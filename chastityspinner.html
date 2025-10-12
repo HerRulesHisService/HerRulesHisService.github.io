@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chastity Time Spinner</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #ff66b2;
+    --highlight: #ff99cc;
+    --bg-gradient: linear-gradient(135deg, #ffe1f0 0%, #ffd1dc 100%);
+    --glass-bg: rgba(255, 255, 255, 0.25);
+  }
+
+  body {
+    background: var(--bg-gradient);
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 32px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #333;
+  }
+
+  .game-container {
+    display: inline-block;
+    padding: 25px;
+    border-radius: 20px;
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+    border: 1px solid rgba(255,255,255,0.3);
+    transition: all 0.3s ease;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    justify-content: center;
+    max-width: 420px;
+    margin: 20px auto;
+  }
+
+  .cell {
+    padding: 20px 0;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 12px;
+    font-weight: 500;
+    color: #333;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    cursor: pointer;
+    transition: transform 0.1s ease, background 0.3s ease, box-shadow 0.3s ease;
+    user-select: none;
+  }
+
+  .cell:hover {
+    transform: scale(1.05);
+  }
+
+  .highlight {
+    background: var(--highlight);
+    color: #111;
+    box-shadow: 0 0 20px rgba(255, 102, 178, 0.7);
+    transform: scale(1.1);
+  }
+
+  .btn-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+  }
+
+  button {
+    padding: 12px 28px;
+    font-size: 16px;
+    border: none;
+    border-radius: 50px;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 0 4px 14px rgba(255, 102, 178, 0.4);
+  }
+
+  button:hover {
+    background: #ff4d9d;
+    transform: scale(1.05);
+  }
+
+  footer {
+    margin-top: 25px;
+    font-size: 14px;
+    color: #444;
+  }
+
+  .icons {
+    font-size: 18px;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+  <div class="game-container" id="captureArea">
+    <h1>🎲 Screenshot Your Chastity Time</h1>
+    <div class="grid" id="grid"></div>
+    <footer>
+      <div class="icons">💖 Shattered Heterosexuality 💖</div>
+    </footer>
+  </div>
+
+  <div class="btn-container">
+    <button id="spinButton" onclick="toggleSpin()">🎲 Spin</button>
+    <button onclick="takeScreenshot()">📸 Screenshot</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+const times = [
+  "7 MONTHS", "3 DAYS", "10 DAYS", "3 YEARS", "2 MONTHS",
+  "1 MONTH", "9 MONTHS", "4 MONTHS", "1 WEEK", "2 YEARS",
+  "SPIN AGAIN", "1 YEAR", "PERMANENT", "4 HOURS", "20 DAYS",
+  "5 MONTHS", "16 DAYS", "1 DAY", "8 HOURS", "6 MONTHS",
+  "3 MONTHS", "5 DAYS", "2 WEEKS", "8 MONTHS", "12 HOURS"
+];
+
+const grid = document.getElementById("grid");
+const spinButton = document.getElementById("spinButton");
+
+let spinning = false;
+let spinInterval = null;
+let currentIndex = -1;
+
+// Create grid cells
+times.forEach(t => {
+  const cell = document.createElement("div");
+  cell.classList.add("cell");
+  cell.textContent = t;
+  grid.appendChild(cell);
+});
+
+function toggleSpin() {
+  if (!spinning) {
+    startSpin();
+  } else {
+    stopSpin();
+  }
+}
+
+function startSpin() {
+  spinning = true;
+  spinButton.textContent = "🛑 Stop";
+  const cells = document.querySelectorAll(".cell");
+
+  spinInterval = setInterval(() => {
+    cells.forEach(c => c.classList.remove("highlight"));
+    currentIndex = Math.floor(Math.random() * cells.length);
+    cells[currentIndex].classList.add("highlight");
+  }, 35); // fast highlight speed
+}
+
+function stopSpin() {
+  spinning = false;
+  spinButton.textContent = "🎲 Spin";
+  clearInterval(spinInterval);
+}
+
+function takeScreenshot() {
+  const captureArea = document.getElementById("captureArea");
+  html2canvas(captureArea, { scale: 2 }).then(canvas => {
+    const link = document.createElement("a");
+    link.download = "chastity-time.png";
+    link.href = canvas.toDataURL();
+    link.click();
+  });
+}
+</script>
+</body>
+</html>
