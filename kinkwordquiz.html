@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Femdom & BDSM Vocabulary Quiz</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #4a235a);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
+
+        .quiz-content {
+            padding: 30px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .question-container {
+            margin-bottom: 30px;
+        }
+
+        .question {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #2c3e50;
+            line-height: 1.4;
+        }
+
+        .options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .option {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .option:hover {
+            border-color: #667eea;
+            background: #f0f2ff;
+        }
+
+        .option.selected {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+
+        .option.correct {
+            border-color: #27ae60;
+            background: #27ae60;
+            color: white;
+        }
+
+        .option.incorrect {
+            border-color: #e74c3c;
+            background: #e74c3c;
+            color: white;
+        }
+
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        #prevBtn {
+            background: #95a5a6;
+            color: white;
+        }
+
+        #prevBtn:hover:not(:disabled) {
+            background: #7f8c8d;
+        }
+
+        #nextBtn {
+            background: #667eea;
+            color: white;
+        }
+
+        #nextBtn:hover:not(:disabled) {
+            background: #5a6fd8;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .results {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .score {
+            font-size: 3em;
+            color: #667eea;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: #27ae60;
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.1em;
+        }
+
+        .restart-btn:hover {
+            background: #219653;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #ecf0f1;
+            border-radius: 3px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <div class="header">
+            <h1>Femdom & BDSM Vocabulary Quiz</h1>
+            <p>Test your knowledge of terminology and concepts</p>
+        </div>
+
+        <div class="quiz-content">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen">
+                <div style="text-align: center; padding: 40px;">
+                    <h2 style="margin-bottom: 20px; color: #2c3e50;">Welcome to the Quiz!</h2>
+                    <p style="margin-bottom: 30px; font-size: 1.1em; line-height: 1.6;">
+                        This quiz contains terminology related to Femdom, BDSM, and kink culture. 
+                        Test your knowledge with multiple-choice questions about definitions, concepts, and practices.
+                    </p>
+                    <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 20px 0;">
+                        <h3 style="margin-bottom: 15px; color: #2c3e50;">Quiz Features:</h3>
+                        <ul style="text-align: left; display: inline-block;">
+                            <li style="margin: 10px 0;">300+ vocabulary questions</li>
+                            <li style="margin: 10px 0;">Multiple choice format</li>
+                            <li style="margin: 10px 0;">Instant feedback</li>
+                            <li style="margin: 10px 0;">Progress tracking</li>
+                        </ul>
+                    </div>
+                    <button id="startBtn" style="background: #667eea; color: white; padding: 15px 40px; font-size: 1.1em; margin-top: 20px;">
+                        Start Quiz
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quiz Screen -->
+            <div id="quizScreen" class="hidden">
+                <div class="stats">
+                    <span id="questionCount">Question 1 of 10</span>
+                    <span id="score">Score: 0</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progressBar"></div>
+                </div>
+                <div class="question-container">
+                    <div class="question" id="questionText"></div>
+                    <div class="options" id="optionsContainer"></div>
+                </div>
+                <div class="navigation">
+                    <button id="prevBtn" disabled>Previous</button>
+                    <button id="nextBtn">Next</button>
+                </div>
+            </div>
+
+            <!-- Results Screen -->
+            <div id="resultsScreen" class="hidden">
+                <div class="results">
+                    <h2>Quiz Completed!</h2>
+                    <div class="score" id="finalScore">0/0</div>
+                    <p id="resultMessage"></p>
+                    <button class="restart-btn" id="restartBtn">Take Quiz Again</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample questions - in practice, you'll load from CSV
+        const sampleQuestions = [
+            {
+                question: "What is the term for a person who takes the dominant role in a BDSM relationship?",
+                options: ["Submissive", "Switch", "Dominant", "Vanilla"],
+                correct: 2,
+                explanation: "A Dominant is the person who takes the controlling or leading role in BDSM activities."
+            },
+            {
+                question: "What does 'Femdom' specifically refer to?",
+                options: ["Female submission", "Female dominance", "Feminist literature", "A type of ritual"],
+                correct: 1,
+                explanation: "Femdom is a portmanteau of 'female domination,' referring to BDSM activities where the dominant partner is female."
+            },
+            {
+                question: "What is a 'Submissive'?",
+                options: ["The person in control", "A type of contract", "The person who surrenders control", "A safety word"],
+                correct: 2,
+                explanation: "A submissive is the person who voluntarily surrenders control to a dominant partner within agreed-upon limits."
+            },
+            {
+                question: "What is 'Aftercare'?",
+                options: ["Post-session care and reassurance", "A type of punishment", "A formal contract", "A type of bondage"],
+                correct: 0,
+                explanation: "Aftercare refers to the care and comfort given to partners after a BDSM scene to ensure emotional and physical well-being."
+            },
+            {
+                question: "What does 'SSC' stand for in BDSM contexts?",
+                options: ["Safe, Sane, Consensual", "Strong, Secure, Controlled", "Silent, Secret, Confidential", "Soft, Sensual, Caring"],
+                correct: 0,
+                explanation: "SSC stands for Safe, Sane, and Consensual - a fundamental principle emphasizing safety and consent in BDSM practices."
+            }
+        ];
+
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userAnswers = [];
+
+        // DOM Elements
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const quizScreen = document.getElementById('quizScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const questionText = document.getElementById('questionText');
+        const optionsContainer = document.getElementById('optionsContainer');
+        const questionCount = document.getElementById('questionCount');
+        const scoreDisplay = document.getElementById('score');
+        const progressBar = document.getElementById('progressBar');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const finalScore = document.getElementById('finalScore');
+        const resultMessage = document.getElementById('resultMessage');
+
+        // Event Listeners
+        document.getElementById('startBtn').addEventListener('click', startQuiz);
+        document.getElementById('restartBtn').addEventListener('click', restartQuiz);
+        prevBtn.addEventListener('click', showPreviousQuestion);
+        nextBtn.addEventListener('click', showNextQuestion);
+
+        function startQuiz() {
+            // For now, using sample questions. Replace with CSV loading
+            currentQuestions = sampleQuestions;
+            welcomeScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const question = currentQuestions[currentQuestionIndex];
+            questionText.textContent = question.question;
+            
+            // Update progress and counters
+            questionCount.textContent = `Question ${currentQuestionIndex + 1} of ${currentQuestions.length}`;
+            scoreDisplay.textContent = `Score: ${score}`;
+            progressBar.style.width = `${((currentQuestionIndex + 1) / currentQuestions.length) * 100}%`;
+            
+            // Create options
+            optionsContainer.innerHTML = '';
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                if (userAnswers[currentQuestionIndex] === index) {
+                    optionElement.classList.add('selected');
+                }
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(index));
+                optionsContainer.appendChild(optionElement);
+            });
+
+            // Update navigation buttons
+            prevBtn.disabled = currentQuestionIndex === 0;
+            nextBtn.textContent = currentQuestionIndex === currentQuestions.length - 1 ? 'Finish' : 'Next';
+        }
+
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestionIndex] = optionIndex;
+            showQuestion();
+        }
+
+        function showPreviousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function showNextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function calculateResults() {
+            score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer === currentQuestions[index].correct) {
+                    score++;
+                }
+            });
+
+            const percentage = (score / currentQuestions.length) * 100;
+            finalScore.textContent = `${score}/${currentQuestions.length}`;
+            
+            if (percentage >= 80) {
+                resultMessage.textContent = "Excellent! You have extensive knowledge of Femdom and BDSM terminology.";
+            } else if (percentage >= 60) {
+                resultMessage.textContent = "Good job! You have a solid understanding of the vocabulary.";
+            } else if (percentage >= 40) {
+                resultMessage.textContent = "Not bad! You're familiar with some concepts but have more to learn.";
+            } else {
+                resultMessage.textContent = "Keep learning! This is a great start to understanding the terminology.";
+            }
+
+            quizScreen.classList.add('hidden');
+            resultsScreen.classList.remove('hidden');
+        }
+
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            userAnswers = new Array(currentQuestions.length).fill(null);
+            resultsScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showQuestion();
+        }
+
+        // Function to load questions from CSV (you'll implement this based on your CSV structure)
+        function loadQuestionsFromCSV(csvData) {
+            // This function would parse your CSV and convert it to the question format
+            // For now, we're using the sample questions above
+            console.log('Load your CSV data here when ready');
+        }
+    </script>
+</body>
+</html>
