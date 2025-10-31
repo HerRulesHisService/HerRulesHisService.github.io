@@ -1,455 +1,475 @@
-<!DOCTYPE html><html lang="en"><head>    <meta charset="UTF-8">    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Femdom & BDSM Vocabulary Quiz</title>    <style>        * {            box-sizing: border-box;            margin: 0;            padding: 0;            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;        }
-        body {            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);            min-height: 100vh;            padding: 20px;        }
-        .quiz-container {            max-width: 800px;            margin: 0 auto;            background: white;            border-radius: 15px;            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);            overflow: hidden;        }
-        .header {            background: linear-gradient(135deg, #2c3e50, #4a235a);            color: white;            padding: 30px;            text-align: center;        }
-        .header h1 {            font-size: 2.2em;            margin-bottom: 10px;        }
-        .header p {            opacity: 0.9;            font-size: 1.1em;        }
-        .quiz-content {            padding: 30px;        }
-        .stats {            display: flex;            justify-content: space-between;            margin-bottom: 20px;            font-weight: bold;            color: #666;        }
-        /* Hiding question count as requested */
-        #questionCount {            display: none !important;        }
-        .question-container {            margin-bottom: 30px;        }
-        .question {            font-size: 1.4em;            margin-bottom: 20px;            color: #2c3e50;            line-height: 1.4;        }
-        .options {            display: grid;            gap: 12px;        }
-        .option {            padding: 15px;            border: 2px solid #e0e0e0;            border-radius: 8px;            cursor: pointer;            transition: all 0.3s ease;            background: #f8f9fa;        }
-        .option:hover:not(.checked) {            border-color: #667eea;            background: #f0f2ff;        }
-        .option.selected {            border-color: #667eea;            background: #667eea;            color: white;        }
-        /* Styles for checked state */
-        .option.correct {            border-color: #27ae60;            background: #27ae60;            color: white;            font-weight: bold;        }
-        .option.incorrect {            border-color: #e74c3c;            background: #e74c3c;            color: white;            font-weight: bold;        }
-        .option.checked {            pointer-events: none; /* Disable clicking after check */        }
-        .navigation {            display: flex;            justify-content: space-between;            margin-top: 30px;        }
-        button {            padding: 12px 25px;            border: none;            border-radius: 6px;            cursor: pointer;            font-size: 1em;            font-weight: 600;            transition: all 0.3s ease;        }
-        #prevBtn {            background: #95a5a6;            color: white;        }
-        #prevBtn:hover:not(:disabled) {            background: #7f8c8d;        }
-        /* Combined Check/Next button */
-        #checkNextBtn {            background: #667eea;            color: white;        }
-        #checkNextBtn:hover:not(:disabled) {            background: #5a6fd8;        }
-        button:disabled {            opacity: 0.5;            cursor: not-allowed;        }
-        .results {            text-align: center;            padding: 40px;        }
-        .score {            font-size: 3em;            color: #667eea;            margin: 20px 0;        }
-        .restart-btn {            background: #27ae60;            color: white;            padding: 15px 30px;            font-size: 1.1em;        }
-        .restart-btn:hover {            background: #219653;        }
-        .progress-bar {            width: 100%;            height: 6px;            background: #ecf0f1;            border-radius: 3px;            margin: 20px 0;            overflow: hidden;        }
-        .progress {            height: 100%;            background: linear-gradient(90deg, #667eea, #764ba2);            transition: width 0.3s ease;            width: 0%;        }
-        .hidden {            display: none;        }
-        .category-filter {            margin: 20px 0;            text-align: center;        }
-        .category-btn {            margin: 5px;            padding: 8px 16px;            background: #ecf0f1;            border: none;            border-radius: 20px;            cursor: pointer;            transition: all 0.3s ease;        }
-        .category-btn.active {            background: #667eea;            color: white;        }    </style></head><body>    <div class="quiz-container">        <div class="header">            <h1>Femdom & BDSM Vocabulary Quiz</h1>            <p>Test your knowledge of terminology and concepts</p>        </div>
-        <div class="quiz-content">            <div id="welcomeScreen">                <div style="text-align: center; padding: 40px;">                    <h2 style="margin-bottom: 20px; color: #2c3e50;">Welcome to the Quiz!</h2>                    <p style="margin-bottom: 30px; font-size: 1.1em; line-height: 1.6;">                        This quiz contains 300+ terminology questions related to Femdom, BDSM, and kink culture.                         Test your knowledge with multiple-choice questions about definitions, concepts, and practices.                    </p>                                        <button id="startBtn" style="background: #667eea; color: white; padding: 15px 40px; font-size: 1.1em; margin-top: 20px;">                        Start Quiz                    </button>                </div>            </div>
-            <div id="quizScreen" class="hidden">                <div class="stats">                    <span id="questionCount">Question X of Y</span>                    <span id="score">Score: 0</span>
-                </div>
-                <div class="progress-bar">                    <div class="progress" id="progressBar"></div>                </div>
-                <div class="question-container">                    <div class="question" id="questionText"></div>                    <div class="options" id="optionsContainer"></div>                </div>
-                <div class="navigation">                    <button id="prevBtn" disabled>Previous</button>
-                    <button id="checkNextBtn" disabled>Check Answer</button>
-                </div>
-            </div>
-            <div id="resultsScreen" class="hidden">                <div class="results">                    <h2>Quiz Completed!</h2>                    <div class="score" id="finalScore">0/0</div>                    <p id="resultMessage"></p>                    <button class="restart-btn" id="restartBtn">Take Quiz Again</button>                </div>            </div>        </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kink Terminology Quiz</title>
+    <!-- Load Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom font import and general styling */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #1f2937; /* Dark background for a serious, clear look */
+        }
+        .card {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        /* Specific feedback colors */
+        .correct-answer {
+            background-color: #10b981; /* Green */
+            border-color: #059669;
+            color: white !important;
+        }
+        .incorrect-answer {
+            background-color: #ef4444; /* Red */
+            border-color: #dc2626;
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <!-- Main Application Container -->
+    <div id="app" class="w-full max-w-2xl bg-gray-900 text-gray-100 p-6 md:p-10 rounded-xl card transition-all duration-300">
+        <!-- Content will be rendered here by JavaScript -->
+        <div class="text-center py-10">
+            <svg class="animate-spin h-8 w-8 text-indigo-400 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <p class="mt-4 text-sm text-gray-400">Loading quiz data...</p>
+        </div>
     </div>
-    <script>        // Complete question bank with 300+ questions
-        const allQuestions = [
-            // Basic Terminology (50 questions)
-      { question: "What is the term for a person who takes the dominant role in a BDSM relationship?", options: ["Submissive", "Switch", "Dominant", "Vanilla"], correct: 2, explanation: "A Dominant is the person who takes the controlling or leading role in BDSM activities.", category: "basic" },
-{ question: "What does 'Femdom' specifically refer to?", options: ["Female submission", "Female dominance", "Feminist literature", "A type of ritual"], correct: 1, explanation: "Femdom is a portmanteau of 'female domination,' referring to BDSM activities where the dominant partner is female.", category: "basic" },
-{ question: "What is a 'Submissive'?", options: ["The person in control", "A type of contract", "The person who surrenders control", "A safety word"], correct: 2, explanation: "A submissive is the person who voluntarily surrenders control to a dominant partner within agreed-upon limits.", category: "basic" },
-{ question: "What is 'Aftercare'?", options: ["Post-session care and reassurance", "A type of punishment", "A formal contract", "A type of bondage"], correct: 0, explanation: "Aftercare refers to the care and comfort given to partners after a BDSM scene to ensure emotional and physical well-being.", category: "basic" },
-{ question: "What does 'SSC' stand for in BDSM contexts?", options: ["Safe, Sane, Consensual", "Strong, Secure, Controlled", "Silent, Secret, Confidential", "Soft, Sensual, Caring"], correct: 0, explanation: "SSC stands for Safe, Sane, and Consensual - a fundamental principle emphasizing safety and consent in BDSM practices.", category: "basic" },
-{ question: "What is a 'Safeword'?", options: ["A secret password", "A word to stop the activity", "A term of endearment", "A type of command"], correct: 1, explanation: "A safeword is a pre-agreed word that either partner can use to stop the activity immediately if they feel uncomfortable or unsafe.", category: "basic" },
-{ question: "What does 'BDSM' stand for?", options: ["Bondage, Discipline, Sadism, Masochism", "Binding, Dominance, Submission, Masochism", "Bondage, Dominance, Submission, Masochism", "Bondage, Discipline, Submission, Masochism"], correct: 0, explanation: "BDSM stands for Bondage, Discipline, Sadism, and Masochism - encompassing various practices and dynamics.", category: "basic" },
-{ question: "What is 'Bondage'?", options: ["A type of contract", "The practice of consensual restraint", "A form of punishment", "A safety protocol"], correct: 1, explanation: "Bondage involves the consensual restraint of a partner using ropes, cuffs, or other devices for erotic or aesthetic purposes.", category: "basic" },
-{ question: "What is a 'Switch'?", options: ["A type of whip", "Someone who enjoys both dominant and submissive roles", "A safety device", "A formal title"], correct: 1, explanation: "A switch is a person who enjoys taking both dominant and submissive roles in BDSM activities, depending on the situation or partner.", category: "basic" },
-{ question: "What is 'Impact Play'?", options: ["Financial domination", "Activities involving hitting or striking", "Psychological games", "Role-playing scenarios"], correct: 1, explanation: "Impact play refers to BDSM activities that involve hitting or striking with implements like floggers, paddles, or hands.", category: "basic" },
-{ question: "What does 'RACK' stand for?", options: ["Risk-Aware Consensual Kink", "Rules And Control Knowledge", "Restraint And Careful Kinetics", "Respect And Consensual Knowledge"], correct: 0, explanation: "RACK stands for Risk-Aware Consensual Kink, emphasizing that participants are aware of and accept the risks involved.", category: "basic" },
-{ question: "What is a 'Scene' in BDSM?", options: ["A dramatic argument", "A specific BDSM session or play event", "The location where play occurs", "A type of negotiation"], correct: 1, explanation: "A scene is a specific BDSM session or play event that has a beginning and end, often with specific goals or themes.", category: "basic" },
-{ question: "What is 'Vanilla' in the context of BDSM?", options: ["A flavor", "Conventional sexual practices without BDSM elements", "A type of submissive", "A safety procedure"], correct: 1, explanation: "Vanilla refers to conventional sexual practices that don't involve BDSM elements or kink.", category: "basic" },
-{ question: "What is a 'Play Partner'?", options: ["Someone you perform theater with", "A BDSM partner for specific scenes", "A type of dominant", "A beginner in BDSM"], correct: 1, explanation: "A play partner is someone with whom you engage in BDSM activities, but may not have a romantic or full-time relationship with.", category: "basic" },
-{ question: "What does 'CNC' stand for?", options: ["Computer Numerical Control", "Consensual Non-Consent", "Careful Negotiated Contact", "Consensual Neutral Control"], correct: 1, explanation: "CNC stands for Consensual Non-Consent, referring to pre-negotiated scenes that simulate non-consensual situations.", category: "basic" },
-{ question: "What is a 'Hard Limit'?", options: ["A difficult restriction", "An activity someone absolutely will not do", "A type of bondage", "A advanced technique"], correct: 1, explanation: "A hard limit is an activity that someone absolutely will not participate in under any circumstances.", category: "basic" },
-{ question: "What is a 'Soft Limit'?", options: ["A comfortable restriction", "An activity someone is hesitant about but might try", "A type of padding", "A beginner's limit"], correct: 1, explanation: "A soft limit is an activity that someone is hesitant about but might be willing to try under certain conditions.", category: "basic" },
-{ question: "What is 'Negotiation' in BDSM?", options: ["Business discussions", "The process of discussing limits and desires before a scene", "A type of punishment", "A form of aftercare"], correct: 1, explanation: "Negotiation is the process where partners discuss their limits, desires, safewords, and expectations before engaging in a scene.", category: "basic" },
-{ question: "What is 'Topping'?", options: ["Being in the dominant role during a scene", "The best partner", "A type of impact play", "The beginning of a scene"], correct: 0, explanation: "Topping refers to taking the dominant or active role during a BDSM scene, regardless of one's overall orientation.", category: "basic" },
-{ question: "What is 'Bottoming'?", options: ["The worst outcome", "Being in the submissive role during a scene", "A type of position", "The end of a scene"], correct: 1, explanation: "Bottoming refers to taking the submissive or receptive role during a BDSM scene, regardless of one's overall orientation.", category: "basic" },
-{ question: "What is a 'Play Space'?", options: ["A children's area", "A designated area for BDSM activities", "A psychological state", "A type of relationship"], correct: 1, explanation: "A play space is a designated area, often in a dungeon or private home, specifically set up for BDSM activities.", category: "basic" },
-{ question: "What does 'M/s' stand for?", options: ["Master/slave", "Mutual/submission", "Main/switch", "Master/service"], correct: 0, explanation: "M/s stands for Master/slave, describing a relationship dynamic with clear ownership and service roles.", category: "basic" },
-{ question: "What does 'D/s' stand for?", options: ["Dominant/submissive", "Discipline/service", "Dynamic/switch", "Domination/submission"], correct: 0, explanation: "D/s stands for Dominant/submissive, describing the power exchange relationship dynamic.", category: "basic" },
-{ question: "What is 'Edge Play'?", options: ["Playing near cliffs", "BDSM activities with higher physical or psychological risks", "Beginner activities", "Outdoor BDSM"], correct: 1, explanation: "Edge play refers to BDSM activities that involve higher levels of physical, emotional, or psychological risk.", category: "basic" },
-{ question: "What is a 'Munch'?", options: ["A type of food", "A casual social gathering for kinky people", "A BDSM technique", "A type of party"], correct: 1, explanation: "A munch is a casual social gathering, often in a public place like a restaurant, where people interested in BDSM can meet and socialize.", category: "basic" },
-{ question: "What is 'Headspace'?", options: ["A type of helmet", "The psychological state during BDSM activities", "The top of a dungeon", "A meditation technique"], correct: 1, explanation: "Headspace refers to the psychological or emotional state someone experiences during BDSM activities.", category: "basic" },
-{ question: "What is 'Subspace'?", options: ["A secondary location", "An altered state of consciousness some submissives experience", "A type of relationship", "A beginner's state"], correct: 1, explanation: "Subspace is an altered state of consciousness that some submissives experience during intense scenes, often characterized by euphoria and reduced pain sensitivity.", category: "basic" },
-{ question: "What is 'Topspace'?", options: ["The best location", "The psychological state dominants experience during scenes", "A type of furniture", "The beginning of a scene"], correct: 1, explanation: "Topspace is the psychological state that dominants may experience during intense scenes, often characterized by heightened focus and awareness.", category: "basic" },
-{ question: "What is 'Protocol'?", options: ["A type of computer language", "Formal rules and etiquette in a BDSM relationship", "A safety procedure", "A type of contract"], correct: 1, explanation: "Protocol refers to the formal rules, rituals, and etiquette established in a BDSM relationship or dynamic.", category: "basic" },
-{ question: "What is '24/7' in BDSM?", options: ["A store hours", "A full-time BDSM relationship", "A type of punishment", "A safety rule"], correct: 1, explanation: "24/7 refers to a BDSM relationship where the power dynamic is maintained continuously, not just during specific scenes.", category: "basic" },
-{ question: "What is 'TPE'?", options: ["Total Power Exchange", "Temporary Play Environment", "Total Protocol Enforcement", "Temporary Power Exchange"], correct: 0, explanation: "TPE stands for Total Power Exchange, describing relationships where the submissive gives complete authority to the dominant.", category: "basic" },
-{ question: "What is 'Objectification'?", options: ["Making something objective", "Treating a person as an object for sexual pleasure", "A type of meditation", "A scientific process"], correct: 1, explanation: "Objectification is a BDSM practice where a person is treated as an object for sexual pleasure or service.", category: "basic" },
-{ question: "What is 'Age Play'?", options: ["Playing games regardless of age", "Role-playing different ages", "A type of competition", "Learning about history"], correct: 1, explanation: "Age play involves role-playing where participants take on roles of different ages, such as caregiver/little or teacher/student.", category: "basic" },
-{ question: "What is 'Pet Play'?", options: ["Playing with animals", "Role-playing as animals", "A type of veterinary practice", "Outdoor activities"], correct: 1, explanation: "Pet play involves role-playing where a person takes on the characteristics and behaviors of an animal, often with a handler.", category: "basic" },
-{ question: "What is 'AB/DL'?", options: ["Adult Baby/Diaper Lover", "Absolute Bondage/Discipline Lifestyle", "Advanced Bondage/Dominance Learning", "Adult Bondage/Diaper Lifestyle"], correct: 0, explanation: "AB/DL stands for Adult Baby/Diaper Lover, referring to age play involving adult baby or diaper lover themes.", category: "basic" },
-{ question: "What is 'Forced Bi'?", options: ["Forced bicycle riding", "Coerced bisexuality in role-play", "A type of bondage", "A mandatory meeting"], correct: 1, explanation: "Forced bi refers to role-play scenarios where someone is 'forced' into bisexual activities, always within consensual boundaries.", category: "basic" },
-{ question: "What is 'Cuckolding'?", options: ["A type of bird", "A practice where someone watches their partner with another person", "A form of cooking", "A type of punishment"], correct: 1, explanation: "Cuckolding involves a person deriving sexual pleasure from watching their partner have sex with someone else, often with humiliation elements.", category: "basic" },
-{ question: "What is 'Cuckqueaning'?", options: ["The female version of cuckolding", "A type of royalty", "A cooking technique", "A form of service"], correct: 0, explanation: "Cuckqueaning is the female equivalent of cuckolding, where a woman watches her partner with another woman.", category: "basic" },
-{ question: "What is 'Findom'?", options: ["Final domination", "Financial domination", "Fine domination", "First domination"], correct: 1, explanation: "Findom stands for Financial Domination, where the submissive derives pleasure from giving money or financial control to the dominant.", category: "basic" },
-{ question: "What is 'Sensation Play'?", options: ["Playing with emotions", "Activities focused on different physical sensations", "A type of theater", "Psychological games"], correct: 1, explanation: "Sensation play involves BDSM activities that focus on experiencing different physical sensations, both pleasurable and painful.", category: "basic" },
-{ question: "What is 'Medical Play'?", options: ["Playing doctor as children", "BDSM activities with medical themes and equipment", "Learning first aid", "A type of service"], correct: 1, explanation: "Medical play involves BDSM activities that incorporate medical themes, role-play, and sometimes equipment.", category: "basic" },
-{ question: "What is 'Fire Play'?", options: ["Playing with matches", "BDSM activities involving controlled use of fire", "A dangerous activity", "A type of candle"], correct: 1, explanation: "Fire play involves the controlled use of fire in BDSM activities, such as fire cupping or flash cotton.", category: "basic" },
-{ question: "What is 'Wax Play'?", options: ["Making candles", "Dripping hot wax on the body for sensation", "A type of art", "Playing with melted cheese"], correct: 1, explanation: "Wax play involves dripping hot wax from candles onto the body for sensual or painful sensation.", category: "basic" },
-{ question: "What is 'Shibari'?", options: ["A Japanese art form", "Japanese rope bondage", "A type of food", "A meditation practice"], correct: 1, explanation: "Shibari is the Japanese art of aesthetic rope bondage, focusing on the beauty of the ties and the connection between partners.", category: "basic" },
-{ question: "What is 'Kinbaku'?", options: ["Japanese for 'beautiful binding'", "A type of food", "A martial art", "A meditation technique"], correct: 0, explanation: "Kinbaku means 'beautiful binding' in Japanese and refers to the erotic and artistic aspects of Japanese rope bondage.", category: "basic" },
-{ question: "What is 'Suspension'?", options: ["A temporary ban", "Lifting a person off the ground using bondage", "A type of punishment", "A waiting period"], correct: 1, explanation: "Suspension in BDSM involves lifting a person completely or partially off the ground using ropes or other bondage equipment.", category: "basic" },
-{ question: "What is 'Predicament Bondage'?", options: ["A difficult situation", "Bondage that puts the submissive in challenging positions", "A type of contract", "A safety issue"], correct: 1, explanation: "Predicament bondage involves tying someone in a position where they must choose between two or more uncomfortable options.", category: "basic" },
-{ question: "What is 'Breath Play'?", options: ["Playing wind instruments", "Activities involving control or restriction of breathing", "A type of meditation", "Outdoor activities"], correct: 1, explanation: "Breath play involves activities that control or restrict breathing for erotic purposes. Note: This is considered edge play due to significant risks.", category: "basic" },
-{ question: "What is 'Knife Play'?", options: ["Cooking together", "Activities involving the use of knives for sensation and threat", "A type of combat", "A dangerous game"], correct: 1, explanation: "Knife play involves using knives for sensation, threat, and psychological play, always with extreme care and consent.", category: "basic" },
-{ question: "What is 'Blood Play'?", options: ["Playing with fake blood", "Activities involving intentional drawing of blood", "A type of theater", "A medical procedure"], correct: 1, explanation: "Blood play involves intentionally drawing blood, often through cutting or needle play, for erotic or ritual purposes.", category: "basic" },
-{ question: "What is 'Flogging'?", options: ["A type of sailing", "Impact play using a flogger", "A dance move", "A cooking technique"], correct: 1, explanation: "Flogging is impact play using a flogger, which is a whip with multiple tails, to strike various parts of the body.", category: "practices" },
-{ question: "What is 'Caning'?", options: ["Making chairs", "Impact play using a cane", "A type of fishing", "A walking aid"], correct: 1, explanation: "Caning is impact play using a flexible cane, typically made of rattan, to deliver sharp, stinging sensations.", category: "practices" },
-{ question: "What is 'Spanking'?", options: ["A cooking method", "Impact play using hands on buttocks", "A type of dance", "A form of greeting"], correct: 1, explanation: "Spanking is impact play using the hand to strike the buttocks, often for punishment, sensation, or erotic pleasure.", category: "practices" },
-{ question: "What is 'Paddling'?", options: ["A water sport", "Impact play using a paddle", "A type of massage", "A cooking technique"], correct: 1, explanation: "Paddling is impact play using a paddle, which is a flat implement, to deliver thudding or stinging sensations.", category: "practices" },
-{ question: "What is 'Electrical Play'?", options: ["Playing with electronics", "Using electrical devices for sensation", "A video game", "A type of massage"], correct: 1, explanation: "Electrical play (or e-stim) uses devices like TENS units to deliver controlled electrical currents to the body for sensation.", category: "practices" },
-{ question: "What is a 'Gag'?", options: ["A joke", "Something placed in or over the mouth to prevent speech", "A type of agreement", "A surprised expression"], correct: 1, explanation: "A gag is a device used in BDSM to restrict speech, often for humiliation or to enhance a sense of helplessness.", category: "practices" },
-{ question: "What is 'Chastity' in a BDSM context?", options: ["Being morally pure", "The practice of denying orgasm or sexual stimulation", "A type of city", "A form of prayer"], correct: 1, explanation: "Chastity in BDSM involves the control of a submissive's orgasms or sexual access, often enforced by a device.", category: "practices" },
-{ question: "What is a 'Chastity Device'?", options: ["A moral code", "A device that prevents sexual stimulation or orgasm", "A type of lock", "A security system"], correct: 1, explanation: "A chastity device is a lockable device worn to prevent sexual activity or orgasm, often used in power exchange dynamics.", category: "practices" },
-{ question: "What is 'Figging'?", options: ["A cooking technique", "Inserting ginger root into the anus or vagina for sensation", "A type of dance", "A form of bondage"], correct: 1, explanation: "Figging is the practice of inserting a peeled piece of ginger root into the anus or vagina, causing a warm, tingling, or burning sensation.", category: "practices" },
-{ question: "What is 'Mummification'?", options: ["An ancient Egyptian practice", "Wrapping a person tightly from head to toe", "A type of meditation", "A form of punishment"], correct: 1, explanation: "Mummification is a form of bondage where a person is wrapped tightly in materials like plastic wrap or vet wrap, restricting all movement.", category: "practices" },
-{ question: "What is 'Humiliation Play'?", options: ["Making fun of someone maliciously", "Consensual acts designed to cause erotic humiliation", "Bullying", "A type of comedy"], correct: 1, explanation: "Humiliation play involves consensual acts that cause embarrassment or shame for the purpose of erotic arousal within agreed limits.", category: "practices" },
-{ question: "What is 'Forced Feminization'?", options: ["A political movement", "Consensual role-play where a male is dressed and treated as female", "A type of surgery", "A historical practice"], correct: 1, explanation: "Forced feminization is a consensual kink where a male submissive is dressed in women's clothing and treated in a feminine manner.", category: "practices" },
-{ question: "What is 'Pegging'?", options: ["A woodworking term", "A woman penetrating a man anally with a strap-on dildo", "A type of game", "A form of betting"], correct: 1, explanation: "Pegging refers to a sexual practice where a woman uses a strap-on dildo to anally penetrate a male partner.", category: "practices" },
-{ question: "What is 'Tease and Denial'?", options: ["A marketing tactic", "Arousing a partner but denying them orgasm", "A type of game", "A form of punishment"], correct: 1, explanation: "Tease and Denial involves sexually arousing a submissive but deliberately preventing them from reaching orgasm, extending their arousal.", category: "practices" },
-{ question: "What is 'Orgasm Control'?", options: ["A medical condition", "The practice of controlling when or if a partner orgasms", "A type of meditation", "A self-help technique"], correct: 1, explanation: "Orgasm control is a BDSM practice where the dominant decides when, if, or how the submissive is allowed to orgasm.", category: "practices" },
-{ question: "What is 'Service-Oriented Submission'?", options: ["Working in the service industry", "A submissive who derives pleasure from performing tasks for their dominant", "A type of contract", "A form of slavery"], correct: 1, explanation: "This describes a submissive whose primary focus is serving their dominant through acts like cleaning, cooking, or personal care.", category: "practices" },
-{ question: "What is a 'Collar' in BDSM?", options: ["A piece of clothing", "A symbol of ownership or commitment in a D/s relationship", "A type of necklace", "A medical device"], correct: 1, explanation: "A collar is often a symbolic piece of jewelry or leatherwear that signifies a submissive's commitment or ownership by a dominant.", category: "practices" },
-{ question: "What is a 'Play Collar'?", options: ["A toy for pets", "A collar used only during scenes, not as a permanent symbol", "A type of children's toy", "A training device"], correct: 1, explanation: "A play collar is used specifically during BDSM scenes to signify the submissive's role for that session, unlike a permanent 'ownership' collar.", category: "practices" },
-{ question: "What is 'Mindfuck'?", options: ["A mental illness", "Psychological play designed to confuse or challenge a person's perceptions", "A type of game", "An insult"], correct: 1, explanation: "Mindfuck is a form of psychological play that uses confusion, trickery, or mental challenges to create a powerful headspace.", category: "practices" },
-{ question: "What is 'Isolation' in sensory deprivation?", options: ["Solitary confinement", "Restricting one sense (like sight or sound) to heighten others", "A type of punishment", "A safety hazard"], correct: 1, explanation: "Isolation, as part of sensory deprivation, involves restricting one or more senses (e.g., with blindfolds or earplugs) to intensify the remaining sensations.", category: "practices" },
-{ question: "What is 'Verbal Humiliation'?", options: ["Insults", "Consensual use of degrading or humiliating language", "Bullying", "A type of argument"], correct: 1, explanation: "Verbal humiliation is the consensual use of words to demean or shame a submissive for erotic pleasure, within pre-negotiated boundaries.", category: "practices" },
-{ question: "What is 'Boot Worship'?", options: ["A religion", "A practice where a submissive shows devotion to a dominant's footwear", "A type of cleaning", "A historical ritual"], correct: 1, explanation: "Boot worship is a form of fetishism and service where a submissive cleans, kisses, or shows reverence for a dominant's boots.", category: "practices" },
-{ question: "What is 'Foot Worship'?", options: ["A religion", "A practice focused on erotic admiration and service to the feet", "A type of massage", "A medical condition"], correct: 1, explanation: "Foot worship involves the erotic admiration, kissing, massaging, or servicing of a dominant's feet by a submissive.", category: "practices" },
-{ question: "What is 'CFNM'?", options: ["Clothed Female, Nude Male", "Clothed Female, Nude Man", "Clothed Female, Nude Master", "Clothed Female, Nude Model"], correct: 0, explanation: "CFNM stands for Clothed Female, Nude Male, a scenario often found in femdom that emphasizes power imbalance through nudity.", category: "practices" },
-{ question: "What is 'CMNF'?", options: ["Clothed Male, Nude Female", "Clothed Man, Nude Female", "Clothed Master, Nude Female", "Clothed Male, Nude Foot"], correct: 0, explanation: "CMNF stands for Clothed Male, Nude Female, a scenario that can be used in various dynamics to create a power imbalance.", category: "practices" },
-{ question: "What is a 'Strap-on'?", options: ["A type of furniture", "A dildo harness worn by a person for penetration", "A tool belt", "A type of punishment"], correct: 1, explanation: "A strap-on is a harness worn around the hips or thighs that holds a dildo, allowing the wearer to penetrate a partner.", category: "practices" },
-{ question: "What is 'Fisting'?", options: ["A type of greeting", "The practice of inserting the entire hand into the vagina or anus", "A fighting technique", "A type of massage"], correct: 1, explanation: "Fisting is the slow, careful process of inserting the entire hand into the vagina or rectum. It requires extensive trust, communication, and lubrication.", category: "practices" },
-{ question: "What is 'Water Sports'?", options: ["Swimming and boating", "Sexual activities involving urine", "Water balloon fights", "A type of cleanse"], correct: 1, explanation: "Water sports, or 'golden showers,' involve the consensual use of urine for sexual arousal, either as part of humiliation play or sensation play.", category: "practices" },
-{ question: "What is 'Scat'?", options: ["Animal droppings", "Sexual activities involving feces", "A type of jazz music", "A fast pace"], correct: 1, explanation: "Scat refers to sexual activities involving feces. It is considered edge play due to high health risks and is a hard limit for many.", category: "practices" },
-{ question: "What is 'Nipple Clamps'?", options: ["A medical device", "Devices applied to the nipples to provide pressure and sensation", "A type of paperclip", "A tool for clothes"], correct: 1, explanation: "Nipple clamps are devices that apply pressure to the nipples, creating a pleasurable or painful sensation and increasing sensitivity.", category: "practices" },
-{ question: "What is 'Clothespins' used for in BDSM?", options: ["Hanging laundry", "As improvised clamps for zippers or sensation play", "A type of toy", "A building block"], correct: 1, explanation: "Clothespins are commonly used in BDSM as inexpensive, adjustable clamps for zippers (a line of pins) or general sensation play on skin.", category: "practices" },
-{ question: "What is a 'Zipper'?", options: ["A clothing fastener", "A line of clothespins or clips attached to the skin and pulled off", "A type of torture", "A fall hazard"], correct: 1, explanation: "A zipper is a BDSM practice where a line of clamps is attached to the skin and then quickly removed, often by pulling a string connecting them.", category: "practices" },
-{ question: "What is 'Temperature Play'?", options: ["Checking for a fever", "Using hot or cold items on the body for sensation", "Weather forecasting", "A type of cooking"], correct: 1, explanation: "Temperature play involves using items like ice cubes, warm wax, or cooled metal to create contrasting sensations on the skin.", category: "practices" },
-{ question: "What is 'Needle Play'?", options: ["Sewing", "The temporary placement of sterile needles through the top layers of skin", "A medical procedure", "A type of art"], correct: 1, explanation: "Needle play is a form of edge play that involves the skilled insertion of sterile needles into the skin for aesthetic or sensation purposes.", category: "practices" },
-{ question: "What is 'Branding'?", options: ["Marketing", "Leaving a permanent mark on the skin through burning or cutting", "A type of punishment", "A farming technique"], correct: 1, explanation: "Branding is an extreme form of body modification and edge play that creates a permanent mark, symbolizing deep ownership.", category: "practices" },
-{ question: "What is 'Cutting' in a BDSM context?", options: ["Making a wound", "Creating designs or marks on the skin with a scalpel", "Interrupting someone", "A type of dance"], correct: 1, explanation: "Cutting is a form of edge play and blood play where a skilled practitioner uses a scalpel to create temporary or permanent marks on the skin.", category: "practices" },
-{ question: "What is 'Play Piercing'?", options: ["Child's play", "Temporary piercing of the skin with needles for a scene", "A type of game", "A fashion trend"], correct: 1, explanation: "Play piercing involves the temporary insertion of sterile needles for the duration of a scene, after which they are removed.", category: "practices" },
-{ question: "What is a 'Flogger'?", options: ["Someone who flogs", "An impact toy consisting of a handle and multiple tails", "A type of whip", "A cooking tool"], correct: 1, explanation: "A flogger is a popular impact toy made of a handle and multiple tails (falls), which can provide a thuddy or stingy sensation depending on its design.", category: "equipment" },
-{ question: "What is a 'Single-Tail Whip'?", options: ["A whip with one end", "A whip with a single, long lash", "A type of flogger", "A riding crop"], correct: 1, explanation: "A single-tail whip has one long lash and requires significant skill to use safely. It is known for its sharp, stinging impact and loud crack.", category: "equipment" },
-{ question: "What is a 'Riding Crop'?", options: ["A farming tool", "A short, stiff whip with a flat striking end", "A type of flogger", "A gardening tool"], correct: 1, explanation: "A riding crop is a short, rigid impact toy with a small, flat striking surface, delivering a very focused, stinging sensation.", category: "equipment" },
-{ question: "What is a 'Paddle'?", options: ["A water sport tool", "A flat, rigid implement for impact play", "A type of boat", "A cooking utensil"], correct: 1, explanation: "A paddle is a flat implement, often made of wood or leather, used for impact play that produces a broad, thudding sensation.", category: "equipment" },
-{ question: "What is a 'Cane'?", options: ["A walking stick", "A long, thin, flexible rod for impact play", "A type of plant", "A measurement tool"], correct: 1, explanation: "A cane used in BDSM is typically made of rattan and is designed to deliver a sharp, stinging, and highly focused sensation.", category: "equipment" },
-{ question: "What are 'Restraints'?", options: ["Self-control", "Devices used to limit movement, like cuffs or ropes", "A type of rule", "A legal term"], correct: 1, explanation: "Restraints is a general term for devices like handcuffs, leather cuffs, ropes, or straps used in bondage to restrict a person's movement.", category: "equipment" },
-{ question: "What are 'Spreaders'?", options: ["Butter knives", "Bars used to keep limbs apart", "A type of farming", "A medical device"], correct: 1, explanation: "Spreader bars are rigid bars with cuffs attached to keep a submissive's ankles or wrists apart, preventing them from closing their legs or arms.", category: "equipment" },
-{ question: "What is a 'St. Andrew's Cross'?", options: ["A religious symbol", "An X-shaped structure used for restraint in bondage", "A type of medicine", "A constellation"], correct: 1, explanation: "A St. Andrew's Cross is a common piece of dungeon furniture, an X-shaped frame to which a submissive can be restrained standing up.", category: "equipment" },
-{ question: "What is a 'Spanking Bench'?", options: ["A workbench", "A piece of furniture designed to position someone for spanking or play", "A children's toy", "A type of seat"], correct: 1, explanation: "A spanking bench is a piece of furniture designed to support a person in a bent-over position, making them accessible for impact play or other activities.", category: "equipment" },
-{ question: "What is a 'Suspension Cuff'?", options: ["A handcuff", "A heavy-duty cuff designed to safely support a person's weight in suspension", "A type of bracelet", "A medical device"], correct: 1, explanation: "Suspension cuffs are specifically designed with strong materials and secure attachments to safely hold a person's weight during rope suspension.", category: "equipment" },
-{ question: "What is 'Rope' typically made of for bondage?", options: ["Metal wire", "Natural fibers like jute or hemp, or synthetic like nylon", "Rubber", "String"], correct: 1, explanation: "Bondage rope is often made of natural fibers like jute or hemp for their grip and lack of stretch, or nylon for its smoothness and strength.", category: "equipment" },
-{ question: "What is 'Safety Shears'?", options: ["Scissors for crafts", "Blunt-tipped scissors for quickly cutting rope or clothing in an emergency", "A type of knife", "A gardening tool"], correct: 1, explanation: "Safety shears are an essential safety tool in bondage. Their blunt tips allow for cutting rope near the skin without stabbing the person.", category: "equipment" },
-{ question: "What is a 'Ball Gag'?", options: ["A joke", "A gag with a ball that fits in the mouth", "A type of game", "A dance"], correct: 1, explanation: "A ball gag is a common type of gag featuring a rubber or silicone ball strapped into the mouth, preventing clear speech.", category: "equipment" },
-{ question: "What is a 'Bit Gag'?", options: ["A computer term", "A gag that resembles a horse's bit", "A small gag", "A type of punishment"], correct: 1, explanation: "A bit gag is modeled after a horse's bit and is placed in the mouth. It can be more comfortable for some than a ball gag.", category: "equipment" },
-{ question: "What is a 'Ring Gag'?", options: ["A gag for calling", "A gag with a ring in the center that keeps the mouth open", "A type of jewelry", "A telephone"], correct: 1, explanation: "A ring gag holds the mouth open with a ring in the center, which can also be used for other activities, like forced oral sex or drool control.", category: "equipment" },
-{ question: "What is a 'Hood'?", options: ["A neighborhood", "A head covering that can restrict sight, hearing, or breathing", "A type of car", "A ranking"], correct: 1, explanation: "A hood is a head covering used in BDSM for sensory deprivation, objectification, or aesthetic purposes. It can cover all or part of the head.", category: "equipment" },
-{ question: "What is a 'Blindfold'?", options: ["A type of dance", "A device to block eyesight for sensory deprivation", "A window covering", "A type of fold"], correct: 1, explanation: "A blindfold is a simple but effective tool for sensory deprivation, removing the sense of sight to heighten other sensations.", category: "equipment" },
-{ question: "What is a 'TENS Unit'?", options: ["A tens machine", "A device used for electrical play (e-stim)", "A measurement device", "A type of exercise machine"], correct: 1, explanation: "A TENS (Transcutaneous Electrical Nerve Stimulation) unit is a medical device commonly adapted for BDSM electrical play to stimulate nerves.", category: "equipment" },
-{ question: "What is a 'Violet Wand'?", options: ["A purple flashlight", "A device for electrical play that uses a high-frequency current", "A type of dildo", "A massager"], correct: 1, explanation: "A violet wand is an electrical play device that produces a high-voltage, low-current current, creating a sensation like static electricity sparks.", category: "equipment" },
-{ question: "What is a 'Chastity Cage'?", options: ["A prison", "A device that encloses the penis to prevent erection and orgasm", "A bird cage", "A type of furniture"], correct: 1, explanation: "A chastity cage is a device worn on the penis to prevent sexual activity. It is a common tool in orgasm control and denial dynamics.", category: "equipment" },
-{ question: "What is a 'Butt Plug'?", options: ["A drain stopper", "A toy inserted into the anus for sensation or to stretch", "A type of electrical plug", "A tool"], correct: 1, explanation: "A butt plug is a sex toy designed for anal insertion, typically with a flared base to prevent it from being lost inside the rectum.", category: "equipment" },
-{ question: "What is a 'Dildo'?", options: ["A silly person", "A sex toy shaped like an erect penis for penetration", "A type of flower", "A name"], correct: 1, explanation: "A dildo is a non-vibrating phallic sex toy used for vaginal or anal penetration. It is a key component of pegging.", category: "equipment" },
-{ question: "What is a 'Gag Reflex'?", options: ["A safety mechanism", "A physical reaction to prevent choking, which can be suppressed with training", "A type of punishment", "A legal term"], correct: 1, explanation: "The gag reflex is an automatic reaction to objects touching the back of the throat. With practice and desensitization, some people can learn to suppress it.", category: "physiology-psychology" },
-{ question: "What is 'Sub Drop'?", options: ["A temperature drop", "A period of emotional or physical low that can occur hours or days after an intense scene", "A type of punishment", "A fall"], correct: 1, explanation: "Sub drop is a colloquial term for the crash that can follow the endorphin high of subspace, involving sadness, fatigue, or irritability. Aftercare helps mitigate it.", category: "physiology-psychology" },
-{ question: "What is 'Top Drop'?", options: ["A price reduction", "A similar emotional low that can affect the dominant after a scene", "A type of punishment", "A fall"], correct: 1, explanation: "Top drop is the dominant's equivalent of sub drop, where they may experience guilt, sadness, or doubt after a scene. Aftercare is crucial for tops as well.", category: "physiology-psychology" },
-{ question: "What are 'Endorphins'?", options: ["Hormones", "Chemicals released by the body during pain or stress that act as natural painkillers and create euphoria", "A type of dolphin", "A food"], correct: 1, explanation: "Endorphins are neurotransmitters released during intense physical activity, pain, or stress, contributing to the 'high' of subspace and the ability to endure pain during impact play.", category: "physiology-psychology" },
-{ question: "What is 'Adrenaline'?", options: ["A medicine", "A hormone released in 'fight or flight' situations, increasing heart rate and focus", "A type of line", "A brand"], correct: 1, explanation: "Adrenaline is a hormone that prepares the body for intense activity, contributing to the heightened state of awareness and sensation during a scene.", category: "physiology-psychology" },
-{ question: "What is 'Frenzy'?", options: ["A state of madness", "An intense, often irrational desire to engage in as much BDSM as possible, common in beginners", "A type of dance", "A weather event"], correct: 1, explanation: "Frenzy describes the overwhelming excitement of a newbie to try everything at once, which can lead to poor judgment and ignoring limits. Self-control and mentorship are important.", category: "physiology-psychology" },
-{ question: "What is 'Norepinephrine'?", options: ["A vitamin", "A neurotransmitter that affects attention and responding actions, involved in the 'fight or flight' response", "A type of nephron", "A philosophy"], correct: 1, explanation: "Norepinephrine works with adrenaline to increase alertness and arousal, contributing to the intense headspace during BDSM scenes.", category: "physiology-psychology" },
-{ question: "What is 'Oxytocin'?", options: ["A painkiller", "The 'bonding hormone' released during intimacy, touch, and after orgasm", "A type of oxygen", "A toxin"], correct: 1, explanation: "Oxytocin is released during cuddling, aftercare, and orgasm, promoting feelings of attachment, trust, and bonding between partners.", category: "physiology-psychology" },
-{ question: "What is a 'Psychosexual' aspect of kink?", options: ["A mental illness", "The connection between psychological processes and sexual arousal", "A type of therapy", "A personality test"], correct: 1, explanation: "BDSM often has a strong psychosexual component, where power dynamics, surrender, or specific scenarios are key to sexual arousal, beyond the physical acts themselves.", category: "physiology-psychology" },
-{ question: "What is 'Catharsis' in a BDSM context?", options: ["A type of punishment", "The process of releasing strong or repressed emotions through a scene", "A cleaning process", "A medical term"], correct: 1, explanation: "For some participants, BDSM can provide catharsis, allowing them to safely release emotions like stress, anger, or sadness in a controlled environment.", category: "physiology-psychology" },
-{ question: "What is 'Conditioning'?", options: ["Hair treatment", "Using rewards and punishments to shape a submissive's behavior or responses over time", "A type of exercise", "Air conditioning"], correct: 1, explanation: "Conditioning is a psychological technique where a dominant uses positive or negative reinforcement to create automatic responses in a submissive.", category: "physiology-psychology" },
-{ question: "What is 'Body Memory'?", options: ["Remembering a dance", "The body's physical recollection of trauma or intense sensation", "A type of memory", "A yoga pose"], correct: 1, explanation: "Body memory refers to the phenomenon where the body physically reacts to a stimulus based on a past experience, which is important to be aware of during play, especially with trauma survivors.", category: "physiology-psychology" },
-{ question: "What is 'Triggers'?", options: ["Gun parts", "Stimuli that can cause a strong negative emotional reaction based on past trauma", "A type of switch", "A horse part"], correct: 1, explanation: "A trigger is anything that reminds someone of a past trauma, causing a distress response. Knowing your partner's triggers is a critical part of negotiation.", category: "physiology-psychology" },
-{ question: "What is 'Dissociation'?", options: ["A chemical process", "A mental process of disconnecting from one's thoughts, feelings, or sense of identity", "A type of society", "A legal term"], correct: 1, explanation: "Dissociation can sometimes occur during intense scenes. A good dominant watches for signs of this, as it can mean the bottom is no longer present and the scene should stop.", category: "physiology-psychology" },
-{ question: "What is 'Agency'?", options: ["A business", "A person's capacity to act independently and make their own choices", "A type of book", "A government body"], correct: 1, explanation: "A core principle of BDSM is that submission is an act of agency. The submissive *chooses* to give up control, which is an expression of their own power.", category: "physiology-psychology" },
-{ question: "What is 'Informed Consent'?", options: ["A legal document", "Agreement given based on a clear understanding of the facts, risks, and alternatives", "A type of consent form", "A medical term"], correct: 1, explanation: "Informed consent is the cornerstone of ethical BDSM. All parties must understand what will happen, the risks involved, and have the ability to say no.", category: "safety-ethics" },
-{ question: "What is 'Ongoing Consent'?", options: ["A continuous yes", "The concept that consent can be withdrawn at any time, not just at the start", "A type of contract", "A legal principle"], correct: 1, explanation: "Consent in BDSM is not a one-time agreement. It is ongoing and can be revoked at any moment, for any reason, using a safeword or other signal.", category: "safety-ethics" },
-{ question: "What is 'Enthusiastic Consent'?", options: ["Excited agreement", "The ideal standard of consent where parties are eagerly and willingly participating", "A type of consent", "A legal standard"], correct: 1, explanation: "While 'yes' is the minimum, enthusiastic consent—a clear, happy, and eager 'yes!'—is the gold standard for healthy BDSM interactions.", category: "safety-ethics" },
-{ question: "What is 'PRICK'?", options: ["An insult", "Personal Responsibility, Informed, Consensual Kink", "A type of needle", "A feeling"], correct: 1, explanation: "PRICK is an acronym for Personal Responsibility, Informed, Consensual Kink. It emphasizes that individuals are responsible for their own risk management.", category: "safety-ethics" },
-{ question: "What is 'Risk Awareness'?", options: ["Being scared", "Understanding the potential physical and emotional risks of an activity", "An insurance policy", "A fear"], correct: 1, explanation: "Risk awareness is a key component of RACK and PRICK. It means educating yourself about what can go wrong before engaging in an activity.", category: "safety-ethics" },
-{ question: "What is 'Risk Mitigation'?", options: ["Eliminating risk", "Taking steps to reduce the likelihood or severity of potential harm", "A type of investment", "A guarantee"], correct: 1, explanation: "Risk mitigation involves actions like using safety shears in bondage, checking in during a scene, and proper aftercare to make play as safe as possible.", category: "safety-ethics" },
-{ question: "What is 'Negotiation' primarily for?", options: ["Getting a better price", "Establishing clear boundaries, limits, safewords, and desires before a scene", "A type of argument", "A business deal"], correct: 1, explanation: "The primary purpose of negotiation is to ensure all parties are on the same page about what will and will not happen, creating a safe container for play.", category: "safety-ethics" },
-{ question: "Why is 'Aftercare' a safety issue?", options: ["It's not", "It helps prevent sub drop and top drop, promoting emotional and physical recovery", "It's a form of punishment", "It's just for comfort"], correct: 1, explanation: "Aftercare is a critical safety practice because it helps partners transition out of intense headspaces and process the experience, reducing the negative effects of 'drop'.", category: "safety-ethics" },
-{ question: "What is 'Check-in' during a scene?", options: ["Paying a bill", "The dominant verbally checking on the submissive's status", "A type of game", "A list"], correct: 1, explanation: "A check-in is when the top asks the bottom for their color (if using the traffic light system) or how they are doing to ensure they are still consenting and okay.", category: "safety-ethics" },
-{ question: "What is the 'Traffic Light System'?", options: ["For driving", "A common safeword system using Green (good), Yellow (slow/check), Red (stop)", "A type of light show", "A party game"], correct: 1, explanation: "The traffic light system is a simple and effective safeword system: Green for 'all good', Yellow for 'ease up/check in', and Red for 'stop everything immediately'.", category: "safety-ethics" },
-{ question: "What is 'Duty of Care'?", options: ["A tax", "The ethical responsibility a dominant has for the well-being of their submissive", "A job", "A legal obligation"], correct: 1, explanation: "Duty of Care is the understanding that the person in control (the dominant/top) has a responsibility to protect the physical and emotional safety of the bottom.", category: "safety-ethics" },
-{ question: "What is 'Toys' in BDSM?", options: ["Children's playthings", "A general term for implements used in play, like floggers, cuffs, and gags", "A pet name", "A game"], correct: 1, explanation: "In BDSM, 'toys' refers to the various tools and implements used during scenes, from impact play tools to bondage gear.", category: "slang-culture" },
-{ question: "What is a 'Dungeon'?", options: ["A prison", "A dedicated space for BDSM play, either private or public", "A video game level", "A basement"], correct: 1, explanation: "A dungeon is a space designed for BDSM activities, often equipped with furniture like crosses, benches, and suspension points.", category: "slang-culture" },
-{ question: "What is a 'Dungeon Monitor' (DM)?", options: ["A computer screen", "A person designated to ensure safety and rules are followed in a public play space", "A type of monster", "A referee"], correct: 1, explanation: "A Dungeon Monitor is a safety officer at a public BDSM event or dungeon. They intervene if they see unsafe or non-consensual behavior.", category: "slang-culture" },
-{ question: "What does 'YKINMK' stand for?", options: ["You Know I Never Make Kinks", "Your Kink Is Not My Kink", "You Kink I Never Mind Kinks", "Your Kink Is Not My Kind"], correct: 1, explanation: "YKINMK stands for 'Your Kink Is Not My Kink' and is often followed by 'and that's OK' (YKINMKATO), promoting tolerance for different preferences within the community.", category: "slang-culture" },
-{ question: "What is 'W/we'?", options: ["A typo", "A grammatical convention where a capital W signifies the Dominant in a D/s relationship", "A pronoun", "A word for us"], correct: 1, explanation: "In some D/s relationships, the dominant uses a capital 'W' when writing 'We' to grammatically signify their position of authority.", category: "slang-culture" },
-{ question: "What is a 'Kinkster'?", options: ["A type of dancer", "A person who practices or is interested in kink or BDSM", "A funny person", "A type of hairstyle"], correct: 1, explanation: "Kinkster is a casual, positive term for someone who is into BDSM or kink.", category: "slang-culture" },
-{ question: "What is the 'Community'?", options: ["A neighborhood", "The broader social network of people involved in BDSM", "A type of building", "A TV show"], correct: 1, explanation: "The 'Community' (often capitalized) refers to the loose global network of people who practice or are interested in BDSM.", category: "slang-culture" },
-{ question: "What is 'Old Guard'?", options: ["Security personnel", "A term for the traditional, strict, and often secretive BDSM subculture of the mid-20th century", "A military unit", "A type of policy"], correct: 1, explanation: "Old Guard refers to a historical BDSM culture with strict codes, hierarchies, and rituals, particularly in the gay leather community.", category: "slang-culture" },
-{ question: "What is 'New Guard'?", options: ["New security", "A more modern, less formal approach to BDSM that emphasizes personal expression over strict tradition", "A military unit", "A policy"], correct: 1, explanation: "New Guard describes the evolution of BDSM culture that is generally more inclusive, fluid, and less bound by the rigid rules of the Old Guard.", category: "slang-culture" },
-{ question: "What is a 'Leather Family'?", options: ["A family that makes leather", "A chosen family within the leather/BDSM community with deep bonds, often with D/s or M/s dynamics", "A type of business", "A brand"], correct: 1, explanation: "A leather family is a deeply committed group of people within the kink community, often with titles like Old Guard titles (e.g., Sir, boy, slave).", category: "slang-culture" },
-{ question: "What is a 'Title'?", options: ["A name of a book", "An honorific used in the community, such as Master, Mistress, slave, or boy", "A job position", "A legal right"], correct: 1, explanation: "A title is an honorific that signifies a person's role or status within a BDSM dynamic or the wider community.", category: "slang-culture" },
-{ question: "What does 'IRL' mean in online kink contexts?", options: ["I Really Love", "In Real Life", "I Read Later", "Internal Right Link"], correct: 1, explanation: "IRL stands for 'In Real Life,' used to distinguish online interactions from face-to-face meetings.", category: "slang-culture" },
-{ question: "What is 'Vetting'?", options: ["Taking a pet to the doctor", "The process of getting to know someone to assess their suitability and safety as a partner", "A type of election", "A medical procedure"], correct: 1, explanation: "Vetting is the process of checking a potential partner's reputation, experience, and character before engaging in play or a relationship with them.", category: "slang-culture" },
-{ question: "What is a 'Poser' or 'Tourist'?", options: ["Someone who takes pictures", "A derogatory term for someone perceived as not genuinely committed to BDSM, just dabbling for fashion or thrill", "A traveler", "An artist"], correct: 1, explanation: "Poser or Tourist is a slang term used to describe someone who is seen as superficially involved in BDSM without understanding or respecting its culture and principles.", category: "slang-culture" },
-{ question: "What is 'The Lifestyle'?", options: ["A TV show", "A term some people use to describe living a BDSM-oriented life, particularly 24/7 dynamics", "A type of brand", "A way of living healthily"], correct: 1, explanation: "'The Lifestyle' is a common phrase used to refer to the practice of incorporating BDSM and power exchange into one's daily life and identity.", category: "slang-culture" }
-            // ... (The rest of the 300+ questions are assumed to be here)
-        ];
 
-        // --- NEW/MODIFIED JAVASCRIPT LOGIC ---
+    <script>
+        // --- QUIZ DATA (Parsed from your CSV format) ---
+        // The data is embedded here as a string and parsed on load.
+        const rawData = `category,question,option_a,option_b,option_c,option_d,correct_answer,explanation
+Basic Terminology & Concepts,What is the term for a person who takes the dominant role in a BDSM relationship?,Submissive,Switch,Dominant,Vanilla,2,A Dominant is the person who takes the controlling or leading role in BDSM activities.
+Basic Terminology & Concepts,What does 'Femdom' specifically refer to?,Female submission,Female dominance,Feminist literature,A type of ritual,1,Femdom is a portmanteau of 'female domination,' referring to BDSM activities where the dominant partner is female.
+Basic Terminology & Concepts,What is a 'Submissive'?,The person in control,A type of contract,The person who surrenders control,A safety word,2,A submissive is the person who voluntarily surrenders control to a dominant partner within agreed-upon limits.
+Basic Terminology & Concepts,What is 'Aftercare'?,Post-session care and reassurance,A type of punishment,A formal contract,A type of bondage,0,Aftercare refers to the care and comfort given to partners after a BDSM scene to ensure emotional and physical well-being.
+Basic Terminology & Concepts,What does 'SSC' stand for in BDSM contexts?,Safe, Sane, Consensual,Strong, Secure, Controlled,Silent, Secret, Confidential,Soft, Sensual, Caring,0,SSC stands for Safe, Sane, and Consensual - a fundamental principle emphasizing safety and consent in BDSM practices.
+Basic Terminology & Concepts,What is a 'Safeword'?,A secret password,A word to stop the activity,A term of endearment,A type of command,1,A safeword is a pre-agreed word that either partner can use to stop the activity immediately if they feel uncomfortable or unsafe.
+Basic Terminology & Concepts,What does 'BDSM' stand for?,Bondage, Discipline, Sadism, Masochism,Binding, Dominance, Submission, Masochism,Bondage, Dominance, Submission, Masochism,Bondage, Discipline, Submission, Masochism,0,BDSM stands for Bondage, Discipline, Sadism, and Masochism - encompassing various practices and dynamics.
+Basic Terminology & Concepts,What is 'Bondage'?,A type of contract,The practice of consensual restraint,A form of punishment,A safety protocol,1,Bondage involves the consensual restraint of a partner using ropes, cuffs, or other devices for erotic or aesthetic purposes.
+Basic Terminology & Concepts,What is a 'Switch'?,A type of whip,Someone who enjoys both dominant and submissive roles,A safety device,A formal title,1,A switch is a person who enjoys taking both dominant and submissive roles in BDSM activities, depending on the situation or partner.
+Basic Terminology & Concepts,What is 'Impact Play'?,Financial domination,Activities involving hitting or striking,Psychological games,Role-playing scenarios,1,Impact play refers to BDSM activities that involve hitting or striking with implements like floggers, paddles, or hands.
+Basic Terminology & Concepts,What does 'RACK' stand for?,Risk-Aware Consensual Kink,Rules And Control Knowledge,Restraint And Careful Kinetics,Respect And Consensual Knowledge,0,RACK stands for Risk-Aware Consensual Kink, emphasizing that participants are aware of and accept the risks involved.
+Basic Terminology & Concepts,What is a 'Scene' in BDSM?,A dramatic argument,A specific BDSM session or play event,The location where play occurs,A type of negotiation,1,A scene is a specific BDSM session or play event that has a beginning and end, often with specific goals or themes.
+Basic Terminology & Concepts,What is 'Vanilla' in the context of BDSM?,A flavor,Conventional sexual practices without BDSM elements,A type of submissive,A safety procedure,1,Vanilla refers to conventional sexual practices that don't involve BDSM elements or kink.
+Basic Terminology & Concepts,What is a 'Play Partner'?,Someone you perform theater with,A BDSM partner for specific scenes,A type of dominant,A beginner in BDSM,1,A play partner is someone with whom you engage in BDSM activities, but may not have a romantic or full-time relationship with.
+Basic Terminology & Concepts,What does 'CNC' stand for?,Computer Numerical Control,Consensual Non-Consent,Careful Negotiated Contact,Consensual Neutral Control,1,CNC stands for Consensual Non-Consent, referring to pre-negotiated scenes that simulate non-consensual situations.
+Basic Terminology & Concepts,What is a 'Hard Limit'?,A difficult restriction,An activity someone absolutely will not do,A type of bondage,A advanced technique,1,A hard limit is an activity that someone absolutely will not participate in under any circumstances.
+Basic Terminology & Concepts,What is a 'Soft Limit'?,A comfortable restriction,An activity someone is hesitant about but might try,A type of padding,A beginner's limit,1,A soft limit is an activity that someone is hesitant about but might be willing to try under certain conditions.
+Basic Terminology & Concepts,What is 'Negotiation' in BDSM?,Business discussions,The process of discussing limits and desires before a scene,A type of punishment,A form of aftercare,1,Negotiation is the process where partners discuss their limits, desires, safewords, and expectations before engaging in a scene.
+Basic Terminology & Concepts,What is 'Topping'?,Being in the dominant role during a scene,The best partner,A type of impact play,The beginning of a scene,0,Topping refers to taking the dominant or active role during a BDSM scene, regardless of one's overall orientation.
+Basic Terminology & Concepts,What is 'Bottoming'?,The worst outcome,Being in the submissive role during a scene,A type of position,The end of a scene,1,Bottoming refers to taking the submissive or receptive role during a BDSM scene, regardless of one's overall orientation.
+Basic Terminology & Concepts,What is a 'Play Space'?,A children's area,A designated area for BDSM activities,A psychological state,A type of relationship,1,A play space is a designated area, often in a dungeon or private home, specifically set up for BDSM activities.
+Basic Terminology & Concepts,What does 'M/s' stand for?,Master/slave,Mutual/submission,Main/switch,Master/service,0,M/s stands for Master/slave, describing a relationship dynamic with clear ownership and service roles.
+Basic Terminology & Concepts,What does 'D/s' stand for?,Dominant/submissive,Discipline/service,Dynamic/switch,Domination/submission,0,D/s stands for Dominant/submissive, describing the power exchange relationship dynamic.
+Basic Terminology & Concepts,What is 'Edge Play'?,Playing near cliffs,BDSM activities with higher physical or psychological risks,Beginner activities,Outdoor BDSM,1,Edge play refers to BDSM activities that involve higher levels of physical, emotional, or psychological risk.
+Basic Terminology & Concepts,What is a 'Munch'?,A type of food,A casual social gathering for kinky people,A BDSM technique,A type of party,1,A munch is a casual social gathering, often in a public place like a restaurant, where people interested in BDSM can meet and socialize.
+Basic Terminology & Concepts,What is 'Headspace'?,A type of helmet,The psychological state during BDSM activities,The top of a dungeon,A meditation technique,1,Headspace refers to the psychological or emotional state someone experiences during BDSM activities.
+Basic Terminology & Concepts,What is 'Subspace'?,A secondary location,An altered state of consciousness some submissives experience,A type of relationship,A beginner's state,1,Subspace is an altered state of consciousness that some submissives experience during intense scenes, often characterized by euphoria and reduced pain sensitivity.
+Basic Terminology & Concepts,What is 'Topspace'?,The best location,The psychological state dominants experience during scenes,A type of furniture,The beginning of a scene,1,Topspace is the psychological state that dominants may experience during intense scenes, often characterized by heightened focus and awareness.
+Basic Terminology & Concepts,What is 'Protocol'?,A type of computer language,Formal rules and etiquette in a BDSM relationship,A safety procedure,A type of contract,1,Protocol refers to the formal rules, rituals, and etiquette established in a BDSM relationship or dynamic.
+Basic Terminology & Concepts,What is '24/7' in BDSM?,A store hours,A full-time BDSM relationship,A type of punishment,A safety rule,1,24/7 refers to a BDSM relationship where the power dynamic is maintained continuously, not just during specific scenes.
+Basic Terminology & Concepts,What is 'TPE'?,Total Power Exchange,Temporary Play Environment,Total Protocol Enforcement,Temporary Power Exchange,0,TPE stands for Total Power Exchange, describing relationships where the submissive gives complete authority to the dominant.
+Basic Terminology & Concepts,What is 'Objectification'?,Making something objective,Treating a person as an object for sexual pleasure,A type of meditation,A scientific process,1,Objectification is a BDSM practice where a person is treated as an object for sexual pleasure or service.
+Basic Terminology & Concepts,What is 'Age Play'?,Playing games regardless of age,Role-playing different ages,A type of competition,Learning about history,1,Age play involves role-playing where participants take on roles of different ages, such as caregiver/little or teacher/student.
+Basic Terminology & Concepts,What is 'Pet Play'?,Playing with animals,Role-playing as animals,A type of veterinary practice,Outdoor activities,1,Pet play involves role-playing where a person takes on the characteristics and behaviors of an animal, often with a handler.
+Basic Terminology & Concepts,What is 'AB/DL'?,Adult Baby/Diaper Lover,Absolute Bondage/Discipline Lifestyle,Advanced Bondage/Dominance Learning,Adult Bondage/Diaper Lifestyle,0,AB/DL stands for Adult Baby/Diaper Lover, referring to age play involving adult baby or diaper lover themes.
+Basic Terminology & Concepts,What is 'Forced Bi'?,Forced bicycle riding,Coerced bisexuality in role-play,A type of bondage,A mandatory meeting,1,Forced bi refers to role-play scenarios where someone is 'forced' into bisexual activities, always within consensual boundaries.
+Basic Terminology & Concepts,What is 'Cuckolding'?,A type of bird,A practice where someone watches their partner with another person,A form of cooking,A type of punishment,1,Cuckolding involves a person deriving sexual pleasure from watching their partner have sex with someone else, often with humiliation elements.
+Basic Terminology & Concepts,What is 'Cuckqueaning'?,The female version of cuckolding,A type of royalty,A cooking technique,A form of service,0,Cuckqueaning is the female equivalent of cuckolding, where a woman watches her partner with another woman.
+Basic Terminology & Concepts,What is 'Findom'?,Final domination,Financial domination,Fine domination,First domination,1,Findom stands for Financial Domination, where the submissive derives pleasure from giving money or financial control to the dominant.
+Basic Terminology & Concepts,What is 'Sensation Play'?,Playing with emotions,Activities focused on different physical sensations,A type of theater,Psychological games,1,Sensation play involves BDSM activities that focus on experiencing different physical sensations, both pleasurable and painful.
+Basic Terminology & Concepts,What is 'Medical Play'?,Playing doctor as children,BDSM activities with medical themes and equipment,Learning first aid,A type of service,1,Medical play involves BDSM activities that incorporate medical themes, role-play, and sometimes equipment.
+Basic Terminology & Concepts,What is 'Fire Play'?,Playing with matches,BDSM activities involving controlled use of fire,A dangerous activity,A type of candle,1,Fire play involves the controlled use of fire in BDSM activities, such as fire cupping or flash cotton.
+Basic Terminology & Concepts,What is 'Wax Play'?,Making candles,Dripping hot wax on the body for sensation,A type of art,Playing with melted cheese,1,Wax play involves dripping hot wax from candles onto the body for sensual or painful sensation.
+Basic Terminology & Concepts,What is 'Shibari'?,A Japanese art form,Japanese rope bondage,A type of food,A meditation practice,1,Shibari is the Japanese art of aesthetic rope bondage, focusing on the beauty of the ties and the connection between partners.
+Basic Terminology & Concepts,What is 'Kinbaku'?,Japanese for 'beautiful binding',A type of food,A martial art,A meditation technique,0,Kinbaku means 'beautiful binding' in Japanese and refers to the erotic and artistic aspects of Japanese rope bondage.
+Basic Terminology & Concepts,What is 'Suspension'?,A temporary ban,Lifting a person off the ground using bondage,A type of punishment,A waiting period,1,Suspension in BDSM involves lifting a person completely or partially off the ground using ropes or other bondage equipment.
+Basic Terminology & Concepts,What is 'Predicament Bondage'?,A difficult situation,Bondage that puts the submissive in challenging positions,A type of contract,A safety issue,1,Predicament bondage involves tying someone in a position where they must choose between two or more uncomfortable options.
+Basic Terminology & Concepts,What is 'Breath Play'?,Playing wind instruments,Activities involving control or restriction of breathing,A type of meditation,Outdoor activities,1,Breath play involves activities that control or restrict breathing for erotic purposes. Note: This is considered edge play due to significant risks.
+Basic Terminology & Concepts,What is 'Knife Play'?,Cooking together,Activities involving the use of knives for sensation and threat,A type of combat,A dangerous game,1,Knife play involves using knives for sensation, threat, and psychological play, always with extreme care and consent.
+Basic Terminology & Concepts,What is 'Blood Play'?,Playing with fake blood,Activities involving intentional drawing of blood,A type of theater,A medical procedure,1,Blood play involves intentionally drawing blood, often through cutting or needle play, for erotic or ritual purposes.
+Practices & Activities,What is 'Flogging'?,A type of sailing,Impact play using a flogger,A dance move,A cooking technique,1,Flogging is impact play using a flogger, which is a whip with multiple tails, to strike various parts of the body.
+Practices & Activities,What is 'Caning'?,Making chairs,Impact play using a cane,A type of fishing,A walking aid,1,Caning is impact play using a flexible cane, typically made of rattan, to deliver sharp, stinging sensations.
+Practices & Activities,What is 'Spanking'?,A cooking method,Impact play using hands on buttocks,A type of dance,A form of greeting,1,Spanking is impact play using the hand to strike the buttocks, often for punishment, sensation, or erotic pleasure.
+Practices & Activities,What is 'Paddling'?,A water sport tool,Impact play using a paddle,A type of boat,A cooking utensil,1,Paddling is impact play using a paddle, which is a flat implement, to deliver thudding or stinging sensations.
+Practices & Activities,What is 'Electrical Play'?,Playing with electronics,Using electrical devices for sensation,A video game,A type of massage,1,Electrical play (or e-stim) uses devices like TENS units to deliver controlled electrical currents to the body for sensation.
+Practices & Activities,What is a 'Gag'?,A joke,Something placed in or over the mouth to prevent speech,A type of agreement,A surprised expression,1,A gag is a device used in BDSM to restrict speech, often for humiliation or to enhance a sense of helplessness.
+Practices & Activities,What is 'Chastity' in a BDSM context?,Being morally pure,The practice of denying orgasm or sexual stimulation,A type of city,A form of prayer,1,Chastity in BDSM involves the control of a submissive's orgasms or sexual access, often enforced by a device.
+Practices & Activities,What is a 'Chastity Device'?,A moral code,A device that prevents sexual stimulation or orgasm,A type of lock,A security system,1,A chastity device is a lockable device worn to prevent sexual activity or orgasm, often used in power exchange dynamics.
+Practices & Activities,What is 'Figging'?,A cooking technique,Inserting ginger root into the anus or vagina for sensation,A type of dance,A form of bondage,1,Figging is the practice of inserting a peeled piece of ginger root into the anus or vagina, causing a warm, tingling, or burning sensation.
+Practices & Activities,What is 'Mummification'?,An ancient Egyptian practice,Wrapping a person tightly from head to toe,A type of meditation,A form of punishment,1,Mummification is a form of bondage where a person is wrapped tightly in materials like plastic wrap or vet wrap, restricting all movement.
+Practices & Activities,What is 'Humiliation Play'?,Making fun of someone maliciously,Consensual acts designed to cause erotic humiliation,Bullying,A type of comedy,1,Humiliation play involves consensual acts that cause embarrassment or shame for the purpose of erotic arousal within agreed limits.
+Practices & Activities,What is 'Forced Feminization'?,A political movement,Consensual role-play where a male is dressed and treated as female,A type of surgery,A historical practice,1,Forced feminization is a consensual kink where a male submissive is dressed in women's clothing and treated in a feminine manner.
+Practices & Activities,What is 'Pegging'?,A woodworking term,A woman penetrating a man anally with a strap-on dildo,A type of game,A form of betting,1,Pegging refers to a sexual practice where a woman uses a strap-on dildo to anally penetrate a male partner.
+Practices & Activities,What is 'Tease and Denial'?,A marketing tactic,Arousing a partner but denying them orgasm,A type of game,A form of punishment,1,Tease and Denial involves sexually arousing a submissive but deliberately preventing them from reaching orgasm, extending their arousal.
+Practices & Activities,What is 'Orgasm Control'?,A medical condition,The practice of controlling when or if a partner orgasms,A type of meditation,A self-help technique,1,Orgasm control is a BDSM practice where the dominant decides when, if, or how the submissive is allowed to orgasm.
+Practices & Activities,What is 'Service-Oriented Submission'?,Working in the service industry,A submissive who derives pleasure from performing tasks for their dominant,A type of contract,A form of slavery,1,This describes a submissive whose primary focus is serving their dominant through acts like cleaning, cooking, or personal care.
+Practices & Activities,What is a 'Collar' in BDSM?,A piece of clothing,A symbol of ownership or commitment in a D/s relationship,A type of necklace,A medical device,1,A collar is often a symbolic piece of jewelry or leatherwear that signifies a submissive's commitment or ownership by a dominant.
+Practices & Activities,What is a 'Play Collar'?,A toy for pets,A collar used only during scenes, not as a permanent symbol,A type of children's toy,A training device,1,A play collar is used specifically during BDSM scenes to signify the submissive's role for that session, unlike a permanent 'ownership' collar.
+Practices & Activities,What is 'Mindfuck'?,A mental illness,Psychological play designed to confuse or challenge a person's perceptions,A type of game,An insult,1,Mindfuck is a form of psychological play that uses confusion, trickery, or mental challenges to create a powerful headspace.
+Practices & Activities,What is 'Isolation' in sensory deprivation?,Solitary confinement,Restricting one sense (like sight or sound) to heighten others,A type of punishment,A safety hazard,1,Isolation, as part of sensory deprivation, involves restricting one or more senses (e.g., with blindfolds or earplugs) to intensify the remaining sensations.
+Practices & Activities,What is 'Verbal Humiliation'?,Insults,Consensual use of degrading or humiliating language,Bullying,A type of argument,1,Verbal humiliation is the consensual use of words to demean or shame a submissive for erotic pleasure, within pre-negotiated boundaries.
+Practices & Activities,What is 'Boot Worship'?,A religion,A practice where a submissive shows devotion to a dominant's footwear,A type of cleaning,A historical ritual,1,Boot worship is a form of fetishism and service where a submissive cleans, kisses, or shows reverence for a dominant's boots.
+Practices & Activities,What is 'Foot Worship'?,A religion,A practice focused on erotic admiration and service to the feet,A type of massage,A medical condition,1,Foot worship involves the erotic admiration, kissing, massaging, or servicing of a dominant's feet by a submissive.
+Practices & Activities,What is 'CFNM'?,Clothed Female, Nude Male,Clothed Female, Nude Man,Clothed Female, Nude Master,Clothed Female, Nude Model,0,CFNM stands for Clothed Female, Nude Male, a scenario often found in femdom that emphasizes power imbalance through nudity.
+Practices & Activities,What is 'CMNF'?,Clothed Male, Nude Female,Clothed Man, Nude Female,Clothed Master, Nude Female,Clothed Male, Nude Foot,0,CMNF stands for Clothed Male, Nude Female, a scenario that can be used in various dynamics to create a power imbalance.
+Practices & Activities,What is a 'Strap-on'?,A type of furniture,A dildo harness worn by a person for penetration,A tool belt,A type of punishment,1,A strap-on is a harness worn around the hips or thighs that holds a dildo, allowing the wearer to penetrate a partner.
+Practices & Activities,What is 'Fisting'?,A type of greeting,The practice of inserting the entire hand into the vagina or anus,A fighting technique,A type of massage,1,Fisting is the slow, careful process of inserting the entire hand into the vagina or rectum. It requires extensive trust, communication, and lubrication.
+Practices & Activities,What is 'Water Sports'?,Swimming and boating,Sexual activities involving urine,Water balloon fights,A type of cleanse,1,Water sports, or 'golden showers,' involve the consensual use of urine for sexual arousal, either as part of humiliation play or sensation play.
+Practices & Activities,What is 'Scat'?,Animal droppings,Sexual activities involving feces,A type of jazz music,A fast pace,1,Scat refers to sexual activities involving feces. It is considered edge play due to high health risks and is a hard limit for many.
+Practices & Activities,What is 'Nipple Clamps'?,A medical device,Devices applied to the nipples to provide pressure and sensation,A type of paperclip,A tool for clothes,1,Nipple clamps are devices that apply pressure to the nipples, creating a pleasurable or painful sensation and increasing sensitivity.
+Practices & Activities,What is 'Clothespins' used for in BDSM?,Hanging laundry,As improvised clamps for zippers or sensation play,A type of toy,A building block,1,Clothespins are commonly used in BDSM as inexpensive, adjustable clamps for zippers (a line of pins) or general sensation play on skin.
+Practices & Activities,What is a 'Zipper'?,A clothing fastener,A line of clothespins or clips attached to the skin and pulled off,A type of torture,A fall hazard,1,A zipper is a BDSM practice where a line of clamps is attached to the skin and then quickly removed, often by pulling a string connecting them.
+Practices & Activities,What is 'Temperature Play'?,Checking for a fever,Using hot or cold items on the body for sensation,Weather forecasting,A type of cooking,1,Temperature play involves using items like ice cubes, warm wax, or cooled metal to create contrasting sensations on the skin.
+Practices & Activities,What is 'Needle Play'?,Sewing,The temporary placement of sterile needles through the top layers of skin,A medical procedure,A type of art,1,Needle play is a form of edge play that involves the skilled insertion of sterile needles into the skin for aesthetic or sensation purposes.
+Practices & Activities,What is 'Branding'?,Marketing,Leaving a permanent mark on the skin through burning or cutting,A type of punishment,A farming technique,1,Branding is an extreme form of body modification and edge play that creates a permanent mark, symbolizing deep ownership.
+Practices & Activities,What is 'Cutting' in a BDSM context?,Making a wound,Creating designs or marks on the skin with a scalpel,Interrupting someone,A type of dance,1,Cutting is a form of edge play and blood play where a skilled practitioner uses a scalpel to create temporary or permanent marks on the skin.
+Practices & Activities,What is 'Play Piercing'?,Child's play,Temporary piercing of the skin with needles for a scene,A type of game,A fashion trend,1,Play piercing involves the temporary insertion of sterile needles for the duration of a scene, after which they are removed.
+Equipment & Tools,What is a 'Flogger'?,Someone who flogs,An impact toy consisting of a handle and multiple tails,A type of whip,A cooking tool,1,A flogger is a popular impact toy made of a handle and multiple tails (falls), which can provide a thuddy or stingy sensation depending on its design.
+Equipment & Tools,What is a 'Single-Tail Whip'?,A whip with one end,A whip with a single, long lash,A type of flogger,A riding crop,1,A single-tail whip has one long lash and requires significant skill to use safely. It is known for its sharp, stinging impact and loud crack.
+Equipment & Tools,What is a 'Riding Crop'?,A farming tool,A short, stiff whip with a flat striking end,A type of flogger,A gardening tool,1,A riding crop is a short, rigid impact toy with a small, flat striking surface, delivering a very focused, stinging sensation.
+Equipment & Tools,What is a 'Paddle'?,A water sport tool,A flat, rigid implement for impact play,A type of boat,A cooking utensil,1,A paddle is a flat implement, often made of wood or leather, used for impact play that produces a broad, thudding sensation.
+Equipment & Tools,What is a 'Cane'?,A walking stick,A long, thin, flexible rod for impact play,A type of plant,A measurement tool,1,A cane used in BDSM is typically made of rattan and is designed to deliver a sharp, stinging, and highly focused sensation.
+Equipment & Tools,What are 'Restraints'?,Self-control,Devices used to limit movement, like cuffs or ropes,A type of rule,A legal term,1,Restraints is a general term for devices like handcuffs, leather cuffs, ropes, or straps used in bondage to restrict a person's movement.
+Equipment & Tools,What are 'Spreaders'?,Butter knives,Bars used to keep limbs apart,A type of farming,A medical device,1,Spreader bars are rigid bars with cuffs attached to keep a submissive's ankles or wrists apart, preventing them from closing their legs or arms.
+Equipment & Tools,What is a 'St. Andrew's Cross'?,A religious symbol,An X-shaped structure used for restraint in bondage,A type of medicine,A constellation,1,A St. Andrew's Cross is a common piece of dungeon furniture, an X-shaped frame to which a submissive can be restrained standing up.
+Equipment & Tools,What is a 'Spanking Bench'?,A workbench,A piece of furniture designed to position someone for spanking or play,A children's toy,A type of seat,1,A spanking bench is a piece of furniture designed to support a person in a bent-over position, making them accessible for impact play or other activities.
+Equipment & Tools,What is a 'Suspension Cuff'?,A handcuff,A heavy-duty cuff designed to safely support a person's weight in suspension,A type of bracelet,A medical device,1,Suspension cuffs are specifically designed with strong materials and secure attachments to safely hold a person's weight during rope suspension.
+Equipment & Tools,What is 'Rope' typically made of for bondage?,Metal wire,Natural fibers like jute or hemp, or synthetic like nylon,Rubber,String,1,Bondage rope is often made of natural fibers like jute or hemp for their grip and lack of stretch, or nylon for its smoothness and strength.
+Equipment & Tools,What is 'Safety Shears'?,Scissors for crafts,Blunt-tipped scissors for quickly cutting rope or clothing in an emergency,A type of knife,A gardening tool,1,Safety shears are an essential safety tool in bondage. Their blunt tips allow for cutting rope near the skin without stabbing the person.
+Equipment & Tools,What is a 'Ball Gag'?,A joke,A gag with a ball that fits in the mouth,A type of game,A dance,1,A ball gag is a common type of gag featuring a rubber or silicone ball strapped into the mouth, preventing clear speech.
+Equipment & Tools,What is a 'Bit Gag'?,A computer term,A gag that resembles a horse's bit,A small gag,A type of punishment,1,A bit gag is modeled after a horse's bit and is placed in the mouth. It can be more comfortable for some than a ball gag.
+Equipment & Tools,What is a 'Ring Gag'?,A gag for calling,A gag with a ring in the center that keeps the mouth open,A type of jewelry,A telephone,1,A ring gag holds the mouth open with a ring in the center, which can also be used for other activities, like forced oral sex or drool control.
+Equipment & Tools,What is a 'Hood'?,A neighborhood,A head covering that can restrict sight, hearing, or breathing,A type of car,A ranking,1,A hood is a head covering used in BDSM for sensory deprivation, objectification, or aesthetic purposes. It can cover all or part of the head.
+Equipment & Tools,What is a 'Blindfold'?,A type of dance,A device to block eyesight for sensory deprivation,A window covering,A type of fold,1,A blindfold is a simple but effective tool for sensory deprivation, removing the sense of sight to heighten other sensations.
+Equipment & Tools,What is a 'TENS Unit'?,A tens machine,A device used for electrical play (e-stim),A measurement device,A type of exercise machine,1,A TENS (Transcutaneous Electrical Nerve Stimulation) unit is a medical device commonly adapted for BDSM electrical play to stimulate nerves.
+Equipment & Tools,What is a 'Violet Wand'?,A purple flashlight,A device for electrical play that uses a high-frequency current,A type of dildo,A massager,1,A violet wand is an electrical play device that produces a high-voltage, low-current current, creating a sensation like static electricity sparks.
+Equipment & Tools,What is a 'Chastity Cage'?,A prison,A device that encloses the penis to prevent erection and orgasm,A bird cage,A type of furniture,1,A chastity cage is a device worn on the penis to prevent sexual activity. It is a common tool in orgasm control and denial dynamics.
+Equipment & Tools,What is a 'Butt Plug'?,A drain stopper,A toy inserted into the anus for sensation or to stretch,A type of electrical plug,A tool,1,A butt plug is a sex toy designed for anal insertion, typically with a flared base to prevent it from being lost inside the rectum.
+Equipment & Tools,What is a 'Dildo'?,A silly person,A sex toy shaped like an erect penis for penetration,A type of flower,A name,1,A dildo is a non-vibrating phallic sex toy used for vaginal or anal penetration. It is a key component of pegging.
+Physiology & Psychology,What is 'Gag Reflex'?,A safety mechanism,A physical reaction to prevent choking, which can be suppressed with training,A type of punishment,A legal term,1,The gag reflex is an automatic reaction to objects touching the back of the throat. With practice and desensitization, some people can learn to suppress it.
+Physiology & Psychology,What is 'Sub Drop'?,A temperature drop,A period of emotional or physical low that can occur hours or days after an intense scene,A type of punishment,A fall,1,Sub drop is a colloquial term for the crash that can follow the endorphin high of subspace, involving sadness, fatigue, or irritability. Aftercare helps mitigate it.
+Physiology & Psychology,What is 'Top Drop'?,A price reduction,A similar emotional low that can affect the dominant after a scene,A type of punishment,A fall,1,Top drop is the similar emotional low that can affect the dominant after a scene, often due to the mental effort required for control and risk management.
+Physiology & Psychology,What are 'Endorphins' in BDSM?,Hormones that cause pain,Natural chemicals released during intense play that cause euphoria and reduced pain,A type of drug,A safety word,1,Endorphins are the body's natural painkillers, released during intense or painful BDSM activities, contributing to the 'high' experienced in subspace.
+Physiology & Psychology,What is 'Trust' in BDSM?,A financial agreement,The reliance on a partner to respect limits and safety,A legal document,A type of game,1,Trust is fundamental in BDSM, as it allows the submissive to fully surrender control, relying on the dominant to respect all negotiated limits and safewords.
+Physiology & Psychology,What is 'Communication' in BDSM?,Talking all the time,The continuous process of discussing desires, limits, and feelings,A formal lecture,A type of punishment,1,Communication is paramount in BDSM, involving thorough negotiation, continuous checking in, and open discussion of feelings before, during, and after a scene.
+Physiology & Psychology,What is 'Risk Awareness'?,Being afraid,Understanding and accepting the potential physical and psychological dangers of BDSM activities,A type of meditation,A safety rule,1,Risk Awareness is part of RACK, meaning participants acknowledge and accept the inherent risks of their chosen activities.
+Physiology & Psychology,What is 'The Power Exchange'?,A financial transaction,The consensual agreement where one partner temporarily or permanently surrenders control to the other,A political deal,A type of contract,1,The Power Exchange is the core dynamic of D/s relationships, where control is voluntarily surrendered and taken.
+Safety & Ethics,What does 'SSC' primarily enforce?,Style, speed, compliance,Safety, sanity, and consent,Silence, secrecy, and control,Structure, sensation, and caring,1,SSC (Safe, Sane, Consensual) is the foundational ethical framework emphasizing safety protocols and informed consent.
+Safety & Ethics,Who is responsible for stopping a scene if a safeword is used?,The submissive,The dominant,Both partners immediately,Only a neutral third party,2,Both partners are responsible for stopping the scene immediately and completely when a safeword is used, regardless of who used it.
+Safety & Ethics,What is the primary role of 'Negotiation'?,To maximize pain,To establish clear limits, safewords, and expectations before play,To select music,To choose outfits,1,Negotiation is the vital safety step where all boundaries, limits (hard and soft), and planned activities are discussed and agreed upon.
+Safety & Ethics,What is a 'Go' or 'Yellow' safeword typically used for?,To stop immediately,To signal discomfort but willingness to continue with caution or a change,To end the relationship,To increase intensity,1,A 'Yellow' safeword (often a color, like Amber/Yellow) signals that the user is uncomfortable, needs a slight break, or needs the intensity reduced, but doesn't require a full stop.
+Safety & Ethics,If a safeword is used, what must happen immediately?,The scene continues more gently,The dominant must stop the action and check on the submissive,The submissive is punished for using it,The partners switch roles,1,The action must stop immediately. The dominant must check on the submissive to ensure their well-being and initiate aftercare if needed.
+Safety & Ethics,What is the 'Rule of Threes' in BDSM?,Three partners, Three safewords, Three rules,The concept that BDSM relationships involve three stages of development,The concept of negotiating three hard limits,The need for a third person (spotter) in high-risk play,3,The Rule of Threes (less common/more specific) suggests a third person (spotter or EMT) is needed for high-risk edge play like suspension or blood play.
+Safety & Ethics,What should be present during all bondage scenes involving ropes or cuffs?,A camera,A bottle of water,A pair of safety shears or key for quick release,A blindfold,2,Safety shears (for ropes) or a key (for cuffs) are essential for immediate release in case of an emergency (e.g., choking, circulation loss).
+Safety & Ethics,Which of these is the most important principle for ensuring the safety of impact play?,Hitting hard,Hitting randomly,Avoiding bones and sensitive areas,Using the most expensive tool,2,Avoiding impact to the head, spine, kidneys, and major arteries is crucial for safety, regardless of the tool used.
+Safety & Ethics,What is the main purpose of 'Aftercare'?,To clean up the play space,To ensure the physical and emotional recovery and well-being of the partner(s),To plan the next scene,To critique the dominant's performance,1,Aftercare is non-negotiable and focuses on the emotional and physical needs of the partners, especially preventing 'drop.'
+Slang & Culture,What is a 'Kinkster'?,A person who plays kinks,A person who practices BDSM or other alternative sexualities,A type of dancer,A fictional character,1,A Kinkster is a person who engages in kink or BDSM activities and identifies with the lifestyle.
+Slang & Culture,What does 'IRC' stand for in BDSM culture (historically)?,Internet Relay Chat (online meeting place),Intense Rope Control,Internal Relationship Contract,Impact and Restraint Community,0,IRC was historically a key online platform where early BDSM communities met and organized.
+Slang & Culture,What is 'Poly' in BDSM contexts?,Polyester,Polyamorous (having multiple consensual relationships),A type of punishment,A safety procedure,1,Poly is short for Polyamory, which often overlaps with BDSM communities, referring to relationships with multiple partners.
+Slang & Culture,What is a 'Dungeon' in BDSM?,A prison,A designated space (often a club or private area) for BDSM play,An underground room,A type of bar,1,A dungeon is a location specifically equipped and sanctioned for BDSM activities, often hosted at clubs or events.
+Slang & Culture,What does 'KSA' stand for in the context of BDSM clubs or organizations?,Kink, Safety, Agreement,Kink, Sex, Acceptance,Kink, Skill, Awareness,Kink, Sensation, Activity,2,KSA stands for Kink, Skill, Awareness - an educational approach emphasizing the skills and knowledge needed for safe play.
+Slang & Culture,What is a 'Bootblack'?,A shoe cleaner,A person who cleans and cares for leather boots/gear,A type of punishment,A beginner dominant,1,A Bootblack is a service role at BDSM events/clubs, focusing on cleaning and polishing leather gear, especially boots, as a form of service play or fetish.
+Slang & Culture,What is a 'Fetish'?,A negative habit,A strong sexual interest in a particular object, activity, or body part,A type of greeting,A form of contract,1,A fetish is a strong sexual focus on non-genital objects or activities, often incorporated into BDSM scenes.
+Slang & Culture,What is 'Leather' in BDSM culture?,A type of jacket,A subculture that incorporates leather clothing and gear into their identity and practices,A type of food,A safety tool,1,Leather refers both to the material (used for gear) and a specific, historical subculture within the BDSM community.
+Slang & Culture,What is a 'Pup' in Pet Play?,A small dog,A person who role-plays as a dog,A type of dominant,A type of beginner,1,A Pup is a common term for a person who engages in role-play as a dog, often wearing a hood and harness.
+Slang & Culture,What is 'Harness' in Pet Play?,A safety device,A set of straps or gear worn for aesthetic or control purposes,A type of training,A type of mask,1,A harness in pet play is often worn by the submissive (pup/kitten/etc.) and used by the dominant (handler) to guide or control them.
+Slang & Culture,What is 'Furries' in relation to BDSM?,People who wear costumes,A community focused on anthropomorphic animal characters, which sometimes overlaps with pet play,A type of animal,A safety rule,1,The Furry community focuses on anthropomorphic characters and art, and while separate, there can be overlap with the Pet Play subculture.
+Slang & Culture,What is a 'Rubber/Latex' fetish?,A type of shoe,Sexual interest in clothing and items made of rubber or latex,A safety rule,A type of material,1,A rubber or latex fetish involves sexual arousal from the sight, feel, or smell of rubber or latex clothing.
+Slang & Culture,What is 'Dressing Out'?,Getting ready,The process of changing from 'play clothes' back into street clothes after a scene,A type of punishment,A form of humiliation,1,Dressing Out is the cultural process of transitioning back to a 'vanilla' state after a scene, symbolizing the end of the play.
+Slang & Culture,What is 'The Lair' (historically)?,A type of animal home,A famous BDSM club/dungeon in the US,A secret meeting place,A type of game,1,The Lair refers to one of the most famous, long-running BDSM clubs/dungeons in the United States, known for its extensive facilities.
+Slang & Culture,What is a 'Slut Drop'?,A type of dance,A sexual move performed by a submissive,A term for someone who is promiscuous,A derogatory term for sub drop,3,Slut Drop is a derogatory term sometimes used for Sub Drop, emphasizing the difference between the post-scene low and the high.
+Slang & Culture,What is 'Gothic' style often associated with in BDSM culture?,A type of architecture,A fashion and aesthetic style with dark, romantic, and often fetish elements,A music genre,A type of toy,1,Gothic style—dark clothing, leather, metal—often overlaps as a popular aesthetic choice within the BDSM and fetish communities.
+Slang & Culture,What is 'The Scene' often used to refer to?,A specific BDSM session,The wider community and culture surrounding BDSM,A movie set,A place to meet,1,The Scene is a broad term referring to the community, culture, and social environment of BDSM and kink practitioners.
+Slang & Culture,What is a 'Brat'?,A naughty child,A submissive who actively and playfully resists or challenges the dominant's authority,A type of toy,A dominant,1,A Brat is a submissive who enjoys challenging or testing their dominant's authority in a consensual, pre-negotiated way.
+Slang & Culture,What is a 'Brat Tamer'?,A type of animal trainer,A dominant who specifically enjoys playing with brats and enforcing rules,A parenting technique,A form of punishment,1,A Brat Tamer is the dominant partner who takes pleasure in disciplining and controlling a bratty submissive, often involving specific rule-sets and punishments.
+Slang & Culture,What is 'Pony Play'?,Horse riding,A form of pet play where the submissive role-plays as a pony or horse,A type of game,A type of toy,1,Pony Play is a form of pet play where the submissive takes on the role of a pony, often involving a bit, harness, and cart or handler.
+`;
 
-        // Variables for quiz state (current question index, score, selected category)
-        let currentQuestionIndex = 0;
-        let score = 0;
-        // This state tracks if the user has checked the answer for the current question
-        let isAnswerChecked = false;
-        let userAnswers = []; // Array to store user's selected option index for each question
-        let filteredQuestions = allQuestions; // Using all questions as category filter was removed
+        // --- GLOBAL STATE AND DATA PARSING ---
+        const state = {
+            currentScreen: 'welcome',
+            selectedCategory: null,
+            quizData: {}, // Holds the structured data
+            currentQuestions: [],
+            currentQuestionIndex: 0,
+            score: 0,
+            hasAnswered: false,
+        };
 
-        // DOM elements
-        const welcomeScreen = document.getElementById('welcomeScreen');
-        const quizScreen = document.getElementById('quizScreen');
-        const resultsScreen = document.getElementById('resultsScreen');
-        const startBtn = document.getElementById('startBtn');
-        const scoreSpan = document.getElementById('score');
-        const progressBar = document.getElementById('progressBar');
-        const questionText = document.getElementById('questionText');
-        const optionsContainer = document.getElementById('optionsContainer');
-        const prevBtn = document.getElementById('prevBtn');
-        // Changed from nextBtn to checkNextBtn
-        const checkNextBtn = document.getElementById('checkNextBtn'); 
-        const finalScoreDiv = document.getElementById('finalScore');
-        const resultMessageP = document.getElementById('resultMessage');
-        const restartBtn = document.getElementById('restartBtn');
+        const appContainer = document.getElementById('app');
 
+        /**
+         * Parses the raw CSV string into a structured JavaScript object.
+         * @param {string} csv - The raw CSV string.
+         * @returns {Object} Structured quiz data grouped by category.
+         */
+        function parseCSVData(csv) {
+            const lines = csv.trim().split('\n');
+            if (lines.length < 2) return {};
+            const headers = lines[0].split(',');
+            const data = {};
 
-        // Function to load a question
-        const loadQuestion = () => {
-            if (currentQuestionIndex >= filteredQuestions.length) {
-                showResults();
+            for (let i = 1; i < lines.length; i++) {
+                // Using a regular expression to split only by comma, ignoring commas inside quoted explanations,
+                // but since the options don't seem to have commas, simple split should be fine for this specific dataset.
+                const values = lines[i].match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g) || lines[i].split(',');
+
+                if (values.length >= 8) {
+                    const category = values[0].trim();
+                    const question = {
+                        q: values[1].trim(),
+                        options: [values[2].trim(), values[3].trim(), values[4].trim(), values[5].trim()],
+                        correctIndex: parseInt(values[6].trim()), // 0-indexed correct answer
+                        explanation: values[7].trim()
+                    };
+
+                    if (!data[category]) {
+                        data[category] = [];
+                    }
+                    data[category].push(question);
+                }
+            }
+            return data;
+        }
+
+        // Utility function to shuffle an array (Fisher-Yates algorithm).
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // --- SCREEN RENDERING FUNCTIONS ---
+
+        function renderWelcomeScreen() {
+            const categories = Object.keys(state.quizData);
+
+            const categoryButtonsHtml = categories.map(category => `
+                <button onclick="startQuiz('${category}')"
+                    class="w-full text-center py-4 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 ease-in-out transform hover:scale-[1.01] active:scale-100 border-b-4 border-indigo-800">
+                    <span class="block text-xl">${category}</span>
+                    <span class="text-xs text-indigo-200">(${state.quizData[category].length} Questions)</span>
+                </button>
+            `).join('');
+
+            appContainer.innerHTML = `
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-center text-indigo-400 mb-4">
+                    Kink Terminology Quiz
+                </h1>
+                <p class="text-lg text-center text-gray-400 mb-8">
+                    Select a category to begin testing your knowledge of BDSM terms, practices, and gear.
+                </p>
+                <div class="space-y-4">
+                    ${categoryButtonsHtml}
+                </div>
+            `;
+        }
+
+        function renderQuizScreen() {
+            const qIndex = state.currentQuestionIndex;
+            const currentQuestion = state.currentQuestions[qIndex];
+            const totalQuestions = state.currentQuestions.length;
+
+            if (!currentQuestion) {
+                state.currentScreen = 'results';
+                renderApp();
                 return;
             }
 
-            // Reset checked state and update button
-            isAnswerChecked = false;
-            checkNextBtn.textContent = 'Check Answer';
-            
-            const currentQuestion = filteredQuestions[currentQuestionIndex];
-            scoreSpan.textContent = `Score: ${score}`;
-            questionText.textContent = currentQuestion.question;
-            optionsContainer.innerHTML = '';
-            
-            currentQuestion.options.forEach((option, index) => {
-                const optionDiv = document.createElement('div');
-                optionDiv.classList.add('option');
-                optionDiv.textContent = option;
-                // Add event listener only if the answer hasn't been checked
-                optionDiv.addEventListener('click', () => selectOption(index));
+            // Options are NOT shuffled here because they are fixed (A, B, C, D) in the source data.
+            // If they were arbitrary, we would shuffle them.
+            const options = currentQuestion.options;
 
-                // Reapply selected class if an answer was chosen before check
-                if (userAnswers[currentQuestionIndex] === index) {
-                    optionDiv.classList.add('selected');
+            const optionsHtml = options.map((option, index) => `
+                <button data-option-index="${index}"
+                    onclick="checkAnswer(this, ${qIndex})"
+                    class="option-btn w-full text-left py-3 px-6 border-2 border-gray-700 bg-gray-800 text-gray-200 font-medium rounded-lg hover:border-indigo-400 hover:bg-gray-700 transition duration-150 ease-in-out disabled:opacity-80 disabled:cursor-not-allowed">
+                    <span class="font-bold text-indigo-400 mr-3">${String.fromCharCode(65 + index)}:</span> ${option}
+                </button>
+            `).join('');
+
+            appContainer.innerHTML = `
+                <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                    <h2 class="text-xl font-bold text-indigo-400">${state.selectedCategory}</h2>
+                    <p class="text-sm text-gray-400">Question ${qIndex + 1} of ${totalQuestions}</p>
+                </div>
+
+                <!-- Score Display - Shows score up to this point -->
+                <div class="mb-6 p-4 bg-gray-800 rounded-lg text-center border border-indigo-500">
+                    <span class="text-xl font-semibold text-indigo-300">Score: ${state.score} / ${qIndex}</span>
+                </div>
+
+                <!-- Question Text -->
+                <div class="p-6 bg-gray-700 rounded-lg mb-8">
+                    <p class="text-xl font-semibold text-white">${currentQuestion.q}</p>
+                </div>
+
+                <!-- Options -->
+                <div id="options-container" class="space-y-3">
+                    ${optionsHtml}
+                </div>
+
+                <!-- Feedback Area (Hidden until answer is selected) -->
+                <div id="feedback-area" class="mt-6 p-4 rounded-lg hidden">
+                    <p id="feedback-text" class="font-bold text-lg"></p>
+                    <p id="explanation-text" class="text-sm mt-2 text-gray-200"></p>
+                </div>
+
+                <!-- Navigation Button -->
+                <button id="next-btn" onclick="nextQuestion()"
+                    class="mt-8 w-full py-3 px-6 bg-green-500 text-white font-semibold rounded-lg shadow-xl hover:bg-green-600 transition duration-300 ease-in-out opacity-0 pointer-events-none"
+                    style="transform: translateY(10px);">
+                    Next Question
+                </button>
+            `;
+        }
+
+        function renderResultsScreen() {
+            const totalQuestions = state.currentQuestions.length;
+            const percentage = ((state.score / totalQuestions) * 100).toFixed(1);
+            const message = state.score === totalQuestions
+                ? "Phenomenal! You're a true expert."
+                : state.score >= totalQuestions / 2
+                    ? "Great job! You have a solid grasp of the terminology."
+                    : "Good effort! Review the results and try another category.";
+
+            appContainer.innerHTML = `
+                <h1 class="text-3xl font-bold text-center text-indigo-400 mb-4">Quiz Complete!</h1>
+                <div class="text-center space-y-4 p-8 bg-gray-800 rounded-xl border border-indigo-600">
+                    <p class="text-5xl font-extrabold text-indigo-500">${percentage}%</p>
+                    <p class="text-2xl font-semibold text-gray-100">Final Score: ${state.score} / ${totalQuestions}</p>
+                    <p class="text-lg text-gray-300">${message}</p>
+                </div>
+                <button onclick="restartQuiz()"
+                    class="mt-8 w-full py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 transition duration-300 ease-in-out">
+                    Start a New Quiz
+                </button>
+            `;
+        }
+
+        // --- QUIZ LOGIC FUNCTIONS ---
+
+        function startQuiz(category) {
+            state.selectedCategory = category;
+            state.currentQuestions = [...state.quizData[category]]; // Copy to allow shuffling
+            shuffleArray(state.currentQuestions); // Randomize questions
+            state.currentQuestionIndex = 0;
+            state.score = 0;
+            state.hasAnswered = false;
+            state.currentScreen = 'quiz';
+            renderApp();
+        }
+
+        /**
+         * Checks the user's answer and provides immediate, robust feedback.
+         */
+        function checkAnswer(selectedButton, questionIndex) {
+            if (state.hasAnswered) return;
+            state.hasAnswered = true;
+
+            const currentQuestion = state.currentQuestions[questionIndex];
+            const userAnswerIndex = parseInt(selectedButton.getAttribute('data-option-index'));
+            const correctAnswerIndex = currentQuestion.correctIndex;
+            const correctAnswerText = currentQuestion.options[correctAnswerIndex];
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const feedbackText = document.getElementById('feedback-text');
+            const explanationText = document.getElementById('explanation-text');
+            const nextButton = document.getElementById('next-btn');
+            const optionButtons = document.querySelectorAll('.option-btn');
+            const scoreDisplay = appContainer.querySelector('.text-xl.font-semibold');
+
+            // Disable all options and highlight the correct one
+            optionButtons.forEach(btn => {
+                const index = parseInt(btn.getAttribute('data-option-index'));
+                btn.disabled = true;
+
+                if (index === correctAnswerIndex) {
+                    // Always highlight the correct answer
+                    btn.classList.add('correct-answer', 'border-4');
+                    btn.classList.remove('bg-gray-800', 'hover:bg-gray-700');
                 }
-                
-                optionsContainer.appendChild(optionDiv);
             });
 
-            updateNavigation();
-            updateProgressBar();
-        };
 
-        // Function to handle option selection
-        const selectOption = (selectedIndex) => {
-            // Only allow selection if the answer hasn't been checked
-            if (!isAnswerChecked) {
-                userAnswers[currentQuestionIndex] = selectedIndex;
-                const options = optionsContainer.querySelectorAll('.option');
-                options.forEach((opt, index) => {
-                    opt.classList.remove('selected');
-                    if (index === selectedIndex) {
-                        opt.classList.add('selected');
-                    }
-                });
-                // Enable the Check Answer button once an option is selected
-                checkNextBtn.disabled = false;
-            }
-        };
-        
-        // NEW FUNCTION: Check the user's answer
-        const checkAnswer = () => {
-            if (userAnswers[currentQuestionIndex] === null) {
-                alert("Please select an option before checking the answer.");
-                return;
-            }
-            
-            isAnswerChecked = true;
-            
-            const currentQuestion = filteredQuestions[currentQuestionIndex];
-            const correctIndex = currentQuestion.correct;
-            const selectedIndex = userAnswers[currentQuestionIndex];
-            const options = optionsContainer.querySelectorAll('.option');
-            
-            // Disable all options and mark them as checked
-            options.forEach(opt => opt.classList.add('checked'));
-
-            if (selectedIndex === correctIndex) {
-                // Correctly selected option (already has 'selected' class)
-                options[selectedIndex].classList.add('correct');
-                score++; // Increment score immediately
+            if (userAnswerIndex === correctAnswerIndex) {
+                state.score++;
+                // Highlight the user's choice (which is also the correct one)
+                selectedButton.classList.add('correct-answer', 'border-4', 'border-green-700');
+                feedbackText.textContent = "✅ Correct!";
+                feedbackArea.classList.add('bg-green-700/20', 'text-green-400');
             } else {
-                // Incorrectly selected option (has 'selected' class)
-                options[selectedIndex].classList.add('incorrect');
-                // Show the correct answer
-                options[correctIndex].classList.add('correct');
+                // Highlight the incorrect user choice
+                selectedButton.classList.add('incorrect-answer', 'border-4', 'border-red-700');
+                feedbackText.textContent = "❌ Incorrect.";
+                feedbackArea.classList.add('bg-red-700/20', 'text-red-400');
             }
-            
-            // Show the updated score immediately
-            scoreSpan.textContent = `Score: ${score}`;
-            
-            // Change button to "Next" or "Finish"
-            checkNextBtn.textContent = (currentQuestionIndex === filteredQuestions.length - 1) ? 'Finish' : 'Next Question';
-            checkNextBtn.disabled = false; // Always enable 'Next' after checking
-            
-            updateNavigation(); // Update prev button state
+
+            // Update score immediately
+            if (scoreDisplay) {
+                scoreDisplay.textContent = `Score: ${state.score} / ${state.currentQuestionIndex + 1}`;
+            }
+
+            // Show detailed feedback and explanation
+            explanationText.innerHTML = `
+                <span class="text-sm font-semibold text-white">Correct Answer:</span> ${correctAnswerText}.<br>
+                <span class="text-sm font-semibold text-white">Explanation:</span> ${currentQuestion.explanation}
+            `;
+            feedbackArea.classList.remove('hidden');
+
+            // Animate next button appearance
+            nextButton.classList.remove('opacity-0', 'pointer-events-none');
+            nextButton.style.transform = 'translateY(0)';
+        }
+
+        function nextQuestion() {
+            state.currentQuestionIndex++;
+            state.hasAnswered = false;
+            renderApp();
+        }
+
+        function restartQuiz() {
+            state.currentScreen = 'welcome';
+            state.selectedCategory = null;
+            state.currentQuestions = [];
+            state.currentQuestionIndex = 0;
+            state.score = 0;
+            state.hasAnswered = false;
+            renderApp();
+        }
+
+        function renderApp() {
+            if (state.currentScreen === 'welcome') {
+                renderWelcomeScreen();
+            } else if (state.currentScreen === 'quiz') {
+                renderQuizScreen();
+            } else if (state.currentScreen === 'results') {
+                renderResultsScreen();
+            }
+        }
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            try {
+                state.quizData = parseCSVData(rawData);
+                renderApp();
+            } catch (error) {
+                appContainer.innerHTML = `<div class="text-red-500 text-center py-10">Error loading data: ${error.message}</div>`;
+                console.error("Failed to parse quiz data:", error);
+            }
         };
-        
-        // MODIFIED FUNCTION: Update navigation buttons
-        const updateNavigation = () => {
-            prevBtn.disabled = currentQuestionIndex === 0 || !isAnswerChecked; 
-            
-            // If the answer is checked, the button should be "Next/Finish"
-            if (isAnswerChecked) {
-                // The main button's text is handled in checkAnswer, but we ensure it's enabled.
-                checkNextBtn.disabled = false;
-            } else {
-                // If answer is not checked, button is "Check Answer" and disabled if no selection is made.
-                checkNextBtn.textContent = 'Check Answer';
-                checkNextBtn.disabled = userAnswers[currentQuestionIndex] === null;
-            }
-        };
-
-
-        // Function to update the progress bar
-        const updateProgressBar = () => {
-            const progress = ((currentQuestionIndex) / filteredQuestions.length) * 100;
-            progressBar.style.width = `${progress}%`;
-        };
-        
-        // Function to handle moving to the next question
-        const nextQuestion = () => {
-            if (currentQuestionIndex < filteredQuestions.length - 1) {
-                currentQuestionIndex++;
-                // Ensure array slot exists for the next question's answer
-                if (userAnswers[currentQuestionIndex] === undefined) {
-                    userAnswers[currentQuestionIndex] = null;
-                }
-                loadQuestion();
-            } else {
-                showResults();
-            }
-        };
-
-
-        // Function to calculate final score and show results
-        const showResults = () => {
-            quizScreen.classList.add('hidden');
-            resultsScreen.classList.remove('hidden');
-
-            // The score is already calculated in real-time in checkAnswer()
-            finalScoreDiv.textContent = `${score}/${filteredQuestions.length}`;
-            
-            let message = '';
-            const percentage = (score / filteredQuestions.length) * 100;
-            if (percentage >= 90) {
-                message = "Excellent! You are a true vocabulary expert.";
-            } else if (percentage >= 70) {
-                message = "Great job! You have a solid understanding of the terms.";
-            } else if (percentage >= 50) {
-                message = "Good attempt! Keep studying the terminology.";
-            } else {
-                message = "You're just getting started! Time to delve deeper into the vocabulary.";
-            }
-            resultMessageP.textContent = message;
-        };
-
-        // Navigation handlers
-        prevBtn.addEventListener('click', () => {
-            // Only allow previous if the answer for the current question is checked
-            if (currentQuestionIndex > 0 && isAnswerChecked) {
-                // Revert to previous question's state (which must be checked)
-                currentQuestionIndex--;
-                // Temporarily force checked state for review
-                isAnswerChecked = true;
-                
-                const currentQuestion = filteredQuestions[currentQuestionIndex];
-                const selectedIndex = userAnswers[currentQuestionIndex];
-                const correctIndex = currentQuestion.correct;
-                
-                checkNextBtn.textContent = 'Next Question'; // Back to Next for previous questions
-                checkNextBtn.disabled = false;
-
-                // Reload question to show checked state
-                loadQuestion();
-                
-                // Manually re-apply visual check states after loadQuestion() resets them
-                const options = optionsContainer.querySelectorAll('.option');
-                options.forEach(opt => opt.classList.add('checked'));
-
-                if (selectedIndex === correctIndex) {
-                    options[selectedIndex].classList.add('correct');
-                } else {
-                    options[selectedIndex].classList.add('incorrect');
-                    options[correctIndex].classList.add('correct');
-                }
-                
-                updateNavigation();
-
-            } else {
-                // If answer hasn't been checked, previous button is conceptually inactive
-                // (Though disabled state handles this)
-            }
-        });
-
-
-        checkNextBtn.addEventListener('click', () => {
-            if (checkNextBtn.textContent === 'Check Answer') {
-                checkAnswer();
-            } else if (checkNextBtn.textContent === 'Next Question') {
-                nextQuestion();
-            } else if (checkNextBtn.textContent === 'Finish') {
-                showResults();
-            }
-        });
-        
-        // Start and Restart handlers
-        startBtn.addEventListener('click', () => {
-            // Initialize userAnswers array size on start
-            userAnswers = Array(filteredQuestions.length).fill(null);
-            welcomeScreen.classList.add('hidden');
-            quizScreen.classList.remove('hidden');
-            // Reset to first question
-            currentQuestionIndex = 0;
-            score = 0;
-            loadQuestion();
-        });
-
-        restartBtn.addEventListener('click', () => {
-            resultsScreen.classList.add('hidden');
-            welcomeScreen.classList.remove('hidden');
-            // Reset state for a new quiz start
-            currentQuestionIndex = 0;
-            score = 0;
-            userAnswers = Array(filteredQuestions.length).fill(null);
-        });
-        
-        // Initial setup for the score display
-        scoreSpan.textContent = `Score: ${score}`;
-        
-    </script></body></html>
+    </script>
+</body>
+</html>
