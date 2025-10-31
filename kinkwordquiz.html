@@ -19,6 +19,27 @@
             /* Shadow adjusted for dark background contrast */
             box-shadow: 0 10px 30px -5px rgba(255, 255, 255, 0.08), 0 0 10px -5px rgba(255, 255, 255, 0.04);
         }
+        .option-button {
+            transition: all 0.15s ease-in-out;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .option-button:hover {
+            transform: translateY(-2px);
+            background-color: #3f3f46; /* Gray-700 on hover */
+        }
+        .option-button.correct {
+            background-color: #065f46 !important; /* Green-700 */
+            border-color: #10b981 !important; /* Emerald-500 */
+            color: white !important;
+            pointer-events: none;
+        }
+        .option-button.incorrect {
+            background-color: #991b1b !important; /* Red-700 */
+            border-color: #f87171 !important; /* Red-400 */
+            color: white !important;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
@@ -49,7 +70,7 @@
             console.error("Firebase configuration is missing.");
         }
 
-        // Authentication Setup (Keeping auth logic but removing UI display)
+        // Authentication Setup
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 userId = user.uid;
@@ -74,26 +95,219 @@
 
         if (auth) authenticate();
 
-        // Dummy function for quiz logic start (to show the file is functional)
-        const startQuiz = () => {
-            document.getElementById('quiz-intro').classList.add('hidden');
-            document.getElementById('quiz-area').classList.remove('hidden');
-            console.log("Quiz started!");
-            // Update the success message with new theme colors
-            document.getElementById('quiz-area').innerHTML = `
-                <div class="p-8 text-center bg-teal-800 text-teal-200 rounded-lg">
-                    <p class="text-2xl font-semibold">Quiz Running!</p>
-                    <p class="mt-2">The core logic for loading questions would go here.</p>
-                </div>
-            `;
+        // --- QUIZ LOGIC AND DATA LOADING ---
+        let quizData = [];
+        const CSV_FILE_PATH = 'kinkwordquiz.csv';
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let isAnswered = false; // Flag to prevent multiple clicks
+
+        const quizArea = document.getElementById('quiz-area');
+
+        // Utility to shuffle an array (Fisher-Yates)
+        const shuffleArray = (array) => {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
         };
 
-        // Attach event listener to the start button
+        // Function to parse the CSV text into a structured quiz array
+        const parseCSV = (text) => {
+            const lines = text.trim().split('\n').filter(line => line.trim() !== '');
+            if (lines.length <= 1) return []; // Needs header and at least one question
+            
+            // Skip the header line: "Term,Correct Definition,Wrong Definition 1,Wrong Definition 2,Wrong Definition 3"
+            const dataLines = lines.slice(1);
+            
+            const parsedData = dataLines.map(line => {
+                // Simple split by comma. Note: This assumes no commas within the definitions themselves.
+                const columns = line.split(',');
+                
+                // Ensure we have at least 5 columns: Term (Q) + 4 Definitions (A + 3 Wrongs)
+                if (columns.length < 5) return null; 
+
+                const term = columns[0].trim();
+                const correctDef = columns[1].trim();
+                const wrongDef1 = columns[2] ? columns[2].trim() : '';
+                const wrongDef2 = columns[3] ? columns[3].trim() : '';
+                const wrongDef3 = columns[4] ? columns[4].trim() : '';
+
+                // Combine all options and filter out any empty strings
+                let options = [correctDef, wrongDef1, wrongDef2, wrongDef3].filter(o => o !== '');
+
+                // Shuffle options for random button order
+                shuffleArray(options);
+                
+                return {
+                    question: `What does the term: "${term}" mean?`,
+                    options: options,
+                    answer: correctDef,
+                    // Use the correct definition as the explanation for simplicity
+                    explanation: correctDef
+                };
+            }).filter(item => item !== null && item.options.length === 4); // Only keep valid questions with 4 options
+
+            // Shuffle the order of the questions
+            shuffleArray(parsedData); 
+            return parsedData;
+        };
+        
+        // Function to fetch and load data from the CSV file
+        const loadQuizData = async () => {
+            const loadingMessage = document.getElementById('loading-message');
+            const startButton = document.getElementById('start-quiz-button');
+            const welcomeTitle = document.getElementById('welcome-title');
+            
+            loadingMessage.innerHTML = 'Fetching terminology data...';
+            startButton.classList.add('hidden');
+            
+            try {
+                const response = await fetch(CSV_FILE_PATH);
+                if (!response.ok) {
+                    throw new Error(`Failed to load CSV: ${response.statusText}`);
+                }
+                const csvText = await response.text();
+                
+                quizData = parseCSV(csvText);
+                
+                if (quizData.length === 0) {
+                    throw new Error("CSV loaded, but no valid questions were found. Check file formatting (5 columns required per row).");
+                }
+
+                // Success state update
+                loadingMessage.innerHTML = `<span class="text-teal-400">${quizData.length} terms loaded.</span> Ready for your deep dive.`;
+                startButton.classList.remove('hidden');
+                welcomeTitle.textContent = "Welcome";
+
+            } catch (error) {
+                console.error("Error loading or parsing quiz data:", error);
+                loadingMessage.innerHTML = `<span class="text-pink-400 font-bold">Error:</span> Could not load quiz data. Ensure '${CSV_FILE_PATH}' is present and correctly formatted.`;
+                welcomeTitle.textContent = "Data Error";
+            }
+        };
+
+
+        // Function to render the current question
+        const renderQuestion = () => {
+            if (currentQuestionIndex >= quizData.length) {
+                finishQuiz();
+                return;
+            }
+
+            const current = quizData[currentQuestionIndex];
+            isAnswered = false;
+
+            // Generate HTML for the question and options
+            const questionHtml = `
+                <div class="mb-6">
+                    <p class="text-lg font-medium text-pink-400">Question ${currentQuestionIndex + 1} of ${quizData.length}</p>
+                    <h3 class="text-3xl font-bold text-gray-100 mt-2">${current.question}</h3>
+                </div>
+                <div id="options-container" class="space-y-4">
+                    ${current.options.map((option) => `
+                        <button data-option="${option}"
+                                class="option-button w-full text-left p-4 rounded-lg bg-gray-700 text-gray-200 font-semibold shadow-md">
+                            ${option}
+                        </button>
+                    `).join('')}
+                </div>
+                <div id="feedback-area" class="mt-6 p-4 rounded-lg bg-gray-900 border border-gray-700 text-gray-300 hidden"></div>
+                <button id="next-button"
+                        class="mt-8 w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform focus:outline-none focus:ring-4 focus:ring-teal-500 focus:ring-opacity-50 hidden">
+                    Next Question &rarr;
+                </button>
+            `;
+            quizArea.innerHTML = questionHtml;
+
+            // Attach event listeners to options
+            document.querySelectorAll('.option-button').forEach(button => {
+                button.addEventListener('click', () => checkAnswer(button.dataset.option, current));
+            });
+            document.getElementById('next-button').addEventListener('click', nextQuestion);
+        };
+
+        // Function to check the selected answer
+        const checkAnswer = (selectedOption, current) => {
+            if (isAnswered) return;
+            isAnswered = true;
+
+            const feedbackArea = document.getElementById('feedback-area');
+            const nextButton = document.getElementById('next-button');
+            const options = document.querySelectorAll('.option-button');
+
+            // Find the correct and selected buttons for styling
+            let isCorrect = selectedOption === current.answer;
+
+            options.forEach(button => {
+                if (button.dataset.option === current.answer) {
+                    button.classList.add('correct');
+                }
+                if (button.dataset.option === selectedOption && !isCorrect) {
+                    button.classList.add('incorrect');
+                }
+                // Disable all buttons after choice
+                button.classList.add('pointer-events-none');
+            });
+
+            // Update score and feedback
+            if (isCorrect) {
+                score++;
+                feedbackArea.innerHTML = `<span class="text-teal-400 font-bold">Correct!</span> The definition is: ${current.explanation}`;
+            } else {
+                feedbackArea.innerHTML = `<span class="text-pink-400 font-bold">Incorrect.</span> The correct definition was: "${current.answer}"`;
+            }
+
+            feedbackArea.classList.remove('hidden');
+            nextButton.classList.remove('hidden');
+        };
+
+        // Function to move to the next question
+        const nextQuestion = () => {
+            currentQuestionIndex++;
+            renderQuestion();
+        };
+
+        // Function to display final results
+        const finishQuiz = () => {
+            quizArea.innerHTML = `
+                <div class="p-8 text-center bg-gray-900 rounded-lg border-4 border-pink-500">
+                    <h2 class="text-4xl font-extrabold text-pink-400 mb-4">Quiz Complete!</h2>
+                    <p class="text-2xl text-gray-100">Your Score:</p>
+                    <p class="text-6xl font-black text-teal-400 mt-2">${score} / ${quizData.length}</p>
+                    <p class="text-gray-300 mt-4">You've finished the Kink Word Quiz. Understanding this lexicon is key to safer, deeper play.</p>
+                    <button id="restart-button"
+                            class="mt-8 py-3 px-6 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform">
+                        Restart Quiz
+                    </button>
+                </div>
+            `;
+             document.getElementById('restart-button').addEventListener('click', startQuiz);
+        };
+
+
+        // Main function to initialize the quiz
+        const startQuiz = () => {
+            if (quizData.length === 0) {
+                // Should only happen if user clicks fast or data load failed
+                document.getElementById('loading-message').innerHTML = '<span class="text-pink-400 font-bold">Error:</span> Quiz data is missing. Please refresh or check the CSV file.';
+                return;
+            }
+            document.getElementById('quiz-intro').classList.add('hidden');
+            quizArea.classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            renderQuestion();
+        };
+
+        // Attach event listeners and load data on window load
         window.onload = () => {
             const startButton = document.getElementById('start-quiz-button');
             if (startButton) {
                 startButton.addEventListener('click', startQuiz);
             }
+            loadQuizData();
         };
     </script>
 
@@ -102,22 +316,22 @@
         <header class="text-center mb-10">
             <!-- Changed Header Title and Color -->
             <h1 class="text-4xl font-extrabold text-pink-400">Kink Word Quiz</h1>
-            <!-- User ID section removed -->
         </header>
 
         <section id="quiz-intro">
             <!-- Intro Box - Darker background, vibrant border, light text -->
             <div class="text-center bg-gray-900 p-6 rounded-lg mb-8 border-l-4 border-pink-500">
-                <h2 class="text-2xl font-semibold text-pink-300 mb-4">Welcome</h2>
-                <p class="text-xl text-gray-300 leading-relaxed">
+                <h2 id="welcome-title" class="text-2xl font-semibold text-pink-300 mb-4">Loading Dictionary...</h2>
+                <p class="text-xl text-gray-300 leading-relaxed mb-4">
                     Step into the world where <span class="font-bold text-teal-400">words hold power</span>.
                     Before any journey into the realms of <span class="font-bold text-teal-400">dynamic play</span> or <span class="font-bold text-teal-400">conscious intimacy</span>, understanding the map is essential. Test your fluency in the language of consent, boundaries, and pleasure. Only then can you truly explore.
                 </p>
+                <p id="loading-message" class="text-lg font-medium text-gray-400">Fetching terminology data...</p>
             </div>
 
-            <!-- Start Button - Vibrant color -->
+            <!-- Start Button - Hidden until data is loaded successfully -->
             <button id="start-quiz-button"
-                    class="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50">
+                    class="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50 hidden">
                 Start the Test
             </button>
         </section>
@@ -125,9 +339,10 @@
         <section id="quiz-area" class="hidden">
             <!-- This area will be populated with quiz questions once started -->
             <div class="text-center text-gray-400">
-                Loading quiz interface...
+                Awaiting quiz start...
             </div>
         </section>
     </div>
 </body>
 </html>
+
