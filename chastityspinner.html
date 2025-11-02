@@ -3,15 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chastity Time Spinner</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<title>Chastity Time Selector</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --primary: #ff66b2;
-    --highlight: #ff99cc;
+    --primary: #ff66b2; /* Strong Pink */
+    --highlight: #ff99cc; /* Lighter Pink for glass */
     --bg-gradient: linear-gradient(135deg, #ffe1f0 0%, #ffd1dc 100%);
     --glass-bg: rgba(255, 255, 255, 0.25);
+    --grid-columns: 5; 
   }
+
 
   body {
     background: var(--bg-gradient);
@@ -20,20 +22,30 @@
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start; 
     padding: 20px;
-  }
-
-  h1 {
-    font-size: 32px;
-    margin-bottom: 15px;
-    font-weight: 600;
     color: #333;
   }
 
+
+  h1 {
+    font-size: 30px; 
+    margin-bottom: 10px; 
+    font-weight: 700;
+    color: #111;
+  }
+  
+  h2 {
+    font-size: 20px; 
+    margin-bottom: 15px; 
+    font-weight: 600;
+    color: #444;
+  }
+
+
   .game-container {
     display: inline-block;
-    padding: 25px;
+    padding: 20px; 
     border-radius: 20px;
     background: var(--glass-bg);
     backdrop-filter: blur(10px);
@@ -41,117 +53,469 @@
     box-shadow: 0 8px 30px rgba(0,0,0,0.1);
     border: 1px solid rgba(255,255,255,0.3);
     transition: all 0.3s ease;
+    max-width: 100%; 
+    width: auto; 
+    margin: 0 auto;
   }
+  
+  /* --- RESPONSIVE LAYOUT CORE --- */
+  #responsiveWrapper {
+      display: flex;
+      flex-direction: column; 
+      gap: 20px; 
+  }
+
+  #spinnerContent {
+      flex: 0 0 auto;
+      max-width: 450px; 
+      margin: 0 auto;
+  }
+
+  #resultTracker {
+      flex: 1 1 100%; 
+      text-align: left;
+      border-top: 2px solid var(--highlight); 
+      padding-top: 15px;
+      margin-top: 15px; 
+      overflow-y: auto; 
+  }
+
+  @media (min-width: 768px) {
+      /* Desktop View: Side-by-Side */
+      .game-container {
+          max-width: 950px; 
+      }
+      
+      #responsiveWrapper {
+          flex-direction: row; 
+          align-items: flex-start;
+          gap: 20px;
+      }
+
+      #spinnerContent {
+          flex: 0 0 400px; 
+          margin: 0; 
+      }
+      
+      #gridWrapper {
+          max-height: 300px; /* Reduced height further to accommodate new buttons */
+          overflow-y: auto;
+          padding-right: 5px;
+      }
+      
+      #resultTracker {
+          flex: 1 1 auto;
+          margin-top: 0;
+          padding-left: 20px; 
+          border-top: none; 
+          border-left: 2px solid var(--highlight); 
+          min-width: 300px;
+          /* Adjusted max-height to match available space */
+          max-height: 480px; 
+          overflow-y: auto; 
+      }
+  }
+  /* --- END RESPONSIVE LAYOUT CORE --- */
+
 
   .grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 10px;
+    grid-template-columns: repeat(var(--grid-columns), 1fr); 
+    gap: 8px; 
     justify-content: center;
-    max-width: 420px;
-    margin: 20px auto;
+    margin: 15px auto 5px auto; 
   }
+
 
   .cell {
-    padding: 20px 0;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 12px;
-    font-weight: 500;
+    padding: 12px 6px; 
+    background: rgba(255, 255, 255, 0.6);
+    border-radius: 10px; 
+    font-weight: 600;
     color: #333;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    cursor: default;
     transition: transform 0.1s ease, background 0.3s ease, box-shadow 0.3s ease;
     user-select: none;
-  }
-
-  .cell:hover {
-    transform: scale(1.05);
+    font-size: 0.9em; 
   }
 
   .highlight {
-    background: var(--highlight);
-    color: #111;
-    box-shadow: 0 0 20px rgba(255, 102, 178, 0.7);
-    transform: scale(1.1);
+    background: var(--primary); 
+    color: white; 
+    box-shadow: 0 0 20px rgba(255, 102, 178, 1); 
+    transform: scale(1.05); 
   }
 
+
   .btn-container {
-    margin-top: 20px;
+    margin-top: 15px; 
     display: flex;
     justify-content: center;
-    gap: 15px;
+    gap: 10px; 
     flex-wrap: wrap;
   }
 
+  /* Specific styling for the new bottom buttons */
+  #bottomButtonsContainer {
+      margin-top: 20px; /* Increased margin to separate from spin controls */
+      padding-top: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.5); /* Optional separator */
+  }
+
+
   button {
-    padding: 12px 28px;
-    font-size: 16px;
+    padding: 10px 20px; 
+    font-size: 14px; 
     border: none;
     border-radius: 50px;
     background: var(--primary);
     color: white;
     cursor: pointer;
     font-weight: 600;
-    transition: background 0.3s, transform 0.2s;
-    box-shadow: 0 4px 14px rgba(255, 102, 178, 0.4);
+    transition: background 0.3s, transform 0.2s, opacity 0.3s;
+    box-shadow: 0 3px 10px rgba(255, 102, 178, 0.3);
   }
 
-  button:hover {
-    background: #ff4d9d;
-    transform: scale(1.05);
+  button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
   }
+
+
+  button:hover:not(:disabled) {
+    background: #ff4d9d;
+    transform: scale(1.03);
+  }
+
 
   footer {
-    margin-top: 25px;
-    font-size: 14px;
+    margin-top: 15px; 
+    font-size: 12px; 
     color: #444;
   }
 
+
   .icons {
-    font-size: 18px;
-    margin-top: 10px;
+    font-size: 16px; 
+    margin-top: 5px;
+  }
+  
+  /* Styling for the results display */
+  #resultsList {
+      list-style-type: none;
+      padding: 0;
+      margin: 10px 0 0 0;
+      font-size: 0.95em;
+      font-weight: 500;
+  }
+  
+  #resultsList li {
+      margin: 8px 0; 
+      padding: 3px;
+      border-bottom: 1px dashed rgba(255, 102, 178, 0.3);
+      color: #333;
+      line-height: 1.3;
+  }
+  
+  #resultsList li span {
+      display: block;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1.05em;
+  }
+  
+  #resultsList li:last-child {
+      border-bottom: none;
+  }
+  
+  /* New style for the final cheeky comment */
+  #finalCheekyComment {
+      margin-top: 10px;
+      font-weight: 600;
+      font-style: italic;
+      color: #666;
+      font-size: 1.0em;
   }
 </style>
 </head>
 <body>
   <div class="game-container" id="captureArea">
-    <h1>🎲 Screenshot Your Chastity Time</h1>
-    <div class="grid" id="grid"></div>
+    <h1>🎲 Chastity Time Selector</h1>
+
+    <!-- 1. Start Screen --><div id="startScreen">
+      <h2>Select Game Mode</h2>
+      <div class="btn-container">
+        <button onclick="startGame(1)">One and Only</button>
+        <button onclick="startGame(3)">Best of Three</button>
+        <button onclick="startGame(5)">Best of Five</button>
+      </div>
+    </div>
+
+    <!-- 2. Range Selection Screen --><div id="rangeScreen" style="display: none;">
+      <h2>Select Time Range</h2>
+      <div class="btn-container range-buttons">
+        <!-- Buttons will be generated by JS --></div>
+    </div>
+
+    <!-- 3. Spinner Screen --><div id="spinnerScreen" style="display: none;">
+      
+      <!-- Responsive Wrapper for Side-by-Side Layout on Desktop --><div id="responsiveWrapper">
+          
+          <div id="spinnerContent">
+              <h2><span id="gameModeText"></span> - Spin <span id="currentSpinCount">1</span> of <span id="totalSpins">1</span></h2>
+              
+              <!-- WRAPPER FOR SCROLLING GRID ON DESKTOP --><div id="gridWrapper"> 
+                <div class="grid" id="grid"></div>
+              </div>
+              
+              <div class="btn-container">
+                <button id="spinButton" onclick="toggleSpin()">🎲 Spin</button>
+                <button id="nextSpinButton" onclick="nextSpin()" style="display: none;">Next Spin</button>
+              </div>
+              
+              <div id="finalMessage" style="margin-top: 10px; font-weight: 700; font-size: 1.2em; color: var(--primary);"></div>
+              <div id="finalCheekyComment"></div>
+              
+              <!-- NEW LOCATION FOR BOTTOM BUTTONS --><div id="bottomButtonsContainer" class="btn-container">
+                <button onclick="takeScreenshot()">📸 Screenshot Final Result</button>
+                <button onclick="resetGame()">🔄 Start Over</button>
+              </div>
+          </div>
+          
+          <!-- Results Tracker (Moves to the right on desktop, scrolls if needed) --><div id="resultTracker">
+              <h3>Results Tracker:</h3>
+              <ul id="resultsList"></ul>
+          </div>
+          
+      </div> <!-- End responsiveWrapper --></div>
+    
     <footer>
       <div class="icons">💖 Shattered Heterosexuality 💖</div>
     </footer>
   </div>
 
-  <div class="btn-container">
-    <button id="spinButton" onclick="toggleSpin()">🎲 Spin</button>
-    <button onclick="takeScreenshot()">📸 Screenshot</button>
-  </div>
+  
+  <!-- Required Library for Screenshot --><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script>
-const times = [
-  "7 MONTHS", "3 DAYS", "10 DAYS", "3 YEARS", "2 MONTHS",
-  "1 MONTH", "9 MONTHS", "4 MONTHS", "1 WEEK", "2 YEARS",
-  "SPIN AGAIN", "1 YEAR", "PERMANENT", "4 HOURS", "20 DAYS",
-  "5 MONTHS", "16 DAYS", "1 DAY", "8 HOURS", "6 MONTHS",
-  "3 MONTHS", "5 DAYS", "2 WEEKS", "8 MONTHS", "12 HOURS"
+const GRID_SIZE = 25; 
+
+const ranges = [
+  // H (Hours), D (Days), W (Weeks)
+  { name: "Hours to 1 Week", times: [
+    "1 H", "2 H", "3 H", "4 H", "6 H", 
+    "8 H", "10 H", "12 H", "18 H", "1 D", 
+    "1.5 D", "2 D", "2.5 D", "3 D", "3.5 D", 
+    "4 D", "5 D", "6 D", "7 D", "1 W", 
+    "RE-SPIN", "SPIN AGAIN", "4 D 12H", "5 D 6H", "7 D"
+  ]},
+  
+  // W (Weeks), M (Months)
+  { name: "1 Week to 3 Months", times: [
+    "1 W", "8 D", "10 D", "12 D", "2 W", 
+    "16 D", "18 D", "20 D", "3 W", "25 D", 
+    "1 M", "5 W", "6 W", "7 W", "2 M", 
+    "9 W", "10 W", "11 W", "12 W", "2.5 M", 
+    "3 M", "SPIN AGAIN", "RE-SPIN", "1 M 1 W", "70 D"
+  ]},
+  
+  // M (Months), Y (Years)
+  { name: "3 Months to 1 Year", times: [
+    "3 M", "3.5 M", "4 M", "4.5 M", "5 M", 
+    "5.5 M", "6 M", "6.5 M", "7 M", "8 M", 
+    "9 M", "10 M", "11 M", "1 Y", "RE-SPIN", 
+    "13 M", "14 M", "15 M", "16 M", "17 M", 
+    "18 M", "SPIN AGAIN", "1.5 Y", "1 Y 1 M", "6 M 1 D"
+  ]},
+
+  // The Vault (All Time)
+  { name: "The Vault (All Time)", times: [
+    "1 H", "1 D", "3 D", "1 W", "2 W", 
+    "1 M", "2 M", "3 M", "4 M", "5 M", 
+    "6 M", "7 M", "8 M", "9 M", "1 Y", 
+    "1.5 Y", "2 Y", "3 Y", "5 Y", "10 Y", 
+    "RE-SPIN", "SPIN AGAIN", "PERMANENT", "LOCKDOWN", "INFINITY"
+  ]}
 ];
+
+const cheekyComments = [
+    "That's a nice, long sentence you've signed! Hope you packed light. Enjoy the anticipation! 😉",
+    "Don't worry, time flies when you're dreaming about what you can't have. Enjoy the anticipation! 😈",
+    "Looks like your date night has been officially postponed. Consider this 'foreplay'. 💋",
+    "You'll have plenty of time to focus on your other duties now. No distractions! 😇",
+    "Consider that a down payment on a very, very patient future. Your desire is noted. 🔒"
+];
+
 
 const grid = document.getElementById("grid");
 const spinButton = document.getElementById("spinButton");
+const nextSpinButton = document.getElementById("nextSpinButton");
+const resultsList = document.getElementById("resultsList");
+const finalCheekyComment = document.getElementById("finalCheekyComment");
 
 let spinning = false;
 let spinInterval = null;
 let currentIndex = -1;
+let totalSpins = 1;
+let currentSpin = 0;
+let selectedRange = [];
+let spinResults = []; 
 
-// Create grid cells
-times.forEach(t => {
-  const cell = document.createElement("div");
-  cell.classList.add("cell");
-  cell.textContent = t;
-  grid.appendChild(cell);
-});
+// --- DATE CALCULATION FUNCTION ---
+
+function calculateReleaseDate(timeString) {
+    if (timeString.includes("PERMANENT") || timeString.includes("LOCKDOWN") || timeString.includes("INFINITY")) {
+        return "NEVER";
+    }
+    if (timeString.includes("RE-SPIN") || timeString.includes("SPIN AGAIN")) {
+        return "Spin Again!";
+    }
+
+    // The time string here is the abbreviated one from the grid, e.g., "1.5 D" or "6 M"
+    const now = new Date();
+    const duration = timeString.toUpperCase().split(' ').filter(word => word.trim().length > 0);
+    
+    let value = 0;
+    let unit = '';
+    
+    // Simple parsing logic (assuming standard format: VALUE UNIT)
+    for (let i = 0; i < duration.length; i++) {
+        if (!isNaN(parseFloat(duration[i]))) {
+            value = parseFloat(duration[i]);
+            unit = duration[i + 1] || ''; 
+            break; 
+        }
+    }
+
+    if (value === 0) return "N/A";
+
+    const futureDate = new Date(now);
+
+    // Check for abbreviated units: H, D, W, M, Y (or full words for mixed/complex cases)
+    if (unit === "H" || unit.includes("HOUR")) {
+        futureDate.setHours(futureDate.getHours() + value);
+    } else if (unit === "D" || unit.includes("DAY")) {
+        futureDate.setDate(futureDate.getDate() + value);
+    } else if (unit === "W" || unit.includes("WEEK")) {
+        futureDate.setDate(futureDate.getDate() + (value * 7));
+    } else if (unit === "M" || unit.includes("MONTH")) {
+        futureDate.setMonth(futureDate.getMonth() + value);
+    } else if (unit === "Y" || unit.includes("YEAR")) {
+        futureDate.setFullYear(futureDate.getFullYear() + value);
+    } else {
+        return "N/A (Unknown Duration)";
+    }
+
+    const options = { 
+        year: 'numeric', 
+        month: 'short', 
+        day: '2-digit', 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        second: '2-digit',
+        hour12: false
+    };
+    return futureDate.toLocaleString('en-GB', options).replace(',', '');
+}
+
+/**
+ * Converts abbreviated time strings (e.g., "1 D", "2 W") back to full words 
+ * for clearer display in the results tracker (e.g., "1 Day", "2 Weeks").
+ * @param {string} abbreviatedString - The time string from the grid.
+ * @returns {string} The expanded string.
+ */
+function expandTime(abbreviatedString) {
+    if (abbreviatedString.includes("SPIN") || abbreviatedString.includes("LOCKDOWN") || abbreviatedString.includes("PERMANENT") || abbreviatedString.includes("INFINITY")) {
+        return abbreviatedString;
+    }
+    
+    let expanded = abbreviatedString
+        .replace(/ H\b/g, ' HOURS')
+        .replace(/ D\b/g, ' DAYS')
+        .replace(/ W\b/g, ' WEEKS')
+        .replace(/ M\b/g, ' MONTHS')
+        .replace(/ Y\b/g, ' YEARS');
+
+    // Handle singular form for aesthetic improvement
+    expanded = expanded
+        .replace(/1 HOURS\b/, '1 HOUR')
+        .replace(/1 DAYS\b/, '1 DAY')
+        .replace(/1 WEEKS\b/, '1 WEEK')
+        .replace(/1 MONTHS\b/, '1 MONTH')
+        .replace(/1 YEARS\b/, '1 YEAR');
+        
+    return expanded;
+}
+
+// --- SCREEN TRANSITION FUNCTIONS ---
+
+function showScreen(screenId) {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('rangeScreen').style.display = 'none';
+  document.getElementById('spinnerScreen').style.display = 'none';
+  document.getElementById(screenId).style.display = 'block';
+}
+
+function startGame(spins) {
+  totalSpins = spins;
+  currentSpin = 0;
+  spinResults = []; 
+  
+  let modeText = "";
+  if (spins === 1) modeText = "One and Only";
+  else if (spins === 3) modeText = "Best of Three";
+  else if (spins === 5) modeText = "Best of Five";
+
+  document.getElementById('gameModeText').textContent = modeText;
+  
+  loadRangeButtons();
+  showScreen('rangeScreen');
+}
+
+function loadRangeButtons() {
+    const container = document.querySelector('.range-buttons');
+    container.innerHTML = ''; 
+    
+    ranges.forEach((range, index) => {
+        const button = document.createElement('button');
+        button.textContent = range.name;
+        button.onclick = () => selectRange(index);
+        container.appendChild(button);
+    });
+}
+
+function selectRange(index) {
+  selectedRange = ranges[index].times;
+  currentSpin = 1;
+  document.getElementById('totalSpins').textContent = totalSpins;
+  document.getElementById('currentSpinCount').textContent = currentSpin;
+  document.getElementById('finalMessage').textContent = "";
+  finalCheekyComment.textContent = "";
+  
+  createGrid(selectedRange);
+  displayResults(); 
+  showScreen('spinnerScreen');
+}
+
+
+// --- SPINNER LOGIC ---
+
+function createGrid(timesArray) {
+  grid.innerHTML = ''; 
+  const timesToUse = timesArray.slice(0, GRID_SIZE); 
+  
+  grid.style.gridTemplateColumns = `repeat(5, 1fr)`;
+  
+  timesToUse.forEach(t => {
+    const cell = document.createElement("div");
+    cell.classList.add("cell");
+    cell.textContent = t;
+    grid.appendChild(cell);
+  });
+}
 
 function toggleSpin() {
   if (!spinning) {
@@ -164,30 +528,122 @@ function toggleSpin() {
 function startSpin() {
   spinning = true;
   spinButton.textContent = "🛑 Stop";
-  const cells = document.querySelectorAll(".cell");
+  spinButton.disabled = false;
+  nextSpinButton.style.display = 'none'; 
+  finalCheekyComment.textContent = ""; 
+  const cells = document.querySelectorAll("#grid .cell");
 
+  cells.forEach(c => c.classList.remove("highlight"));
+  
   spinInterval = setInterval(() => {
-    cells.forEach(c => c.classList.remove("highlight"));
-    currentIndex = Math.floor(Math.random() * cells.length);
-    cells[currentIndex].classList.add("highlight");
-  }, 35); // fast highlight speed
+    if (currentIndex >= 0) {
+        cells[currentIndex].classList.remove("highlight");
+    }
+    currentIndex = Math.floor(Math.random() * GRID_SIZE);
+    cells[currentIndex].classList.add("highlight"); 
+  }, 30); 
 }
 
 function stopSpin() {
   spinning = false;
-  spinButton.textContent = "🎲 Spin";
   clearInterval(spinInterval);
+  const resultTime = document.querySelectorAll("#grid .cell")[currentIndex].textContent;
+  
+  const releaseDate = calculateReleaseDate(resultTime); 
+
+  spinResults.push({ 
+      spin: currentSpin, 
+      result: resultTime, 
+      release: releaseDate
+  });
+  
+  displayResults();
+
+  if (currentSpin < totalSpins) {
+      nextSpinButton.style.display = 'block';
+      spinButton.style.display = 'none';
+      document.getElementById('finalMessage').textContent = `Spin ${currentSpin} Result: ${expandTime(resultTime)}`;
+  } else {
+      // FINAL SPIN LOGIC
+      spinButton.textContent = "✅ Final Result";
+      spinButton.disabled = true; 
+      document.getElementById('finalMessage').textContent = `Game Over: Final Result is in!`;
+      
+      const randomIndex = Math.floor(Math.random() * cheekyComments.length);
+      finalCheekyComment.textContent = cheekyComments[randomIndex];
+  }
 }
+
+function displayResults() {
+    resultsList.innerHTML = ''; 
+    
+    if (spinResults.length === 0) {
+        resultsList.innerHTML = '<li>Awaiting first spin...</li>';
+        return;
+    }
+    
+    spinResults.forEach(item => {
+        const expandedResult = expandTime(item.result); 
+        const li = document.createElement('li');
+        li.innerHTML = `
+            **Spin ${item.spin}: ${expandedResult}**
+            <span style="color: #444; font-size: 0.9em; font-weight: 500;">Release Date:</span>
+            <span>${item.release}</span>
+        `;
+        resultsList.appendChild(li);
+    });
+}
+
+function nextSpin() {
+    currentSpin++;
+    document.getElementById('currentSpinCount').textContent = currentSpin;
+    document.getElementById('finalMessage').textContent = "";
+    spinButton.textContent = "🎲 Spin";
+    spinButton.style.display = 'block';
+    nextSpinButton.style.display = 'none';
+    
+    document.querySelectorAll("#grid .cell").forEach(c => c.classList.remove("highlight"));
+}
+
+
+// --- UTILITY FUNCTIONS ---
+
+function resetGame() {
+    spinning = false;
+    totalSpins = 1;
+    currentSpin = 0;
+    selectedRange = [];
+    spinResults = [];
+    clearInterval(spinInterval);
+    
+    document.getElementById('finalMessage').textContent = "";
+    finalCheekyComment.textContent = "";
+    document.getElementById('spinButton').textContent = "🎲 Spin";
+    document.getElementById('spinButton').style.display = 'block';
+    document.getElementById('spinButton').disabled = false;
+    document.getElementById('nextSpinButton').style.display = 'none';
+    displayResults();
+    
+    showScreen('startScreen');
+}
+
 
 function takeScreenshot() {
   const captureArea = document.getElementById("captureArea");
+  
+  // No need to hide external buttons anymore as they are all within captureArea
   html2canvas(captureArea, { scale: 2 }).then(canvas => {
     const link = document.createElement("a");
-    link.download = "chastity-time.png";
+    link.download = "chastity-time-result.png";
     link.href = canvas.toDataURL();
     link.click();
   });
 }
+
+// Initialize the game state
+document.addEventListener('DOMContentLoaded', () => {
+    showScreen('startScreen');
+});
 </script>
 </body>
 </html>
