@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Royal Scepter: Husband's Cuckold Dare</title>
+    <style>
+        /* --- Royal Blue & Gold Color Palette --- */
+        :root {
+            --primary: #1a3c6e;
+            --primary-light: #2a5ca0;
+            --accent: #d4af37;
+            --accent-light: #e6c350;
+            --dark: #0d1b2a;
+            --darker: #0a1521;
+            --light: #e0e1dd;
+            --card-bg: #152642;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--darker) 100%);
+            color: var(--light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .oracle-container {
+            background-color: var(--card-bg);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            text-align: center;
+            max-width: 650px;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+
+        h1 {
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-size: 2.4em;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .subtitle {
+            color: var(--accent-light);
+            margin-bottom: 25px;
+            font-style: italic;
+            font-size: 1.1em;
+        }
+
+        /* --- Level Selection Styling --- */
+        .level-selection {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .level-btn {
+            background-color: var(--primary);
+            color: var(--light);
+            border: 2px solid var(--primary-light);
+            padding: 15px 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .level-btn:hover {
+            background-color: var(--primary-light);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(42, 92, 160, 0.4);
+        }
+
+        .level-btn.active {
+            background-color: var(--accent);
+            color: var(--dark);
+            border-color: var(--accent-light);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.7);
+        }
+
+        .level-name {
+            font-size: 1.1em;
+        }
+
+        .level-desc {
+            font-size: 0.8em;
+            opacity: 0.9;
+        }
+
+        /* --- Dare Button Styling --- */
+        #dareButton {
+            background: linear-gradient(to bottom, var(--accent) 0%, var(--accent-light) 100%);
+            color: var(--dark);
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+            margin-top: 20px;
+        }
+
+        #dareButton:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6);
+        }
+
+        #dareButton:active {
+            transform: translateY(1px);
+        }
+
+        #dareButton:disabled {
+            background: #2a3b52;
+            color: #6b7b95;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* --- Result Display Styling --- */
+        #dareResult {
+            margin-top: 30px;
+            padding: 25px;
+            min-height: 100px;
+            background-color: rgba(21, 38, 66, 0.7);
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: var(--accent-light);
+            border-left: 5px solid var(--accent);
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .emoji-icon {
+            font-size: 1.5em;
+            margin: 0 8px;
+        }
+
+        .instructions {
+            color: var(--accent-light);
+            font-size: 0.95em;
+            margin-top: 10px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        .level-indicator {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: var(--accent-light);
+            min-height: 20px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .level-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .oracle-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="oracle-container">
+        <h1><span class="emoji-icon">👑</span> Royal Scepter</h1>
+        <p class="subtitle">Husband's Cuckold Dare Decider</p>
+        
+        <p class="instructions">Select your comfort level to receive a personalized dare that explores the cuckold dynamic from the husband's perspective.</p>
+
+        <div class="level-selection">
+            <button class="level-btn" data-level="curious">
+                <span class="level-name">Curious Explorer 🧭</span>
+                <span class="level-desc">Fantasy & Communication</span>
+            </button>
+            <button class="level-btn" data-level="enthusiast">
+                <span class="level-name">Enthusiast Partner 💫</span>
+                <span class="level-desc">Flirting & Preparation</span>
+            </button>
+            <button class="level-btn" data-level="devoted">
+                <span class="level-name">Devoted Cuckold 🔥</span>
+                <span class="level-desc">Active Participation</span>
+            </button>
+            <button class="level-btn" data-level="master">
+                <span class="level-name">Master of Ceremonies ⚡</span>
+                <span class="level-desc">Full Immersion</span>
+            </button>
+        </div>
+
+        <div class="level-indicator" id="levelIndicator">
+            <!-- Selected level will appear here -->
+        </div>
+
+        <button id="dareButton" disabled>
+            Receive Your Royal Command! <span class="emoji-icon">✨</span>
+        </button>
+
+        <div id="dareResult">
+            <!-- Dare will appear here -->
+        </div>
+    </div>
+
+    <script>
+        // --- Dare Databases by Level ---
+        const dareLevels = {
+            curious: [
+                "Share a fantasy where you watch your wife flirt with someone else 💭",
+                "Look at attractive men together and discuss what qualities she finds appealing 👀",
+                "Practice saying 'I enjoy seeing you desired by others' in the mirror 🗣️",
+                "Watch a movie with a seduction scene and discuss how it makes you both feel 🎬",
+                "Share one thing that intrigues you about the idea of sharing your wife 💕",
+                "Describe how you imagine you'd feel watching your wife receive attention from another man 📝",
+                "Browse social media together and point out men she finds attractive 📱",
+                "Create a private code word for when you're both feeling adventurous about this topic 🔐",
+                "Discuss your boundaries and what you're both comfortable exploring 🗺️",
+                "Write down three fantasies you'd like to explore together 📝",
+                "Share what you find most attractive about your wife's confidence 💪",
+                "Discuss what makes your relationship strong enough to explore this dynamic 💎",
+                "Create a fantasy scenario together using only words 🎭",
+                "Practice checking in with each other's emotions regularly ❤️",
+                "Share one new thing you learned about your wife's desires today 🎯",
+                "Discuss the difference between fantasy and reality in your relationship ⚖️",
+                "Create a 'safe word' system for all your adventures 🛑",
+                "Share what you appreciate about each other's openness 🙏",
+                "Practice communicating desires without judgment 🗨️",
+                "Discuss what aftercare looks like for both of you 💖",
+                "Share three things that make your relationship unique 🌟",
+                "Create a list of 'absolute no' boundaries together 🚫",
+                "Practice giving and receiving compliments about attractiveness 💐",
+                "Discuss how to handle jealousy in healthy ways 🌈",
+                "Share what excited you most about today's conversation ⚡",
+                "Create a fantasy bucket list together 📋",
+                "Practice saying 'I love you' after sharing vulnerable thoughts 💘",
+                "Discuss what trust means in your relationship 🤝",
+                "Share one thing you're curious to explore further ❓",
+                "Create a ritual for reconnecting after deep conversations 🔄",
+                "Practice active listening without interrupting 👂",
+                "Discuss what makes you feel secure in your relationship 🛡️",
+                "Share your favorite quality about your wife's personality 🌸",
+                "Create a 'comfort menu' of things that make you feel safe 🍜",
+                "Practice expressing boundaries clearly and kindly 🎯",
+                "Discuss how to recognize when to slow down 🐢",
+                "Share what you're most proud of in your relationship 🏆",
+                "Create a list of 'green light' signals 🟢",
+                "Practice thanking each other for honesty 🙌",
+                "Discuss what emotional safety looks like for you 🏠",
+                "Share one thing that surprised you about your wife 🔍",
+                "Create a 'connection first' reminder system 💞",
+                "Practice validating each other's feelings 🌈",
+                "Discuss how to maintain intimacy during exploration 🔗",
+                "Share what growth means for your relationship 🌱",
+                "Describe how you imagine feeling when your wife dresses to impress other men 👗",
+                "Discuss what you both find exciting about the attention she receives 🎯",
+                "Share how you envision handling a situation where someone flirts with your wife 💬",
+                "Practice describing your wife's attractive qualities as if to another man 🗣️",
+                "Create a shared journal where you both write fantasies and thoughts 📓"
+            ],
+
+            enthusiast: [
+                "Help your wife choose an outfit that she feels attractive and confident in for a night out 👗",
+                "Practice giving your wife permission to flirt with others when you're out together ✅",
+                "Share details of past attractions your wife has had with you 📖",
+                "Visit a bar or social event and point out men you think would be interested in your wife 🍸",
+                "Create a dating profile for your wife together, focusing on her best qualities 📱",
+                "Role-play a scenario where your wife is being approached by an attractive man 🎭",
+                "Dress your wife up for a 'date' and take photos of her looking her best 📸",
+                "Practice negotiating boundaries for real-world scenarios 🗣️",
+                "Visit a social event and discreetly check out men together 🎉",
+                "Share turn-ons about seeing your wife desired by others 🔥",
+                "Help your wife create an online dating profile and browse potential matches together 💻",
+                "Practice discussing your relationship dynamic with curious friends 💬",
+                "Role-play your wife meeting someone new at a bar 🎭",
+                "Share what you find exciting about potential real experiences ⚡",
+                "Create a system for checking in during social situations 🎯",
+                "Practice handling compliments about your wife from other men 💐",
+                "Discuss what you'd want to know about potential partners 🔍",
+                "Share feelings about your wife dressing attractively for others 👗",
+                "Create guidelines for safe online interactions 🌐",
+                "Practice communicating desires in the moment 🗨️",
+                "Discuss how to handle unexpected attractions 🎭",
+                "Share what you learn about yourselves through this journey 📚",
+                "Create rituals for reconnecting after social experiments 🔄",
+                "Practice giving your wife 'permission' to enjoy attention ✅",
+                "Discuss what you both need to feel valued and secure 💎",
+                "Help your wife shop for lingerie that makes her feel sexy and confident 👙",
+                "Practice describing your wife's best qualities to an imaginary admirer 🗣️",
+                "Share fantasies involving specific men you know 👥",
+                "Create a 'menu' of experiences you're both open to trying 📋",
+                "Practice discussing your dynamic without embarrassment 🗣️",
+                "Explore what commitment means within your unique relationship 💍",
+                "Share how this journey has strengthened your bond 🔗",
+                "Create a celebration ritual for milestones 🎉",
+                "Practice handling questions from curious friends 🤔",
+                "Discuss how to maintain your primary connection 🌟",
+                "Share what you've discovered about your own desires 🎯",
+                "Create a system for processing emotions together 🛠️",
+                "Practice setting up safe social scenarios 🎭",
+                "Discuss what you both consider 'success' in this journey 🏆",
+                "Share appreciation for each other's courage and trust 🙏",
+                "Create a vision for your relationship's future together 🔮",
+                "Practice navigating real-world flirtation together 💫",
+                "Discuss how to handle different types of reactions 🌈",
+                "Share what makes your partnership unique and strong 💪",
+                "Create a 'connection first' approach to all experiences 💖",
+                "Practice emotional check-ins during exciting moments ❤️",
+                "Discuss how to balance excitement with security ⚖️",
+                "Share what you're learning about communication 📢",
+                "Create a gratitude practice for your journey 🙌",
+                "Practice celebrating small steps and progress 🎊"
+            ],
+
+            devoted: [
+                "Help your wife get ready for a date with another man, choosing her outfit and lingerie 👔",
+                "Wait at home while your wife is on a date, sending her encouraging texts 📱",
+                "Share intimate details of your wife's date when she returns 💬",
+                "Practice being home alone while thinking about your wife's date 🏠",
+                "Create a special welcome home ritual for after your wife's dates 🎉",
+                "Help your wife prepare for her date physically and emotionally 🛁",
+                "Practice handling the anticipation and excitement together ⏳",
+                "Discuss what you both enjoyed about the date experience 🗣️",
+                "Create a memory book of your adventures together 📖",
+                "Share what turns you on about your wife's dating experiences 🔥",
+                "Help your wife create dating profiles on actual platforms and help her respond to messages 💻",
+                "Practice aftercare following your wife's real dating experiences 🤗",
+                "Discuss boundaries for physical intimacy on dates 🚦",
+                "Share feelings about your wife developing connections with other men 💫",
+                "Create guidelines for communication during dates 📱",
+                "Practice processing jealousy in constructive ways 🌈",
+                "Discuss what you learn about each other through these experiences 📚",
+                "Share appreciation for the trust and communication required 🙏",
+                "Create rituals for reconnecting after time apart 🔄",
+                "Help your wife get ready for dates with excitement and support 🎯",
+                "Practice discussing dates with humor and connection 😄",
+                "Explore what you both want from these experiences 🎯",
+                "Share how this dynamic enhances your sexual relationship 💖",
+                "Create a system for checking in about feelings regularly ❤️",
+                "Practice handling questions from dates about your relationship 💬",
+                "Discuss how to maintain your primary bond 🌟",
+                "Share what surprises you about this journey 🎁",
+                "Create celebrations for milestones in your journey 🎊",
+                "Practice gratitude for the unique relationship you share 🙌",
+                "Explore different types of dating scenarios 🌍",
+                "Discuss what makes a 'good' date from both perspectives ⭐",
+                "Share how you've grown individually through this experience 🌱",
+                "Create a vision for where this journey might lead 🔮",
+                "Practice handling unexpected emotions with compassion 💝",
+                "Discuss how to balance safety with adventure ⚖️",
+                "Share what you're most proud of in your relationship 🏆",
+                "Create a 'relationship resume' of your strengths 📄",
+                "Practice communicating needs clearly and lovingly 🗨️",
+                "Explore what commitment means in your unique dynamic 💎",
+                "Discuss how to handle different types of dating partners 👥",
+                "Share what you've learned about love and relationships 💡",
+                "Create a system for continuous learning and growth 📈",
+                "Practice celebrating each other's happiness and experiences 🎉",
+                "Discuss how to maintain intimacy through changes 🔗",
+                "Share your hopes for the future of your relationship 🌈",
+                "Create a 'connection first' approach to all adventures 💞",
+                "Practice handling social situations as a unique couple 👫",
+                "Discuss what makes your bond unbreakable 🔐",
+                "Share gratitude for the journey you're on together 🙏",
+                "Help your wife plan a weekend getaway with another man 🗓️"
+            ],
+
+            master: [
+                "Arrange for your wife to have overnight dates with clear boundaries and check-ins 🌙",
+                "Share detailed accounts of your wife's intimate experiences with other men 📖",
+                "Create a system for including other men in your relationship dynamic 👥",
+                "Practice handling deep emotional connections your wife develops with additional partners 💫",
+                "Discuss long-term possibilities with consistent additional partners 📅",
+                "Share what you learn about love being non-exclusive through your wife's experiences 💝",
+                "Create rituals for welcoming others into your dynamic 🎉",
+                "Practice communicating complex emotions and boundaries 🗣️",
+                "Explore what commitment means in open relationship structures 💎",
+                "Share how this dynamic transforms your understanding of love 🔄",
+                "Create guidelines for multiple simultaneous connections 🌐",
+                "Practice handling societal judgments and questions 🛡️",
+                "Discuss how to maintain your primary connection through growth 🌟",
+                "Share what you discover about your capacity for love through your wife's adventures ∞",
+                "Create a support system with like-minded couples 👥",
+                "Practice navigating complex scheduling and emotional needs 🗓️",
+                "Explore different relationship structures and models 🏗️",
+                "Discuss how to handle your wife falling in love with additional partners 💘",
+                "Share what you learn about jealousy and compersion 🌈",
+                "Create a relationship philosophy that works for you 📜",
+                "Practice radical honesty in all communications 💎",
+                "Explore the boundaries of your comfort zones 🗺️",
+                "Discuss how to handle unexpected pregnancies or STIs 🚨",
+                "Share your evolving definition of family and commitment 🏠",
+                "Create a legacy for your unique relationship approach 🌱",
+                "Practice handling family and friend reactions 👨‍👩‍👧‍👦",
+                "Explore long-term sustainability of your dynamic 📈",
+                "Discuss how to age within your relationship structure 👵👴",
+                "Share what you want to teach others about love 💡",
+                "Create a community around your relationship values 🌍",
+                "Practice handling legal and practical considerations ⚖️",
+                "Explore spiritual aspects of non-monogamous love 🙏",
+                "Discuss how to handle wanting to close the relationship 🔒",
+                "Share your most vulnerable fears and desires 💭",
+                "Create a system for continuous evolution and growth 🔄",
+                "Practice celebrating the uniqueness of your path 🎊",
+                "Explore what 'forever' means in your context ⏳",
+                "Discuss how to handle major life changes within your dynamic 🎭",
+                "Share your vision for a society that accepts diverse relationships 🌈",
+                "Create a mentorship approach for newer couples 👥",
+                "Practice handling the complexities of multiple loves 💖",
+                "Explore the depths of trust and communication possible 🗣️",
+                "Discuss how to maintain individual identities within complexity 👤",
+                "Share what you've learned about human connection 🔗",
+                "Create a philosophy of love that embraces complexity 💞",
+                "Practice radical acceptance of all emotions experienced 🌊",
+                "Explore the intersection of freedom and commitment 🕊️",
+                "Discuss how to leave a positive impact on others 🌟",
+                "Share your gratitude for the extraordinary journey 🙏",
+                "Create a vision for love that transcends traditional boundaries 🚀"
+            ]
+        };
+
+        // DOM Elements
+        const levelButtons = document.querySelectorAll('.level-btn');
+        const dareButton = document.getElementById('dareButton');
+        const dareResult = document.getElementById('dareResult');
+        const levelIndicator = document.getElementById('levelIndicator');
+        
+        let selectedLevel = null;
+
+        // Level Selection
+        levelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                levelButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Set selected level
+                selectedLevel = this.getAttribute('data-level');
+                
+                // Update level indicator
+                const levelName = this.querySelector('.level-name').textContent;
+                levelIndicator.textContent = `Selected: ${levelName}`;
+                
+                // Enable dare button
+                dareButton.disabled = false;
+                
+                // Show initial message
+                dareResult.style.opacity = 1;
+                dareResult.textContent = `Ready for ${levelName} dares! Click the button to receive your command.`;
+            });
+        });
+
+        // Generate Dare Function
+        function generateDare() {
+            if (!selectedLevel) return;
+
+            const dares = dareLevels[selectedLevel];
+            const randomIndex = Math.floor(Math.random() * dares.length);
+            const selectedDare = dares[randomIndex];
+
+            // Update display with fade effect
+            dareResult.style.opacity = 0;
+            setTimeout(() => {
+                dareResult.textContent = selectedDare;
+                dareResult.style.opacity = 1;
+            }, 300);
+        }
+
+        // Event Listeners
+        dareButton.addEventListener('click', generateDare);
+
+        // Initial setup
+        window.onload = function() {
+            dareResult.style.opacity = 1;
+            dareResult.textContent = "Please select your comfort level above to begin";
+        };
+    </script>
+</body>
+</html>
