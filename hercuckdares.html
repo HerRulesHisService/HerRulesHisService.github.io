@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emerald Oracle: Cuckold Dare Decider</title>
+    <style>
+        :root {
+            --dark-bg: #121212;
+            --container-bg: #1E1E1E;
+            --emerald: #00C853;
+            --light-emerald: #69F0AE;
+            --text: #E0E0E0;
+            --accent: #FF4081;
+            --warning: #FF9800;
+            --danger: #F44336;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .oracle-container {
+            background-color: var(--container-bg);
+            border: 3px solid var(--emerald);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 25px rgba(0, 200, 83, 0.5);
+            text-align: center;
+            max-width: 700px;
+            width: 90%;
+            transition: all 0.3s ease;
+        }
+        
+        h1 {
+            color: var(--light-emerald);
+            margin-bottom: 5px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #A5D6A7;
+            margin-bottom: 25px;
+            font-style: italic;
+        }
+        
+        .instructions {
+            margin-bottom: 25px;
+            color: #B0BEC5;
+            font-size: 1.1em;
+        }
+        
+        .level-info {
+            background: rgba(0, 200, 83, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .level-info h3 {
+            color: var(--light-emerald);
+            margin-bottom: 10px;
+        }
+        
+        .level-selection {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .level-btn {
+            background-color: #2C2C2C;
+            color: var(--text);
+            border: 2px solid;
+            padding: 15px 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .level-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .level-btn.active {
+            box-shadow: 0 0 15px rgba(0, 200, 83, 0.7);
+        }
+        
+        .beginner {
+            border-color: #4CAF50;
+        }
+        
+        .beginner.active, .beginner:hover {
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .experienced {
+            border-color: #2196F3;
+        }
+        
+        .experienced.active, .experienced:hover {
+            background-color: rgba(33, 150, 243, 0.2);
+        }
+        
+        .advanced {
+            border-color: #FF9800;
+        }
+        
+        .advanced.active, .advanced:hover {
+            background-color: rgba(255, 152, 0, 0.2);
+        }
+        
+        .extreme {
+            border-color: #F44336;
+        }
+        
+        .extreme.active, .extreme:hover {
+            background-color: rgba(244, 67, 54, 0.2);
+        }
+        
+        .level-intensity {
+            font-size: 0.8em;
+            margin-top: 5px;
+            opacity: 0.8;
+        }
+        
+        #dareButton {
+            background-color: var(--emerald);
+            color: #121212;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 200, 83, 0.4);
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        #dareButton:hover {
+            background-color: #00E676;
+            box-shadow: 0 6px 20px rgba(0, 200, 83, 0.6);
+        }
+        
+        #dareButton:active {
+            transform: translateY(2px);
+        }
+        
+        #dareButton:disabled {
+            background-color: #2C2C2C;
+            color: #666;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        
+        #dareResult {
+            margin-top: 30px;
+            padding: 25px;
+            min-height: 120px;
+            background-color: #2C2C2C;
+            border-radius: 10px;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #FFEB3B;
+            border-left: 5px solid var(--emerald);
+            transition: opacity 0.5s ease;
+            opacity: 0;
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        
+        .emoji-icon {
+            font-size: 1.5em;
+            margin: 0 8px;
+        }
+        
+        .footer-note {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #78909C;
+            text-align: center;
+        }
+        
+        @media (max-width: 600px) {
+            .level-selection {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="oracle-container">
+        <h1><span class="emoji-icon">🔮</span> The Emerald Oracle</h1>
+        <p class="subtitle">Wife-Centric Cuckold Dare Decider</p>
+        
+        <p class="instructions">Select your experience level to receive a dare focused on the wife's pleasure and exploration.</p>
+        
+        <div class="level-info">
+            <h3>Important Note</h3>
+            <p>All dares should be approached with mutual consent, communication, and established boundaries. The intensity increases with each level, so please choose appropriately.</p>
+        </div>
+
+        <div class="level-selection">
+            <button class="level-btn beginner" data-level="beginner">
+                Beginner 🔰
+                <span class="level-intensity">Fantasy & Flirtation</span>
+            </button>
+            <button class="level-btn experienced" data-level="experienced">
+                Experienced 💫
+                <span class="level-intensity">Real-World Exploration</span>
+            </button>
+            <button class="level-btn advanced" data-level="advanced">
+                Advanced 🔥
+                <span class="level-intensity">Intimate Encounters</span>
+            </button>
+            <button class="level-btn extreme" data-level="extreme">
+                Extreme ⚡
+                <span class="level-intensity">Advanced Scenarios</span>
+            </button>
+        </div>
+
+        <button id="dareButton" disabled>
+            Receive Your Dare! <span class="emoji-icon">✨</span>
+        </button>
+
+        <div id="dareResult">
+            <!-- Dare will appear here -->
+        </div>
+        
+        <div class="footer-note">
+            <p>Remember: Communication, consent, and aftercare are essential for all activities.</p>
+        </div>
+    </div>
+
+    <script>
+        // Dare Databases by Level - Wife-Centric
+        const dareLevels = {
+            beginner: [
+                "Wear a sexy outfit under your clothes all day and send your husband teasing photos 📱",
+                "Share a fantasy where you're flirted with by an attractive stranger 💭",
+                "Point out men you find attractive when you're out with your husband 👀",
+                "Tell your husband about a time someone other than him checked you out 🗣️",
+                "Dress up and take sexy selfies to show your husband later 📸",
+                "Share a celebrity crush and describe what you'd do on a date with him 🌟",
+                "Practice seductive walking and posing in front of your husband 💃",
+                "Tell your husband what you'd wear on a first date with someone new 👗",
+                "Browse dating apps together and show your husband men you'd consider matching with 📱",
+                "Describe your ideal 'other man' in detail to your husband 🎯",
+                "Practice flirty conversation with your husband pretending he's someone new 💬",
+                "Share what parts of your body you think other men would find most attractive 💖",
+                "Create a secret signal to let your husband know when you see someone you like 🔐",
+                "Tell your husband one thing you'd like to experience with another man 🌈",
+                "Watch a romantic movie and describe which actor you'd want as a lover 🎬",
+                "Share a fantasy about being taken by a confident stranger in a luxurious setting 🏨",
+                "Describe how you'd act on a date without your husband knowing 🕵️‍♀️",
+                "Practice receiving compliments gracefully and telling your husband about them later 💐",
+                "Share what kind of gifts you'd like to receive from an admirer 🎁",
+                "Tell your husband what you find sexy about confident, dominant men 💪",
+                "Describe your ideal first kiss with someone new 💋",
+                "Share what you'd want another man to whisper in your ear during intimacy 👂",
+                "Practice sensual dancing for your husband as if he's someone new 💃",
+                "Tell your husband what you'd do if an ex-lover tried to win you back 🔄",
+                "Describe how you'd feel being the center of attention at a party 🌟",
+                "Share what you find exciting about the idea of secret admirers 🎭",
+                "Tell your husband what you'd wear to attract a specific type of man 👠",
+                "Practice using your voice in a more seductive way when talking to your husband 🗣️",
+                "Share a fantasy about being 'accidentally' seen undressing by a neighbor 👀",
+                "Describe how you'd react if a younger man showed interest in you 🎯",
+                "Tell your husband what you find appealing about men with different body types than his 💖",
+                "Share a fantasy about being seduced by someone in a position of authority 👔",
+                "Practice walking in heels as if you're heading to a secret rendezvous 👠",
+                "Describe your ideal romantic getaway with a lover ✈️",
+                "Tell your husband what you'd want another man to notice about you first 🔍",
+                "Share how you'd feel receiving flowers from a secret admirer 💐",
+                "Practice applying makeup as if preparing for a date with someone new 💄",
+                "Describe what you find exciting about the chase of a new relationship 🎯",
+                "Tell your husband what you'd do if someone recognized your wedding ring but still flirted with you 💍",
+                "Share a fantasy about being the other woman in an affair 🎭",
+                "Practice sending a flirty text message to your husband as if he's someone else 📱",
+                "Describe how you'd act at a club if you were single 💃",
+                "Tell your husband what you find appealing about 'bad boy' types 😎",
+                "Share a fantasy about being seduced by a foreigner with an accent 🌍",
+                "Practice wearing perfume that makes you feel irresistible 🌹",
+                "Describe what you'd do on a lunch date with a coworker 🍽️",
+                "Tell your husband how you'd react if someone much younger showed interest in you 🎯",
+                "Share a fantasy about being recognized as beautiful by a complete stranger 👁️",
+                "Practice the art of subtle seduction in everyday situations 🎭",
+                "Describe your ideal 'meet cute' with a potential lover 💫",
+                "Tell your husband what you find sexy about intelligence in a man 🧠",
+                "Share how you'd feel being the subject of office gossip about your attractiveness 💼",
+                "Practice maintaining eye contact with attractive men when your husband is watching 👀",
+                "Describe what you'd wear to a beach to attract attention 👙",
+                "Tell your husband what you find appealing about older, experienced men 👴",
+                "Share a fantasy about being pursued by multiple suitors 👥",
+                "Practice the art of leaving a man wanting more 🎭",
+                "Describe how you'd act if you ran into an ex while looking your best 🔄",
+                "Tell your husband what you find exciting about the idea of forbidden romance 🚫",
+                "Share a fantasy about being seduced at a formal event 🎩",
+                "Practice speaking about your husband to others in a way that suggests openness 💬",
+                "Describe what you find appealing about artistic or creative men 🎨",
+                "Tell your husband how you'd react if someone wrote a poem about your beauty 📝",
+                "Share a fantasy about being the muse for a talented artist 🖼️",
+                "Practice moving in a way that emphasizes your best features 💃",
+                "Describe your ideal romantic dinner with a lover 🍷",
+                "Tell your husband what you find sexy about a man who takes charge 🎯",
+                "Share how you'd feel being complimented on your appearance in front of your husband 👏",
+                "Practice accepting compliments with confidence and grace 💪",
+                "Describe what you find appealing about physically fit men 🏋️",
+                "Tell your husband how you'd react if someone recognized you from your photos online 🌐",
+                "Share a fantasy about being seduced by a famous person 🌟",
+                "Practice the art of subtle touch in flirting ✋",
+                "Describe what you find exciting about the beginning stages of attraction ⚡"
+            ],
+
+            experienced: [
+                "Create an online dating profile and show your husband the responses you receive 💻",
+                "Go to a bar alone and report back to your husband about men who approach you 🍸",
+                "Let your husband watch as you flirt with someone online via video call 📹",
+                "Share details of a past lover with your husband, including what you enjoyed about him 📖",
+                "Go dancing and allow men to buy you drinks, then tell your husband about it 💃",
+                "Wear a revealing outfit to a social event and describe the attention you received 👗",
+                "Let your husband help you choose provocative photos for your dating profile 📸",
+                "Go on a practice date and share every detail with your husband when you return 🗣️",
+                "Allow your husband to listen as you have a flirty phone conversation with another man 📞",
+                "Visit a club with your husband but separate so men can approach you alone 🎉",
+                "Share your husband's kink with a trusted friend and report their reaction 💬",
+                "Let your husband watch security camera footage of you flirting in public 📹",
+                "Exchange sensual messages with someone online and show them to your husband later 📱",
+                "Go to a beach in a revealing bikini and describe the attention you received 👙",
+                "Allow your husband to take photos of you in seductive poses to share online 📸",
+                "Practice receiving lap dances from your husband as if he's someone new 💃",
+                "Share what you would do on a weekend getaway with another man ✈️",
+                "Let your husband help you write a sensual personal ad 📝",
+                "Go to a hotel bar alone and document the interactions you have 🏨",
+                "Share your location with your husband while you're out attracting attention 📍",
+                "Practice telling your husband about your attractions in real-time 🗣️",
+                "Allow your husband to choose your outfit for a night out with friends 👚",
+                "Share screenshots of your conversations with interested men 📱",
+                "Go to a gym in form-fitting clothes and report on the attention you receive 🏋️",
+                "Let your husband listen as you describe your fantasies to a trusted friend 🎧",
+                "Practice being the center of attention in social situations 🌟",
+                "Share what you find exciting about being desired by multiple men 👥",
+                "Allow your husband to watch from a distance as you interact with other men 👀",
+                "Go shopping for lingerie and ask male clerks for their opinions 👙",
+                "Share details of what you'd want in a physical relationship with another man 💖",
+                "Practice receiving compliments from other men in front of your husband 👏",
+                "Allow your husband to read your private messages with admirers 📖",
+                "Go to a resort alone and document your experiences 🏖️",
+                "Share what you find arousing about the idea of being 'discovered' 🎯",
+                "Practice setting boundaries with interested men while still encouraging attention 🚧",
+                "Allow your husband to choose which men you respond to online 🎯",
+                "Go to a speed dating event and share your experiences 🗣️",
+                "Share what you find exciting about the power dynamic in these situations 💪",
+                "Practice describing your encounters with other men in vivid detail 📖",
+                "Allow your husband to take you on a date while you pretend to be strangers 🎭",
+                "Go to a dance class and describe the men who partnered with you 💃",
+                "Share what you find appealing about men with different sexual energies ⚡",
+                "Practice being pursued while your husband watches from a distance 🎯",
+                "Allow your husband to help you create content for your dating profile 📸",
+                "Go to a networking event and flirt professionally 💼",
+                "Share what you find exciting about the secrecy of these encounters 🤫",
+                "Practice receiving gifts from admirers and showing them to your husband 🎁",
+                "Allow your husband to listen to your voice messages from interested men 🎵",
+                "Go to a wine tasting and describe the interactions you had 🍷",
+                "Share what you find arousing about being objectified in a consensual way 🎯",
+                "Practice maintaining your relationship while exploring your sexuality 🔗",
+                "Allow your husband to watch as you try on seductive outfits 👗",
+                "Go to a concert and describe the attention you received 🎵",
+                "Share what you find exciting about the validation from male attention 💫",
+                "Practice being the one in control of these sexual explorations 🎯",
+                "Allow your husband to be your 'wingman' in social situations 👥",
+                "Go to a pool party and document the interactions 👙",
+                "Share what you find appealing about men who are different from your husband 🌈",
+                "Practice balancing your marital relationship with these explorations ⚖️",
+                "Allow your husband to choose your perfume for dates 🌹",
+                "Go to a comedy club and describe the comedians who flirted with you 🎤",
+                "Share what you find exciting about the adrenaline of these encounters 💓",
+                "Practice communicating your desires clearly to both your husband and potential partners 🗣️",
+                "Allow your husband to watch as you get ready for dates 💄",
+                "Go to a casino and describe the high rollers who approached you 🎰",
+                "Share what you find arousing about being the fantasy of other men 💭",
+                "Practice setting up dates while keeping your husband informed 📅",
+                "Allow your husband to help you choose which dates to accept ✅",
+                "Go to a sporting event and describe the fans who flirted with you 🏈",
+                "Share what you find exciting about the novelty of new sexual partners 🔄",
+                "Practice aftercare with your husband following these experiences 🤗",
+                "Allow your husband to listen to your date planning phone calls 📞",
+                "Go to a museum opening and describe the cultured men you met 🖼️",
+                "Share what you find appealing about educated, sophisticated men 🎓",
+                "Practice being objectified in ways that empower you 💪",
+                "Allow your husband to be part of the fantasy as you share your experiences 🎭"
+            ],
+
+            advanced: [
+                "Go on an actual date and allow kissing, then describe the details to your husband 💋",
+                "Let your husband watch from a distance as you make out with someone new 👀",
+                "Share intimate photos with a trusted lover and show your husband his responses 📸",
+                "Allow your husband to listen via phone as you have a sensual encounter 📞",
+                "Go to a hotel with another man and call your husband during the experience 🏨",
+                "Let your husband choose your outfit for a sexual encounter with someone else 👗",
+                "Share details of your sexual preferences with a potential lover in front of your husband 🗣️",
+                "Allow your husband to watch security footage of your intimate encounters 📹",
+                "Go on a weekend trip with a lover and document everything for your husband ✈️",
+                "Let your husband be in the next room while you're intimate with someone else 🚪",
+                "Share your body with another man while your husband watches from across the room 👁️",
+                "Allow your husband to take photos during your intimate encounters 📸",
+                "Go to a swinger's club with your husband and play with other couples 👥",
+                "Let your husband listen to audio recordings of your sexual experiences 🎧",
+                "Share your bed with another man while your husband sleeps in another room 🛏️",
+                "Allow your husband to choose which men you become intimate with 🎯",
+                "Go to a private party and engage in group activities, then share details 🎉",
+                "Let your husband watch as you give oral pleasure to another man 👄",
+                "Share what you enjoy about different lovers' techniques and styles 💖",
+                "Allow your husband to be your 'director' during intimate encounters 🎬",
+                "Go to a resort known for lifestyle activities and explore your fantasies 🏖️",
+                "Let your husband help you prepare for dates that may become sexual 🛁",
+                "Share comparative details about different lovers with your husband 📊",
+                "Allow your husband to watch via video call as you're intimate with someone else 📹",
+                "Go to a private club and engage in semi-public intimate activities 🎭",
+                "Let your husband choose the condoms you use with other men 🎯",
+                "Share the gifts you receive from lovers with your husband 🎁",
+                "Allow your husband to be in the room while you're intimate but not participating 👁️",
+                "Go on a business trip and document your sexual experiences for your husband 💼",
+                "Let your husband listen as you describe your sexual encounters in vivid detail 🗣️",
+                "Share what you learn about your own sexuality through these experiences 🌈",
+                "Allow your husband to watch as you receive oral pleasure from another man 👅",
+                "Go to a lifestyle resort and participate in organized activities 🏨",
+                "Let your husband help you create a sexual bucket list with other men 📝",
+                "Share comparative sizes and techniques of different lovers with your husband 📏",
+                "Allow your husband to photograph your intimate moments with others 📸",
+                "Go to a private gathering and engage in partner swapping activities 🔄",
+                "Let your husband choose the music for your encounters with other men 🎵",
+                "Share what you find exciting about being shared with other men 🎁",
+                "Allow your husband to watch as you try different sexual positions with others 🎯",
+                "Go to an adult theater and engage in activities, then describe them 🎭",
+                "Let your husband be your 'stage manager' for sexual encounters 🎬",
+                "Share the afterglow of your encounters with your husband ✨",
+                "Allow your husband to bathe you after encounters with other men 🛁",
+                "Go to a lifestyle cruise and document your experiences ⚓",
+                "Let your husband choose the lubricants you use with other men 🎯",
+                "Share what you discover about your own desires through these experiences 🔍",
+                "Allow your husband to watch as you dominate another man 👑",
+                "Go to a private club and engage in BDSM activities with others ⛓️",
+                "Let your husband help you process the emotional aspects of these experiences 💖",
+                "Share comparative endurance of different lovers with your husband ⏱️",
+                "Allow your husband to watch as you're taken by multiple men in succession 👥",
+                "Go to an orgy and participate, then share every detail with your husband 🎉",
+                "Let your husband choose the toys you use with other men 🎯",
+                "Share what you find arousing about being the center of sexual attention 🌟",
+                "Allow your husband to watch as you explore different kinks with others 🎭",
+                "Go to a private estate known for lifestyle parties and explore 🏰",
+                "Let your husband document your sexual experiences in a journal 📖",
+                "Share what you learn about different cultural approaches to sexuality 🌍",
+                "Allow your husband to watch as you engage in sexual roleplay with others 🎭",
+                "Go to a tantric workshop with a lover and practice, then share 🧘",
+                "Let your husband choose the ambiance for your encounters with others 🕯️",
+                "Share comparative intimacy levels with different lovers 💞",
+                "Allow your husband to watch as you explore same-sex experiences 👭",
+                "Go to a sexuality conference and document your experiences 📊",
+                "Let your husband help you create boundaries for different types of encounters 🚧",
+                "Share what you discover about your capacity for pleasure through these experiences 💫",
+                "Allow your husband to watch as you explore age-gap relationships 👥",
+                "Go to a private collection of erotic art and engage in activities, then describe 🖼️",
+                "Let your husband choose the scents you wear for encounters with others 🌹",
+                "Share comparative aftercare experiences with different lovers 🤗",
+                "Allow your husband to watch as you explore power exchange dynamics with others ⚖️",
+                "Go to a sexuality retreat and document your experiences 🏞️",
+                "Let your husband help you integrate these experiences into your marriage 🔗",
+                "Share what you learn about relationship structures through these explorations 🏗️",
+                "Allow your husband to watch as you explore sensory deprivation with others 🕶️",
+                "Go to a private screening of erotic films and engage in activities, then share 🎬",
+                "Let your husband choose the beverages you share with other men 🍷",
+                "Share comparative communication styles with different lovers 🗣️",
+                "Allow your husband to watch as you explore edgeplay with others ⚠️"
+            ],
+
+            extreme: [
+                "Have your husband clean you after you've been with another man 🛁",
+                "Let your husband watch as you're taken by multiple men simultaneously 👥",
+                "Have your husband serve drinks to you and your lovers during an orgy 🍷",
+                "Make your husband wait outside the room while you're with other men 🚪",
+                "Have your husband document your gangbang experience with photos and videos 📸",
+                "Let your husband listen from a cage while you're with other men ⛓️",
+                "Have your husband clean the used condoms after your encounters with others 🎯",
+                "Make your husband beg for permission to watch you with other men 🙏",
+                "Have your husband prepare the bed for you and your lovers 🛏️",
+                "Let your husband watch as you're dominated and used by a group of men 👑",
+                "Have your husband massage your lovers before and after they're with you 💆",
+                "Make your husband wear a chastity device while you're with other men 🔒",
+                "Have your husband taste other men from your body after your encounters 👅",
+                "Let your husband watch as you're shared at a lifestyle party 🎉",
+                "Have your husband drive you to and from your dates with other men 🚗",
+                "Make your husband thank other men for satisfying you 🙏",
+                "Have your husband choose which men will participate in your gangbang 🎯",
+                "Let your husband watch as you're used as a centerpiece in group activities 🌟",
+                "Have your husband clean the sex toys used by you and your lovers 🧼",
+                "Make your husband sleep on the floor after you've been with other men 🛌",
+                "Have your husband pay for your dates with other men 💵",
+                "Let your husband watch as you're passed around at a private party 🔄",
+                "Have your husband prepare romantic meals for you and your lovers 🍽️",
+                "Make your husband wear your lovers' used clothing as humiliation 👕",
+                "Have your husband be your 'fluffer' before your encounters with other men 🎬",
+                "Let your husband watch as you're used in BDSM scenarios with multiple dominants ⛓️",
+                "Have your husband document your sexual experiences in detailed written reports 📝",
+                "Make your husband ask for permission to touch you after you've been with others 🙏",
+                "Have your husband service your lovers in non-sexual ways during parties 🍷",
+                "Let your husband watch as you're shared with much younger or older men 👥",
+                "Have your husband clean the room after your orgies 🧹",
+                "Make your husband wear a collar and leash during your encounters with others 🐕",
+                "Have your husband be the 'warm-up' before you're with other men 🔥",
+                "Let your husband watch as you're used in financial domination scenarios 💵",
+                "Have your husband thank you for allowing him to watch you with other men 🙏",
+                "Make your husband sleep in a separate room indefinitely after certain encounters 🚪",
+                "Have your husband create a shrine to your sexuality with mementos from your encounters 🛕",
+                "Let your husband watch as you're used in cuckold pregnancy fantasies 🤰",
+                "Have your husband service your lovers sexually if they request it 🎯",
+                "Make your husband beg other men for permission to be with you 🙏",
+                "Have your husband wear your soiled clothing as reminders of your encounters 👗",
+                "Let your husband watch as you're used in raceplay scenarios 🌍",
+                "Have your husband be your 'cameraman' during professional-style shoots 📹",
+                "Make your husband use honorifics for your lovers 👑",
+                "Have your husband maintain a calendar of your encounters with other men 📅",
+                "Let your husband watch as you're used in consensual non-consent scenarios 🚫",
+                "Have your husband write love letters to you about your experiences with other men 💌",
+                "Make your husband financially support your lifestyle with other men 💵",
+                "Have your husband service your lovers' partners as part of the dynamic 👥",
+                "Let your husband watch as you're used in extreme BDSM scenarios involving suspension ⛓️",
+                "Have your husband create art inspired by your sexual experiences 🎨",
+                "Make your husband thank you for humiliating him through these experiences 🙏",
+                "Have your husband be your 'safety' during edgeplay with other men ⚠️",
+                "Let your husband watch as you're used in medical play scenarios 🏥",
+                "Have your husband maintain a database of your lovers and their preferences 💾",
+                "Make your husband worship your body after it's been used by other men 🙇",
+                "Have your husband service your lovers in any way they demand 🎯",
+                "Let your husband watch as you're used in fantasy roleplays involving family dynamics 👨‍👩‍👧",
+                "Have your husband write poetry about your beauty when shared with other men 📝",
+                "Make your husband earn money to fund your encounters with other men 💵",
+                "Have your husband be your 'assistant' during dates with other men 📋",
+                "Let your husband watch as you're used in scenarios involving size comparison 📏",
+                "Have your husband maintain a blog about your cuckolding experiences 🌐",
+                "Make your husband thank your lovers for 'training' you 🙏",
+                "Have your husband service your lovers' friends as part of the dynamic 👥",
+                "Let your husband watch as you're used in scenarios involving animal roleplay 🐾",
+                "Have your husband create a financial plan to support your lifestyle with other men 💰",
+                "Make your husband worship the beds where you've been with other men 🛏️",
+                "Have your husband be your 'pimp' in finding new lovers 🎯",
+                "Let your husband watch as you're used in scenarios involving bathroom functions 🚽",
+                "Have your husband maintain a trophy case of mementos from your encounters 🏆",
+                "Make your husband thank you for allowing him to be part of your sexual journey 🙏",
+                "Have your husband service your lovers in public settings where they might be recognized 🌆",
+                "Let your husband watch as you're used in scenarios involving food and sexuality 🍓",
+                "Have your husband create a social media presence documenting your lifestyle 📱",
+                "Make your husband earn the privilege of cleaning you after encounters 🛁",
+                "Have your husband be your 'researcher' for finding new sexual experiences 🔍",
+                "Let your husband watch as you're used in scenarios involving religious roleplay ⛪",
+                "Have your husband maintain a library of literature about cuckolding dynamics 📚",
+                "Make your husband thank your lovers for 'improving' you through their attention 🙏",
+                "Have your husband service your lovers in ways that risk public discovery 🌆",
+                "Let your husband watch as you're used in scenarios involving historical roleplay 🏰",
+                "Have your husband create a business to fund your lifestyle with other men 💼",
+                "Make your husband worship the floor where you've been with other men 🙇"
+            ]
+        };
+
+        // DOM Elements
+        const levelButtons = document.querySelectorAll('.level-btn');
+        const dareButton = document.getElementById('dareButton');
+        const dareResult = document.getElementById('dareResult');
+        
+        let selectedLevel = null;
+
+        // Level Selection
+        levelButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                levelButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Set selected level
+                selectedLevel = this.getAttribute('data-level');
+                
+                // Enable dare button
+                dareButton.disabled = false;
+                
+                // Show initial message
+                dareResult.style.opacity = 1;
+                dareResult.textContent = `Ready for ${this.textContent} dares! Click the button.`;
+            });
+        });
+
+        // Generate Dare Function
+        function generateDare() {
+            if (!selectedLevel) return;
+
+            const dares = dareLevels[selectedLevel];
+            const randomIndex = Math.floor(Math.random() * dares.length);
+            const selectedDare = dares[randomIndex];
+
+            // Update display with fade effect
+            dareResult.style.opacity = 0;
+            setTimeout(() => {
+                dareResult.textContent = selectedDare;
+                dareResult.style.opacity = 1;
+            }, 300);
+        }
+
+        // Event Listeners
+        dareButton.addEventListener('click', generateDare);
+
+        // Initial setup
+        window.onload = function() {
+            dareResult.style.opacity = 1;
+            dareResult.textContent = "Please select your experience level above";
+        };
+    </script>
+</body>
+</html>
