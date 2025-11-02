@@ -673,7 +673,9 @@
             limit: '',
             reason: '',
             instrument: '',
-            punishment: ''
+            punishment: '',
+            wheelIntensity: '',
+            resultIntensity: ''
         };
 
         // Navigation functions
@@ -754,11 +756,25 @@
             wheel.style.transition = 'none';
             wheel.style.transform = 'rotate(0deg)';
             
-            // Generate random spin
+            // Generate random spin and determine wheel intensity
             const spins = 5 + Math.random() * 5; // 5-10 spins
             const degrees = 1440 + Math.floor(Math.random() * 360); // 4 full spins + random
             wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
             wheel.style.transform = `rotate(${degrees}deg)`;
+            
+            // Determine wheel intensity based on final position
+            const finalRotation = degrees % 360;
+            let wheelIntensity = '';
+            if (finalRotation >= 0 && finalRotation < 45) wheelIntensity = 'MILD';
+            else if (finalRotation >= 45 && finalRotation < 90) wheelIntensity = 'MEDIUM';
+            else if (finalRotation >= 90 && finalRotation < 135) wheelIntensity = 'HARD';
+            else if (finalRotation >= 135 && finalRotation < 180) wheelIntensity = 'SEVERE';
+            else if (finalRotation >= 180 && finalRotation < 225) wheelIntensity = 'EXTREME';
+            else if (finalRotation >= 225 && finalRotation < 270) wheelIntensity = 'INTENSE';
+            else if (finalRotation >= 270 && finalRotation < 315) wheelIntensity = 'FIRM';
+            else wheelIntensity = 'STRONG';
+            
+            appData.wheelIntensity = wheelIntensity;
             
             // Change button to "Show Punishment" after spin completes
             setTimeout(() => {
@@ -776,11 +792,25 @@
             wheel.style.transition = 'none';
             wheel.style.transform = 'rotate(0deg)';
             
-            // Generate random spin
+            // Generate random spin and determine wheel intensity
             const spins = 5 + Math.random() * 5; // 5-10 spins
             const degrees = 1440 + Math.floor(Math.random() * 360); // 4 full spins + random
             wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
             wheel.style.transform = `rotate(${degrees}deg)`;
+            
+            // Determine wheel intensity based on final position
+            const finalRotation = degrees % 360;
+            let wheelIntensity = '';
+            if (finalRotation >= 0 && finalRotation < 45) wheelIntensity = 'MILD';
+            else if (finalRotation >= 45 && finalRotation < 90) wheelIntensity = 'MEDIUM';
+            else if (finalRotation >= 90 && finalRotation < 135) wheelIntensity = 'HARD';
+            else if (finalRotation >= 135 && finalRotation < 180) wheelIntensity = 'SEVERE';
+            else if (finalRotation >= 180 && finalRotation < 225) wheelIntensity = 'EXTREME';
+            else if (finalRotation >= 225 && finalRotation < 270) wheelIntensity = 'INTENSE';
+            else if (finalRotation >= 270 && finalRotation < 315) wheelIntensity = 'FIRM';
+            else wheelIntensity = 'STRONG';
+            
+            appData.wheelIntensity = wheelIntensity;
             
             // Change button to "Show Punishment" after spin completes
             setTimeout(() => {
@@ -797,34 +827,35 @@
             
             // Determine punishment based on limit
             let punishment = '';
-            let intensity = '';
+            let resultIntensity = '';
             
             switch(appData.limit) {
                 case 'soft':
                     punishment = '10 gentle strokes';
-                    intensity = 'Light pink marks';
+                    resultIntensity = 'Light pink marks';
                     break;
                 case 'medium':
                     punishment = '20 firm strokes';
-                    intensity = 'Noticeable redness';
+                    resultIntensity = 'Noticeable redness';
                     break;
                 case 'hard':
                     punishment = '30 strong strokes';
-                    intensity = 'Red stripes, mild discomfort';
+                    resultIntensity = 'Red stripes, mild discomfort';
                     break;
                 case 'extreme':
                     punishment = '50 intense strokes';
-                    intensity = 'Severe red stripes, crying expected';
+                    resultIntensity = 'Severe red stripes, crying expected';
                     break;
             }
             
             appData.punishment = punishment;
+            appData.resultIntensity = resultIntensity;
             
             // Show punishment result
             const resultText = document.getElementById('result-text');
             resultText.innerHTML = `
                 <strong>${punishment}</strong> with the ${appData.instrument}<br>
-                <em>Intensity: ${intensity}</em>
+                <em>Intensity: ${resultIntensity}</em>
             `;
             punishmentResult.style.display = 'block';
             
@@ -877,6 +908,9 @@
                 <p><strong>Instrument of Correction:</strong> ${instrumentMap[appData.instrument]}</p>
                 <p><strong>Punishment Level:</strong> ${appData.limit.charAt(0).toUpperCase() + appData.limit.slice(1)}</p>
                 <p><strong>Prescribed Punishment:</strong> ${appData.punishment}</p>
+                <p><strong>Punishment Intensity:</strong><br>
+                - Wheel Determination: ${appData.wheelIntensity}<br>
+                - Expected Outcome: ${appData.resultIntensity}</p>
                 
                 <p>The Submissive acknowledges that this punishment is deserved and agrees to accept it without resistance. The Goddess agrees to administer the punishment within the agreed limits.</p>
                 
@@ -938,7 +972,9 @@
                 limit: '',
                 reason: '',
                 instrument: '',
-                punishment: ''
+                punishment: '',
+                wheelIntensity: '',
+                resultIntensity: ''
             };
             
             // Go back to welcome screen
