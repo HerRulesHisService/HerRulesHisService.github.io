@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Goddess Punishment Wheel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #8a2be2;
+            --primary-dark: #6a1cb3;
+            --secondary: #ff4081;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f8f8ff;
+            --accent: #e91e63;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            background: rgba(26, 26, 46, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(138, 43, 226, 0.3);
+            animation: fadeIn 0.5s ease;
+        }
+
+        .active {
+            display: block;
+        }
+
+        h1, h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--light);
+            text-shadow: 0 0 10px rgba(138, 43, 226, 0.5);
+        }
+
+        h1 {
+            font-size: 3rem;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            font-size: 2.2rem;
+            margin-bottom: 40px;
+        }
+
+        .welcome-message {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 40px;
+            line-height: 1.6;
+            color: #e0e0ff;
+            font-style: italic;
+        }
+
+        .kinky-message {
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            background: rgba(138, 43, 226, 0.2);
+            border-radius: 15px;
+            border-left: 5px solid var(--secondary);
+            font-weight: bold;
+            color: var(--light);
+            text-shadow: 0 0 5px rgba(255, 64, 129, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.2rem;
+            color: #d0d0ff;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            background: rgba(26, 26, 46, 0.7);
+            color: var(--light);
+            font-size: 1.1rem;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(255, 64, 129, 0.5);
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(138, 43, 226, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(138, 43, 226, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .limit-options {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .limit-option {
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 200px;
+        }
+
+        .limit-option:hover {
+            background: rgba(138, 43, 226, 0.4);
+            transform: scale(1.05);
+        }
+
+        .limit-option.selected {
+            background: rgba(255, 64, 129, 0.3);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(255, 64, 129, 0.5);
+        }
+
+        .instrument-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .instrument {
+            background: rgba(138, 43, 226, 0.2);
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 10px;
+            padding: 20px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .instrument:hover {
+            background: rgba(138, 43, 226, 0.4);
+            transform: scale(1.05);
+        }
+
+        .instrument.selected {
+            background: rgba(255, 64, 129, 0.3);
+            border-color: var(--secondary);
+            box-shadow: 0 0 15px rgba(255, 64, 129, 0.5);
+        }
+
+        .instrument i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: var(--light);
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto 40px;
+        }
+
+        .wheel {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                from 0deg,
+                #ff4081, #8a2be2, #4a00e0, #8e2de2, #ff4081
+            );
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 0 10px rgba(138, 43, 226, 0.3),
+                        0 0 30px rgba(138, 43, 226, 0.5);
+            transition: transform 3s cubic-bezier(0.2, 0.8, 0.3, 1);
+        }
+
+        .wheel-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            transform-origin: bottom right;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+
+        .wheel-center {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            background: var(--dark);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light);
+        }
+
+        .pointer {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 40px;
+            background: var(--secondary);
+            clip-path: polygon(50% 100%, 0 0, 100% 0);
+            z-index: 20;
+        }
+
+        .punishment-result {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 64, 129, 0.2);
+            border-radius: 15px;
+            margin-top: 30px;
+            border-left: 5px solid var(--secondary);
+            display: none;
+        }
+
+        .punishment-result h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--light);
+        }
+
+        .punishment-result p {
+            font-size: 1.3rem;
+            line-height: 1.6;
+        }
+
+        .agreement {
+            background: rgba(26, 26, 46, 0.9);
+            padding: 30px;
+            border-radius: 15px;
+            margin-top: 30px;
+            border: 2px solid rgba(138, 43, 226, 0.5);
+            display: none;
+        }
+
+        .agreement h3 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 2rem;
+            color: var(--secondary);
+        }
+
+        .agreement-content {
+            line-height: 1.8;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .agreement-content p {
+            margin-bottom: 15px;
+        }
+
+        .agreement-buttons {
+            display: flex;
+            gap: 20px;
+        }
+
+        .agreement-buttons button {
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(to right, #4a4a6e, #2a2a4e);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(to right, #5a5a7e, #3a3a5e);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(138, 43, 226, 0.3);
+            border-radius: 3px;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .step-indicator {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+        }
+
+        .step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(138, 43, 226, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--light);
+            position: relative;
+        }
+
+        .step.active {
+            background: var(--primary);
+            box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+        }
+
+        .step.completed {
+            background: var(--secondary);
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 100%;
+            width: 80px;
+            height: 2px;
+            background: rgba(138, 43, 226, 0.3);
+            transform: translateY(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo i {
+            font-size: 4rem;
+            color: var(--secondary);
+            text-shadow: 0 0 20px rgba(255, 64, 129, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.8rem;
+            }
+            
+            .wheel-container {
+                width: 300px;
+                height: 300px;
+            }
+            
+            .agreement-buttons {
+                flex-direction: column;
+            }
+            
+            .limit-options {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="screen active" id="welcome-screen">
+            <div class="logo">
+                <i class="fas fa-gem"></i>
+            </div>
+            <h1>Goddess Punishment Wheel</h1>
+            <div class="welcome-message">
+                Welcome to the ultimate tool for establishing discipline and obedience.
+            </div>
+            <div class="kinky-message">
+                Your submission is our pleasure. Surrender control and embrace the consequences.
+            </div>
+            <button class="btn" id="start-btn">Begin Your Journey</button>
+        </div>
+
+        <!-- Names Screen -->
+        <div class="screen" id="names-screen">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step active">2</div>
+                <div class="step">3</div>
+                <div class="step">4</div>
+                <div class="step">5</div>
+                <div class="step">6</div>
+            </div>
+            <h2>Enter Your Details</h2>
+            <div class="form-group">
+                <label for="sub-name">Submissive's Name</label>
+                <input type="text" id="sub-name" placeholder="Enter the sub's name">
+            </div>
+            <div class="form-group">
+                <label for="goddess-name">Goddess's Name</label>
+                <input type="text" id="goddess-name" placeholder="Enter the Goddess's name">
+            </div>
+            <button class="btn" id="names-next">Continue</button>
+        </div>
+
+        <!-- Limits Screen -->
+        <div class="screen" id="limits-screen">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step active">3</div>
+                <div class="step">4</div>
+                <div class="step">5</div>
+                <div class="step">6</div>
+            </div>
+            <h2>Select Limits</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #d0d0ff;">Choose the intensity level for the punishment</p>
+            <div class="limit-options">
+                <div class="limit-option" data-limit="soft">Soft<br><small>Light discipline</small></div>
+                <div class="limit-option" data-limit="medium">Medium<br><small>Moderate correction</small></div>
+                <div class="limit-option" data-limit="hard">Hard<br><small>Severe punishment</small></div>
+                <div class="limit-option" data-limit="extreme">Extreme<br><small>No limits</small></div>
+            </div>
+            <button class="btn" id="limits-next">Continue</button>
+        </div>
+
+        <!-- Reason Screen -->
+        <div class="screen" id="reason-screen">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step active">4</div>
+                <div class="step">5</div>
+                <div class="step">6</div>
+            </div>
+            <h2>Reason for Punishment</h2>
+            <div class="form-group">
+                <label for="punishment-reason">Select the reason</label>
+                <select id="punishment-reason">
+                    <option value="">-- Select a reason --</option>
+                    <option value="daily">Daily Punishment</option>
+                    <option value="disobedience">Disobedience</option>
+                    <option value="attitude">Bad Attitude</option>
+                    <option value="tasks">Incomplete Tasks</option>
+                    <option value="protocol">Protocol Violation</option>
+                    <option value="other">Other Indiscipline</option>
+                </select>
+            </div>
+            <button class="btn" id="reason-next">Continue</button>
+        </div>
+
+        <!-- Instrument Screen -->
+        <div class="screen" id="instrument-screen">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step completed">4</div>
+                <div class="step active">5</div>
+                <div class="step">6</div>
+            </div>
+            <h2>Select Instrument</h2>
+            <p style="text-align: center; margin-bottom: 20px; color: #d0d0ff;">Choose the tool for discipline</p>
+            <div class="instrument-options">
+                <div class="instrument" data-instrument="belt">
+                    <i class="fas fa-grip-lines"></i>
+                    <div>Belt</div>
+                </div>
+                <div class="instrument" data-instrument="spatula">
+                    <i class="fas fa-utensil-spoon"></i>
+                    <div>Wooden Spatula</div>
+                </div>
+                <div class="instrument" data-instrument="slipper">
+                    <i class="fas fa-shoe-prints"></i>
+                    <div>Slipper</div>
+                </div>
+                <div class="instrument" data-instrument="comb">
+                    <i class="fas fa-vector-square"></i>
+                    <div>Thick Comb</div>
+                </div>
+                <div class="instrument" data-instrument="cane">
+                    <i class="fas fa-walking-stick"></i>
+                    <div>Cane</div>
+                </div>
+                <div class="instrument" data-instrument="paddle">
+                    <i class="fas fa-table-tennis"></i>
+                    <div>Paddle</div>
+                </div>
+                <!-- New instruments -->
+                <div class="instrument" data-instrument="hanger">
+                    <i class="fas fa-tshirt"></i>
+                    <div>Clothes Hanger</div>
+                </div>
+                <div class="instrument" data-instrument="whip">
+                    <i class="fas fa-wind"></i>
+                    <div>Single Tail Whip</div>
+                </div>
+                <div class="instrument" data-instrument="flogger">
+                    <i class="fas fa-feather-alt"></i>
+                    <div>Flogger</div>
+                </div>
+                <div class="instrument" data-instrument="crop">
+                    <i class="fas fa-horse"></i>
+                    <div>Riding Crop</div>
+                </div>
+                <div class="instrument" data-instrument="paddle-heavy">
+                    <i class="fas fa-weight-hanging"></i>
+                    <div>Heavy Paddle</div>
+                </div>
+                <div class="instrument" data-instrument="tawse">
+                    <i class="fas fa-grip-lines-vertical"></i>
+                    <div>Tawse</div>
+                </div>
+            </div>
+            <button class="btn" id="instrument-next">Continue</button>
+        </div>
+
+        <!-- Wheel Screen -->
+        <div class="screen" id="wheel-screen">
+            <div class="step-indicator">
+                <div class="step completed">1</div>
+                <div class="step completed">2</div>
+                <div class="step completed">3</div>
+                <div class="step completed">4</div>
+                <div class="step completed">5</div>
+                <div class="step active">6</div>
+            </div>
+            <h2>Punishment Wheel</h2>
+            <div class="wheel-container" id="wheel-container">
+                <div class="pointer"></div>
+                <div class="wheel" id="wheel">
+                    <div class="wheel-center">
+                        <i class="fas fa-gavel"></i>
+                    </div>
+                </div>
+            </div>
+            <button class="btn" id="spin-btn">Spin Wheel</button>
+            <div class="punishment-result" id="punishment-result">
+                <h3>Punishment Determined</h3>
+                <p id="result-text">The wheel has spoken! Your fate is sealed.</p>
+            </div>
+            <button class="btn" id="generate-agreement" style="display: none;">Generate Agreement</button>
+        </div>
+
+        <!-- Agreement Screen -->
+        <div class="screen" id="agreement-screen">
+            <h2>Punishment Agreement</h2>
+            <div class="agreement" id="agreement">
+                <h3>Official Punishment Contract</h3>
+                <div class="agreement-content" id="agreement-content">
+                    <!-- Agreement content will be generated here -->
+                </div>
+                <div class="agreement-buttons">
+                    <button class="btn" id="screenshot-btn">Take Screenshot</button>
+                    <button class="btn btn-secondary" id="reset-btn">Start Over</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        // DOM Elements
+        const screens = document.querySelectorAll('.screen');
+        const startBtn = document.getElementById('start-btn');
+        const namesNextBtn = document.getElementById('names-next');
+        const limitsNextBtn = document.getElementById('limits-next');
+        const reasonNextBtn = document.getElementById('reason-next');
+        const instrumentNextBtn = document.getElementById('instrument-next');
+        const spinBtn = document.getElementById('spin-btn');
+        const generateAgreementBtn = document.getElementById('generate-agreement');
+        const screenshotBtn = document.getElementById('screenshot-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const wheelContainer = document.getElementById('wheel-container');
+        const punishmentResult = document.getElementById('punishment-result');
+        
+        // Data storage
+        let appData = {
+            subName: '',
+            goddessName: '',
+            limit: '',
+            reason: '',
+            instrument: '',
+            punishment: ''
+        };
+
+        // Navigation functions
+        function showScreen(screenId) {
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+
+        // Event Listeners
+        startBtn.addEventListener('click', () => showScreen('names-screen'));
+        
+        namesNextBtn.addEventListener('click', () => {
+            const subName = document.getElementById('sub-name').value;
+            const goddessName = document.getElementById('goddess-name').value;
+            
+            if (subName && goddessName) {
+                appData.subName = subName;
+                appData.goddessName = goddessName;
+                showScreen('limits-screen');
+            } else {
+                alert('Please enter both names');
+            }
+        });
+        
+        // Limit selection
+        const limitOptions = document.querySelectorAll('.limit-option');
+        limitOptions.forEach(option => {
+            option.addEventListener('click', () => {
+                limitOptions.forEach(opt => opt.classList.remove('selected'));
+                option.classList.add('selected');
+                appData.limit = option.getAttribute('data-limit');
+            });
+        });
+        
+        limitsNextBtn.addEventListener('click', () => {
+            if (appData.limit) {
+                showScreen('reason-screen');
+            } else {
+                alert('Please select a limit');
+            }
+        });
+        
+        reasonNextBtn.addEventListener('click', () => {
+            const reason = document.getElementById('punishment-reason').value;
+            if (reason) {
+                appData.reason = reason;
+                showScreen('instrument-screen');
+            } else {
+                alert('Please select a reason');
+            }
+        });
+        
+        // Instrument selection
+        const instrumentOptions = document.querySelectorAll('.instrument');
+        instrumentOptions.forEach(instrument => {
+            instrument.addEventListener('click', () => {
+                instrumentOptions.forEach(inst => inst.classList.remove('selected'));
+                instrument.classList.add('selected');
+                appData.instrument = instrument.getAttribute('data-instrument');
+            });
+        });
+        
+        instrumentNextBtn.addEventListener('click', () => {
+            if (appData.instrument) {
+                showScreen('wheel-screen');
+            } else {
+                alert('Please select an instrument');
+            }
+        });
+        
+        // Wheel functionality
+        spinBtn.addEventListener('click', () => {
+            const wheel = document.getElementById('wheel');
+            
+            // Reset wheel
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            // Generate random spin
+            const spins = 5 + Math.random() * 5; // 5-10 spins
+            const degrees = 1440 + Math.floor(Math.random() * 360); // 4 full spins + random
+            wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            wheel.style.transform = `rotate(${degrees}deg)`;
+            
+            // Change button to "Show Punishment" after spin completes
+            setTimeout(() => {
+                spinBtn.textContent = 'Show Punishment';
+                spinBtn.removeEventListener('click', spinWheelHandler);
+                spinBtn.addEventListener('click', showPunishmentHandler);
+            }, 4100);
+        });
+        
+        // Spin wheel handler
+        function spinWheelHandler() {
+            const wheel = document.getElementById('wheel');
+            
+            // Reset wheel
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            // Generate random spin
+            const spins = 5 + Math.random() * 5; // 5-10 spins
+            const degrees = 1440 + Math.floor(Math.random() * 360); // 4 full spins + random
+            wheel.style.transition = 'transform 4s cubic-bezier(0.2, 0.8, 0.3, 1)';
+            wheel.style.transform = `rotate(${degrees}deg)`;
+            
+            // Change button to "Show Punishment" after spin completes
+            setTimeout(() => {
+                spinBtn.textContent = 'Show Punishment';
+                spinBtn.removeEventListener('click', spinWheelHandler);
+                spinBtn.addEventListener('click', showPunishmentHandler);
+            }, 4100);
+        }
+        
+        // Show punishment handler
+        function showPunishmentHandler() {
+            // Hide wheel container
+            wheelContainer.style.display = 'none';
+            
+            // Determine punishment based on limit
+            let punishment = '';
+            let intensity = '';
+            
+            switch(appData.limit) {
+                case 'soft':
+                    punishment = '10 gentle strokes';
+                    intensity = 'Light pink marks';
+                    break;
+                case 'medium':
+                    punishment = '20 firm strokes';
+                    intensity = 'Noticeable redness';
+                    break;
+                case 'hard':
+                    punishment = '30 strong strokes';
+                    intensity = 'Red stripes, mild discomfort';
+                    break;
+                case 'extreme':
+                    punishment = '50 intense strokes';
+                    intensity = 'Severe red stripes, crying expected';
+                    break;
+            }
+            
+            appData.punishment = punishment;
+            
+            // Show punishment result
+            const resultText = document.getElementById('result-text');
+            resultText.innerHTML = `
+                <strong>${punishment}</strong> with the ${appData.instrument}<br>
+                <em>Intensity: ${intensity}</em>
+            `;
+            punishmentResult.style.display = 'block';
+            
+            // Show generate agreement button
+            generateAgreementBtn.style.display = 'block';
+            
+            // Hide the spin/show punishment button
+            spinBtn.style.display = 'none';
+        }
+        
+        // Initialize spin button with spin handler
+        spinBtn.addEventListener('click', spinWheelHandler);
+        
+        // Generate Agreement
+        generateAgreementBtn.addEventListener('click', () => {
+            const agreementContent = document.getElementById('agreement-content');
+            
+            // Map reason to readable text
+            const reasonMap = {
+                'daily': 'Daily Punishment',
+                'disobedience': 'Disobedience',
+                'attitude': 'Bad Attitude',
+                'tasks': 'Incomplete Tasks',
+                'protocol': 'Protocol Violation',
+                'other': 'Other Indiscipline'
+            };
+            
+            // Map instrument to readable text
+            const instrumentMap = {
+                'belt': 'Leather Belt',
+                'spatula': 'Wooden Spatula',
+                'slipper': 'Slipper',
+                'comb': 'Thick Comb',
+                'cane': 'Rattan Cane',
+                'paddle': 'Wooden Paddle',
+                'hanger': 'Clothes Hanger',
+                'whip': 'Single Tail Whip',
+                'flogger': 'Flogger',
+                'crop': 'Riding Crop',
+                'paddle-heavy': 'Heavy Paddle',
+                'tawse': 'Tawse'
+            };
+            
+            agreementContent.innerHTML = `
+                <p>This agreement is made between <strong>${appData.goddessName}</strong> (The Goddess) and <strong>${appData.subName}</strong> (The Submissive) on ${new Date().toLocaleDateString()}.</p>
+                
+                <p>The Submissive has willingly consented to the following punishment terms:</p>
+                
+                <p><strong>Reason for Punishment:</strong> ${reasonMap[appData.reason]}</p>
+                <p><strong>Instrument of Correction:</strong> ${instrumentMap[appData.instrument]}</p>
+                <p><strong>Punishment Level:</strong> ${appData.limit.charAt(0).toUpperCase() + appData.limit.slice(1)}</p>
+                <p><strong>Prescribed Punishment:</strong> ${appData.punishment}</p>
+                
+                <p>The Submissive acknowledges that this punishment is deserved and agrees to accept it without resistance. The Goddess agrees to administer the punishment within the agreed limits.</p>
+                
+                <p>Both parties agree that this contract is binding and signifies the Submissive's complete submission to the Goddess's authority.</p>
+                
+                <p style="margin-top: 30px;">
+                    <strong>Signed:</strong><br><br>
+                    _________________________<br>
+                    ${appData.goddessName} (Goddess)<br><br><br>
+                    
+                    _________________________<br>
+                    ${appData.subName} (Submissive)
+                </p>
+            `;
+            
+            showScreen('agreement-screen');
+            document.getElementById('agreement').style.display = 'block';
+        });
+        
+        // Screenshot functionality
+        screenshotBtn.addEventListener('click', () => {
+            html2canvas(document.getElementById('agreement')).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `punishment-agreement-${new Date().getTime()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        });
+        
+        // Reset functionality
+        resetBtn.addEventListener('click', () => {
+            // Reset all form elements
+            document.getElementById('sub-name').value = '';
+            document.getElementById('goddess-name').value = '';
+            
+            limitOptions.forEach(opt => opt.classList.remove('selected'));
+            document.getElementById('punishment-reason').selectedIndex = 0;
+            instrumentOptions.forEach(inst => inst.classList.remove('selected'));
+            
+            // Reset wheel screen elements
+            const wheel = document.getElementById('wheel');
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            wheelContainer.style.display = 'block';
+            punishmentResult.style.display = 'none';
+            generateAgreementBtn.style.display = 'none';
+            spinBtn.style.display = 'block';
+            spinBtn.textContent = 'Spin Wheel';
+            
+            // Remove and re-add event listeners
+            spinBtn.removeEventListener('click', showPunishmentHandler);
+            spinBtn.addEventListener('click', spinWheelHandler);
+            
+            // Reset data
+            appData = {
+                subName: '',
+                goddessName: '',
+                limit: '',
+                reason: '',
+                instrument: '',
+                punishment: ''
+            };
+            
+            // Go back to welcome screen
+            showScreen('welcome-screen');
+        });
+
+        // Create wheel sections
+        function createWheelSections() {
+            const wheel = document.getElementById('wheel');
+            const sections = 8;
+            
+            for (let i = 0; i < sections; i++) {
+                const section = document.createElement('div');
+                section.className = 'wheel-section';
+                section.style.transform = `rotate(${i * 45}deg)`;
+                
+                const text = document.createElement('div');
+                text.style.transform = 'rotate(67.5deg)';
+                text.textContent = ['MILD', 'MEDIUM', 'HARD', 'SEVERE', 'EXTREME', 'INTENSE', 'FIRM', 'STRONG'][i];
+                section.appendChild(text);
+                
+                wheel.appendChild(section);
+            }
+        }
+
+        // Initialize the app
+        createWheelSections();
+    </script>
+</body>
+</html>
