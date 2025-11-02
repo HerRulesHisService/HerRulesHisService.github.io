@@ -1,896 +1,874 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chastity Time Selector</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --primary: #ff66b2; /* Strong Pink */
-    --highlight: #ff99cc; /* Lighter Pink for glass */
-    --bg-gradient: linear-gradient(135deg, #ffe1f0 0%, #ffd1dc 100%);
-    --glass-bg: rgba(255, 255, 255, 0.25);
-    --grid-columns: 5; 
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chastity Time Selector</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff66b2; /* Strong Pink */
+            --highlight: #ff99cc; /* Lighter Pink for glass */
+            --bg-gradient: linear-gradient(135deg, #ffe1f0 0%, #ffd1dc 100%);
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --grid-columns: 5;
+        }
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            font-size: 30px;
+            margin-bottom: 10px;
+            font-weight: 700;
+            color: #111;
+        }
+        h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            color: #444;
+        }
+        .game-container {
+            display: inline-block;
+            padding: 20px;
+            border-radius: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+            max-width: 100%;
+            width: auto;
+            margin: 0 auto;
+        }
 
+        /* --- RESPONSIVE LAYOUT CORE --- */
+        #responsiveWrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        #spinnerContent {
+            flex: 0 0 auto;
+            max-width: 450px;
+            margin: 0 auto;
+        }
+        #resultTracker {
+            flex: 1 1 100%;
+            text-align: left;
+            border-top: 2px solid var(--highlight);
+            padding-top: 15px;
+            margin-top: 15px;
+            overflow-y: auto;
+        }
+        @media (min-width: 768px) {
+            .game-container {
+                max-width: 950px;
+            }
+            #responsiveWrapper {
+                flex-direction: row;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            #spinnerContent {
+                flex: 0 0 400px;
+                margin: 0;
+            }
+            #gridWrapper {
+                padding-right: 5px;
+            }
+            #resultTracker {
+                flex: 1 1 auto;
+                margin-top: 0;
+                padding-left: 20px;
+                border-top: none;
+                border-left: 2px solid var(--highlight);
+                min-width: 300px;
+                max-height: 480px;
+            }
+            #mainControls {
+                display: flex;
+                justify-content: center;
+                gap: 10px;
+            }
+        }
+        /* --- END RESPONSIVE LAYOUT CORE --- */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(var(--grid-columns), 1fr);
+            gap: 8px;
+            justify-content: center;
+            margin: 15px auto 5px auto;
+        }
+        .cell {
+            padding: 12px 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            font-weight: 600;
+            color: #333;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            cursor: default;
+            transition: transform 0.1s ease, background 0.3s ease, box-shadow 0.3s ease;
+            user-select: none;
+            font-size: 0.9em;
+        }
+        .highlight {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 102, 178, 1);
+            transform: scale(1.05);
+        }
+        .btn-container {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 14px;
+            border: none;
+            border-radius: 50px;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s, transform 0.2s, opacity 0.3s;
+            box-shadow: 0 3px 10px rgba(255, 102, 178, 0.3);
+        }
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        button:hover:not(:disabled) {
+            background: #ff4d9d;
+            transform: scale(1.03);
+        }
+        .btn-danger {
+            background: #ff4d4d; /* Red color */
+            box-shadow: 0 3px 10px rgba(255, 77, 77, 0.5);
+        }
+        .btn-danger:hover:not(:disabled) {
+            background: #e60000;
+        }
+        footer {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #444;
+        }
+        .dynamic-footer-text {
+            font-size: 14px;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary);
+            display: block;
+        }
+        /* Styling for the results display */
+        #resultsList {
+            list-style-type: none;
+            padding: 0;
+            margin: 10px 0 0 0;
+            font-size: 0.95em;
+            font-weight: 500;
+        }
+        #resultsList li {
+            margin: 8px 0;
+            padding: 3px;
+            border-bottom: 1px dashed rgba(255, 102, 178, 0.3);
+            color: #333;
+            line-height: 1.3;
+        }
+        #resultsList li span {
+            display: block;
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 1.05em;
+        }
+        #resultsList li:last-child {
+            border-bottom: none;
+        }
+        /* Style for final comments/messages */
+        .final-text {
+            margin-top: 10px;
+            font-weight: 600;
+            font-style: italic;
+            color: #666;
+            font-size: 1.0em;
+        }
+        /* Style for the absolute final chosen result */
+        #finalChosenResult h2 {
+            font-size: 2.5em;
+            color: #000;
+            margin-top: 20px;
+            font-weight: 700;
+        }
+        #finalChosenResult h3 {
+            font-size: 1.5em;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
 
-  body {
-    background: var(--bg-gradient);
-    font-family: 'Poppins', sans-serif;
-    text-align: center;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 20px;
-    color: #333;
-  }
-
-
-  h1 {
-    font-size: 30px; 
-    margin-bottom: 10px; 
-    font-weight: 700;
-    color: #111;
-  }
-  
-  h2 {
-    font-size: 20px; 
-    margin-bottom: 15px; 
-    font-weight: 600;
-    color: #444;
-  }
-
-
-  .game-container {
-    display: inline-block;
-    padding: 20px; 
-    border-radius: 20px;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 8px 30px rgba(0,0,0,0.1);
-    border: 1px solid rgba(255,255,255,0.3);
-    transition: all 0.3s ease;
-    max-width: 100%; 
-    width: auto; 
-    margin: 0 auto;
-  }
-  
-  /* --- RESPONSIVE LAYOUT CORE --- */
-  #responsiveWrapper {
-      display: flex;
-      flex-direction: column; 
-      gap: 20px; 
-  }
-
-  #spinnerContent {
-      flex: 0 0 auto;
-      max-width: 450px; 
-      margin: 0 auto;
-  }
-
-  #resultTracker {
-      flex: 1 1 100%; 
-      text-align: left;
-      border-top: 2px solid var(--highlight); 
-      padding-top: 15px;
-      margin-top: 15px; 
-      overflow-y: auto; 
-  }
-
-  @media (min-width: 768px) {
-      /* Desktop View: Side-by-Side */
-      .game-container {
-          max-width: 950px; 
-      }
-      
-      #responsiveWrapper {
-          flex-direction: row; 
-          align-items: flex-start;
-          gap: 20px;
-      }
-
-      #spinnerContent {
-          flex: 0 0 400px; 
-          margin: 0; 
-      }
-      
-      #gridWrapper {
-          padding-right: 5px;
-      }
-      
-      #resultTracker {
-          flex: 1 1 auto;
-          margin-top: 0;
-          padding-left: 20px; 
-          border-top: none; 
-          border-left: 2px solid var(--highlight); 
-          min-width: 300px;
-          max-height: 480px; 
-      }
-      
-      #mainControls {
-          display: flex;
-          justify-content: center;
-          gap: 10px;
-      }
-  }
-  /* --- END RESPONSIVE LAYOUT CORE --- */
-
-
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(var(--grid-columns), 1fr); 
-    gap: 8px; 
-    justify-content: center;
-    margin: 15px auto 5px auto; 
-  }
-
-
-  .cell {
-    padding: 12px 6px; 
-    background: rgba(255, 255, 255, 0.6);
-    border-radius: 10px; 
-    font-weight: 600;
-    color: #333;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    cursor: default;
-    transition: transform 0.1s ease, background 0.3s ease, box-shadow 0.3s ease;
-    user-select: none;
-    font-size: 0.9em; 
-  }
-
-  .highlight {
-    background: var(--primary); 
-    color: white; 
-    box-shadow: 0 0 20px rgba(255, 102, 178, 1); 
-    transform: scale(1.05); 
-  }
-
-
-  .btn-container {
-    margin-top: 15px; 
-    display: flex;
-    justify-content: center;
-    gap: 10px; 
-    flex-wrap: wrap;
-  }
-
-  button {
-    padding: 10px 20px; 
-    font-size: 14px; 
-    border: none;
-    border-radius: 50px;
-    background: var(--primary);
-    color: white;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background 0.3s, transform 0.2s, opacity 0.3s;
-    box-shadow: 0 3px 10px rgba(255, 102, 178, 0.3);
-  }
-
-  button:disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-      transform: none;
-  }
-
-
-  button:hover:not(:disabled) {
-    background: #ff4d9d;
-    transform: scale(1.03);
-  }
-  
-  /* New style for the "Choose" button */
-  .btn-danger {
-      background: #ff4d4d; /* Red color */
-      box-shadow: 0 3px 10px rgba(255, 77, 77, 0.5);
-  }
-  
-  .btn-danger:hover:not(:disabled) {
-      background: #e60000;
-  }
-
-
-  footer {
-    margin-top: 15px; 
-    font-size: 12px; 
-    color: #444;
-  }
-
-  /* Style for the dynamic kinky comment */
-  .dynamic-footer-text {
-    font-size: 14px; 
-    margin-bottom: 5px; 
-    font-weight: 600;
-    color: var(--primary); 
-    display: block;
-  }
-  
-  /* Styling for the results display */
-  #resultsList {
-      list-style-type: none;
-      padding: 0;
-      margin: 10px 0 0 0;
-      font-size: 0.95em;
-      font-weight: 500;
-  }
-  
-  #resultsList li {
-      margin: 8px 0; 
-      padding: 3px;
-      border-bottom: 1px dashed rgba(255, 102, 178, 0.3);
-      color: #333;
-      line-height: 1.3;
-  }
-  
-  #resultsList li span {
-      display: block;
-      font-weight: 700;
-      color: var(--primary);
-      font-size: 1.05em;
-  }
-  
-  #resultsList li:last-child {
-      border-bottom: none;
-  }
-  
-  /* Style for final comments/messages */
-  .final-text {
-      margin-top: 10px;
-      font-weight: 600;
-      font-style: italic;
-      color: #666;
-      font-size: 1.0em;
-  }
-  
-  /* Style for the absolute final chosen result */
-  #finalChosenResult h2 {
-      font-size: 2.5em;
-      color: #000;
-      margin-top: 20px;
-      font-weight: 700;
-  }
-  
-  #finalChosenResult h3 {
-      font-size: 1.5em;
-      color: var(--primary);
-      margin-bottom: 20px;
-      font-weight: 600;
-  }
-</style>
+        /* Styles for Agreement Screens */
+        .agreement-input-container, .agreement-display-container {
+            max-width: 600px;
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.4);
+            text-align: left;
+        }
+        .agreement-input-container label, .agreement-input-container input {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        .agreement-input-container input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--primary);
+            border-radius: 8px;
+            font-size: 1em;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .agreement-input-container button {
+            margin-top: 20px;
+            width: auto;
+            padding: 12px 25px;
+            font-size: 16px;
+        }
+        .agreement-content {
+            white-space: pre-wrap; /* Preserve line breaks */
+            text-align: left;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px dashed var(--primary);
+            border-radius: 10px;
+            background-color: rgba(255, 255, 255, 0.7);
+            font-size: 1.05em;
+            line-height: 1.6;
+            color: #222;
+        }
+        .agreement-content strong {
+            color: var(--primary);
+        }
+        .agreement-content .agreement-names {
+            font-weight: 700;
+            color: #000;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .agreement-content .release-info {
+            font-weight: 600;
+            color: #555;
+            margin-top: 15px;
+            display: block;
+        }
+        .agreement-display-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-  <div class="game-container" id="captureArea">
-    <h1>🎲 Chastity Time Selector</h1>
-
-    <!-- 1. Start Screen -->
-    <div id="startScreen">
-      <h2>Select Game Mode</h2>
-      <div class="btn-container">
-        <button onclick="startGame(1)">One and Only</button>
-        <button onclick="startGame(3)">Best of Three</button>
-      </div>
-    </div>
-
-    <!-- 2. Range Selection Screen -->
-    <div id="rangeScreen" style="display: none;">
-      <h2>Select Time Range</h2>
-      <div class="btn-container range-buttons">
-        <!-- Buttons will be generated by JS -->
-      </div>
-    </div>
-
-    <!-- 3. Spinner Screen (Used for Spinning AND Final Summary Before Choice) -->
-    <div id="spinnerScreen" style="display: none;">
-      
-      <div id="responsiveWrapper">
-          
-          <div id="spinnerContent">
-              <div id="spinControlsContainer">
-                  <h2><span id="gameModeText"></span> - Spin <span id="currentSpinCount">1</span> of <span id="totalSpins">1</span></h2>
-                  
-                  <!-- Grid container -->
-                  <div id="gridWrapper"> 
-                    <div class="grid" id="grid"></div>
-                  </div>
-                  
-                  <!-- Consolidated Buttons -->
-                  <div id="mainControls" class="btn-container">
-                    <button id="spinButton" onclick="toggleSpin()">🎲 Spin</button>
-                    <!-- nextSpin is now hidden and replaced by startSpin logic -->
-                    <button id="nextSpinButton" onclick="nextSpin()" style="display: none;">Next Spin</button>
-                    <!-- These are visible throughout the process -->
-                    <button id="screenshotButton" onclick="takeScreenshot()">📸 Screenshot</button>
-                    <button id="resetButton" onclick="resetGame()">🔄 Start Over</button>
-                    <!-- New choice button, visible only at the end of all spins -->
-                    <button id="chooseFinalButton" class="btn-danger" onclick="chooseFinalResult()" style="display: none;">❓ Choose Best or Least</button>
-                  </div>
-                  
-                  <!-- The postSpinComment remains for the cheeky message or end-of-game notification -->
-                  <div id="postSpinComment" class="final-text"></div>
-              </div>
-          </div>
-          
-          <!-- Results Tracker -->
-          <div id="resultTracker">
-              <h3>Results Tracker:</h3>
-              <ul id="resultsList"></ul>
-          </div>
-          
-      </div> 
-      
-    </div>
-    
-    <!-- 4. Final Selection Screen (Showing the definitive result after choice) -->
-    <div id="finalResultScreen" style="display: none;">
-        <h2>The Final Verdict is In!</h2>
-        <div id="finalChosenResult" style="padding: 20px; border: 2px solid var(--primary); border-radius: 15px; margin: 20px auto; max-width: 400px;">
-            <h3>Decision: <span id="finalDecisionText"></span></h3>
-            <h2 id="finalResultDuration"></h2>
-            <p style="font-size: 1.1em; font-weight: 500;">Release Date: <span id="finalResultDate"></span></p>
+    <div class="game-container" id="captureArea">
+        <h1>🎲 Chastity Time Selector</h1>
+        
+        <div id="startScreen">
+            <h2>Select Game Mode</h2>
+            <div class="btn-container">
+                <button onclick="startGame(1)">One and Only</button>
+                <button onclick="startGame(3)">Best of Three</button>
+            </div>
         </div>
-        <div id="finalDecisionComment" class="final-text"></div>
-        <div class="btn-container">
-            <button id="finalScreenshotButton" onclick="takeScreenshot()">📸 Screenshot Final Result</button>
-            <button onclick="resetGame()">🔄 Start Over</button>
+        
+        <div id="rangeScreen" style="display: none;">
+            <h2>Select Time Range</h2>
+            <div class="btn-container range-buttons">
+                </div>
         </div>
+        
+        <div id="spinnerScreen" style="display: none;">
+            <div id="responsiveWrapper">
+                <div id="spinnerContent">
+                    <div id="spinControlsContainer">
+                        <h2><span id="gameModeText"></span> - Spin <span id="currentSpinCount">1</span> of <span id="totalSpins">1</span></h2>
+                        
+                        <div id="gridWrapper">
+                            <div class="grid" id="grid"></div>
+                        </div>
+                        
+                        <div id="mainControls" class="btn-container">
+                            <button id="spinButton" onclick="toggleSpin()">🎲 Spin</button>
+                            <button id="nextSpinButton" onclick="nextSpin()" style="display: none;">Next Spin</button>
+                            <button id="screenshotButton" onclick="takeScreenshot()">📸 Screenshot</button>
+                            <button id="resetButton" onclick="resetGame()">🔄 Start Over</button>
+                            <button id="chooseFinalButton" class="btn-danger" onclick="chooseFinalResult()" style="display: none;">❓ Choose Best or Least</button>
+                        </div>
+                        
+                        <div id="postSpinComment" class="final-text"></div>
+                    </div>
+                </div>
+                
+                <div id="resultTracker">
+                    <h3>Results Tracker:</h3>
+                    <ul id="resultsList"></ul>
+                </div>
+            </div>
+        </div>
+        
+        <div id="finalResultScreen" style="display: none;">
+            <h2>The Final Verdict is In!</h2>
+            <div id="finalChosenResult" style="padding: 20px; border: 2px solid var(--primary); border-radius: 15px; margin: 20px auto; max-width: 400px;">
+                <h3>Decision: <span id="finalDecisionText"></span></h3>
+                <h2 id="finalResultDuration"></h2>
+                <p style="font-size: 1.1em; font-weight: 500;">Release Date: <span id="finalResultDate"></span></p>
+            </div>
+            <div id="finalDecisionComment" class="final-text"></div>
+            <div class="btn-container">
+                <button id="finalScreenshotButton" onclick="takeScreenshot()">📸 Screenshot</button>
+                <button onclick="resetGame()">🔄 Start Over</button>
+                <button id="generateAgreementButton" onclick="generateAgreement()">📝 Generate Agreement</button>
+            </div>
+        </div>
+
+        <div id="agreementInputScreen" style="display: none;">
+            <div class="agreement-input-container" id="agreementInputCaptureArea">
+                <h2>Generate Chastity Agreement</h2>
+                <label for="lockedNameInput">Locked Person's Name:</label>
+                <input type="text" id="lockedNameInput" placeholder="Enter name of locked person">
+
+                <label for="keyholderNameInput">Keyholder's Name:</label>
+                <input type="text" id="keyholderNameInput" placeholder="Enter name of Keyholder">
+
+                <div class="btn-container">
+                    <button onclick="createAgreement()">✅ Generate Now</button>
+                    <button onclick="showFinalSelectionScreen(finalChosenResultData.result, finalChosenResultData.decisionType)">⬅️ Back</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="agreementDisplayScreen" style="display: none;">
+            <div class="agreement-display-container" id="agreementDisplayCaptureArea">
+                <h2>Chastity Agreement</h2>
+                <div id="agreementContent" class="agreement-content">
+                    </div>
+                <div class="btn-container">
+                    <button onclick="takeScreenshot()">📸 Screenshot</button>
+                    <button onclick="resetGame()">🔄 Start Over</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <div id="footerPhrase" class="dynamic-footer-text"></div>
+            <div class="copyright-text">&copy; Her Rules. His Service | All rights reserved</div>
+        </footer>
     </div>
-    
-    <!-- FOOTER WITH DYNAMIC PHRASE AND STATIC COPYRIGHT -->
-    <footer>
-      <div id="footerPhrase" class="dynamic-footer-text"></div>
-      <div class="copyright-text">&copy; Her Rules. His Service | All rights reserved</div>
-    </footer>
-  </div>
 
-  
-  <!-- Required Library for Screenshot -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        const GRID_SIZE = 25;
+        // --- Dynamic Footer Phrases (Restored) ---
+        const footerPhrases = [
+            "👑 Pride: Checked at the Door.",
+            "📉 Ego: Reduced to Obedience.",
+            "🕰️ Will: Subservient to Her Clock.",
+            "🚫 Worth: Measured in Denials.",
+            "🐾 Status: Just a Good Boy's Wait.",
+            "🤏 Ego: Irrelevant Until Release.",
+            "🧘 A Constant Lesson in Patience.",
+            "📊 Your Worth: Calculated by Her.",
+            "⛓️ Owned. Measured. Denied.",
+            "🎯 His Focus: Her Control."
+        ];
+        // 1. EXPANDED CHEEKY COMMENTS (x10)
+        const cheekyComments = [
+            "That's a nice, long sentence you've signed! Hope you packed light. Enjoy the anticipation! 😉",
+            "Don't worry, time flies when you're dreaming about what you can't have. Enjoy the anticipation! 😈",
+            "Looks like your date night has been officially postponed. Consider this 'foreplay'. 💋",
+            "You'll have plenty of time to focus on your other duties now. No distractions! 😇",
+            "Consider that a down payment on a very patient future. Your desire is noted. 🔒",
+            "The wait is part of the fun. Every ticking second builds the pleasure, or so they say! ⏳",
+            "A moment of silence for your freedom... and now, focus on the reward! 🤫",
+            "Looks like you've been granted the gift of *extreme* anticipation. Use it wisely. 🎁",
+            "This time is reserved for reflection. And maybe a lot of frustrated pacing. 🚶‍♂️",
+            "The clock starts now. Better get comfortable with the color pink. 🎀"
+        ];
+        const finalDecisionComments = {
+            BEST: [
+                "The computer has spoken: **Maximum anticipation** is the path chosen! Good luck with the wait.",
+                "Your obedience is rewarded with the longest duration possible. The cage loves you! 😈",
+                "It was a clear choice. Go big or go home! The longest spin wins the ultimate wait time."
+            ],
+            LEAST: [
+                "A small break! The computer chose the shortest duration, showing unexpected mercy. Enjoy it!",
+                "Barely a blip on the radar. The shortest time was chosen, but don't get used to it. 😉",
+                "The least amount of time was randomly selected. Hope you didn't bet against it!"
+            ],
+            FINAL: [
+                "This was the one and only decision. Fate has spoken, and the time is set! 👑",
+                "The single spin is final. May the odds of patience be ever in your favor. 💖"
+            ]
+        };
+        // 1. Separated RE-SPIN and SPIN AGAIN for all ranges
+        const ranges = [
+            // H (Hours), D (Days), W (Weeks)
+            { name: "Hours to 1 Week", times: [
+                "1 H", "2 H", "3 H", "4 H", "6 H",
+                "RE-SPIN", // Moved to position 5
+                "10 H", "12 H", "18 H", "1 D",
+                "1.5 D", "2 D", "2.5 D", "3 D", "3.5 D",
+                "4 D", "5 D", "6 D", "7 D", "1 W",
+                "SPIN AGAIN", // Moved to position 20
+                "4 D 12H", "5 D 6H", "7 D", "8 H" // Adjusted last few to maintain 25
+            ]},
+            // W (Weeks), M (Months)
+            { name: "1 Week to 3 Months", times: [
+                "1 W", "8 D", "10 D", "12 D", "2 W",
+                "RE-SPIN", // Moved to position 5
+                "16 D", "18 D", "20 D", "3 W",
+                "25 D", "1 M", "5 W", "6 W", "7 W",
+                "2 M", "9 W", "10 W", "11 W", "12 W",
+                "SPIN AGAIN", // Moved to position 20
+                "2.5 M", "3 M", "1 M 1 W", "70 D"
+            ]},
+            // M (Months), Y (Years)
+            { name: "3 Months to 1 Year", times: [
+                "3 M", "3.5 M", "4 M", "4.5 M", "5 M",
+                "RE-SPIN", // Moved to position 5
+                "6 M", "6.5 M", "7 M", "8 M",
+                "9 M", "10 M", "11 M", "1 Y", "1.5 Y",
+                "13 M", "14 M", "15 M", "16 M", "17 M",
+                "SPIN AGAIN", // Moved to position 20
+                "18 M", "1 Y 1 M", "6 M 1 D", "4 M 1 W"
+            ]},
+            // The Vault (All Time)
+            { name: "The Vault (All Time)", times: [
+                "1 H", "1 D", "3 D", "1 W", "2 W",
+                "RE-SPIN", // Moved to position 5
+                "1 M", "2 M", "3 M", "4 M",
+                "5 M", "6 M", "7 M", "8 M", "9 M",
+                "1 Y", "1.5 Y", "2 Y", "3 Y", "5 Y",
+                "SPIN AGAIN", // Moved to position 20
+                "10 Y", "PERMANENT", "LOCKDOWN", "INFINITY"
+            ]}
+        ];
+        const grid = document.getElementById("grid");
+        const spinButton = document.getElementById("spinButton");
+        const nextSpinButton = document.getElementById("nextSpinButton");
+        const screenshotButton = document.getElementById("screenshotButton");
+        const resetButton = document.getElementById("resetButton");
+        const chooseFinalButton = document.getElementById("chooseFinalButton");
+        const resultsList = document.getElementById("resultsList");
+        const postSpinComment = document.getElementById("postSpinComment");
+        let spinning = false;
+        let spinInterval = null;
+        let currentIndex = -1;
+        let totalSpins = 1;
+        let currentSpin = 0;
+        let selectedRange = [];
+        let spinResults = []; // Stores objects: { spin, result, release, msValue }
+        let finalChosenResultData = null; // Store the final result for agreement generation
 
-
-<script>
-const GRID_SIZE = 25; 
-
-// --- Dynamic Footer Phrases (Restored) ---
-const footerPhrases = [
-    "👑 Pride: Checked at the Door.",
-    "📉 Ego: Reduced to Obedience.",
-    "🕰️ Will: Subservient to Her Clock.",
-    "🚫 Worth: Measured in Denials.",
-    "🐾 Status: Just a Good Boy's Wait.",
-    "🤏 Ego: Irrelevant Until Release.",
-    "🧘 A Constant Lesson in Patience.",
-    "📊 Your Worth: Calculated by Her.",
-    "⛓️ Owned. Measured. Denied.",
-    "🎯 His Focus: Her Control."
-];
-
-// 1. EXPANDED CHEEKY COMMENTS (x10)
-const cheekyComments = [
-    "That's a nice, long sentence you've signed! Hope you packed light. Enjoy the anticipation! 😉",
-    "Don't worry, time flies when you're dreaming about what you can't have. Enjoy the anticipation! 😈",
-    "Looks like your date night has been officially postponed. Consider this 'foreplay'. 💋",
-    "You'll have plenty of time to focus on your other duties now. No distractions! 😇",
-    "Consider that a down payment on a very patient future. Your desire is noted. 🔒",
-    "The wait is part of the fun. Every ticking second builds the pleasure, or so they say! ⏳",
-    "A moment of silence for your freedom... and now, focus on the reward! 🤫",
-    "Looks like you've been granted the gift of *extreme* anticipation. Use it wisely. 🎁",
-    "This time is reserved for reflection. And maybe a lot of frustrated pacing. 🚶‍♂️",
-    "The clock starts now. Better get comfortable with the color pink. 🎀"
-];
-
-const finalDecisionComments = {
-    BEST: [
-        "The computer has spoken: **Maximum anticipation** is the path chosen! Good luck with the wait.",
-        "Your obedience is rewarded with the longest duration possible. The cage loves you! 😈",
-        "It was a clear choice. Go big or go home! The longest spin wins the ultimate wait time."
-    ],
-    LEAST: [
-        "A small break! The computer chose the shortest duration, showing unexpected mercy. Enjoy it!",
-        "Barely a blip on the radar. The shortest time was chosen, but don't get used to it. 😉",
-        "The least amount of time was randomly selected. Hope you didn't bet against it!"
-    ],
-    FINAL: [
-        "This was the one and only decision. Fate has spoken, and the time is set! 👑",
-        "The single spin is final. May the odds of patience be ever in your favor. 💖"
-    ]
-};
-
-
-// 1. Separated RE-SPIN and SPIN AGAIN for all ranges
-const ranges = [
-  // H (Hours), D (Days), W (Weeks)
-  { name: "Hours to 1 Week", times: [
-    "1 H", "2 H", "3 H", "4 H", "6 H", 
-    "RE-SPIN", // Moved to position 5
-    "10 H", "12 H", "18 H", "1 D", 
-    "1.5 D", "2 D", "2.5 D", "3 D", "3.5 D", 
-    "4 D", "5 D", "6 D", "7 D", "1 W", 
-    "SPIN AGAIN", // Moved to position 20
-    "4 D 12H", "5 D 6H", "7 D", "8 H" // Adjusted last few to maintain 25
-  ]},
-  
-  // W (Weeks), M (Months)
-  { name: "1 Week to 3 Months", times: [
-    "1 W", "8 D", "10 D", "12 D", "2 W", 
-    "RE-SPIN", // Moved to position 5
-    "16 D", "18 D", "20 D", "3 W", 
-    "25 D", "1 M", "5 W", "6 W", "7 W", 
-    "2 M", "9 W", "10 W", "11 W", "12 W", 
-    "SPIN AGAIN", // Moved to position 20
-    "2.5 M", "3 M", "1 M 1 W", "70 D"
-  ]},
-  
-  // M (Months), Y (Years)
-  { name: "3 Months to 1 Year", times: [
-    "3 M", "3.5 M", "4 M", "4.5 M", "5 M", 
-    "RE-SPIN", // Moved to position 5
-    "6 M", "6.5 M", "7 M", "8 M", 
-    "9 M", "10 M", "11 M", "1 Y", "1.5 Y", 
-    "13 M", "14 M", "15 M", "16 M", "17 M", 
-    "SPIN AGAIN", // Moved to position 20
-    "18 M", "1 Y 1 M", "6 M 1 D", "4 M 1 W"
-  ]},
-  
-  // The Vault (All Time)
-  { name: "The Vault (All Time)", times: [
-    "1 H", "1 D", "3 D", "1 W", "2 W", 
-    "RE-SPIN", // Moved to position 5
-    "1 M", "2 M", "3 M", "4 M", 
-    "5 M", "6 M", "7 M", "8 M", "9 M", 
-    "1 Y", "1.5 Y", "2 Y", "3 Y", "5 Y", 
-    "SPIN AGAIN", // Moved to position 20
-    "10 Y", "PERMANENT", "LOCKDOWN", "INFINITY"
-  ]}
-];
-
-const grid = document.getElementById("grid");
-const spinButton = document.getElementById("spinButton");
-const nextSpinButton = document.getElementById("nextSpinButton");
-const screenshotButton = document.getElementById("screenshotButton");
-const resetButton = document.getElementById("resetButton");
-const chooseFinalButton = document.getElementById("chooseFinalButton");
-const resultsList = document.getElementById("resultsList");
-const postSpinComment = document.getElementById("postSpinComment");
-
-let spinning = false;
-let spinInterval = null;
-let currentIndex = -1;
-let totalSpins = 1;
-let currentSpin = 0;
-let selectedRange = [];
-let spinResults = []; // Stores objects: { spin, result, release, msValue }
-
-// --- TIME CONVERSION FOR COMPARISON ---
-/** * Converts time string (e.g., "1.5 D", "6 M") into milliseconds for comparison. 
- * Uses approximations for Months (30.44 days) and Years (365.25 days). 
- * Returns a large value for 'PERMANENT' and 0 for 'RE-SPIN' types. 
- */
-function durationToMilliseconds(timeString) {
-    const s = timeString.toUpperCase();
-    if (s.includes("PERMANENT") || s.includes("LOCKDOWN") || s.includes("INFINITY")) {
-        return Number.MAX_SAFE_INTEGER;
-    }
-    if (s.includes("RE-SPIN") || s.includes("SPIN AGAIN")) {
-        // Treat as 0 for min/max comparison in final selection logic
-        return 0;     
-    }
-
-    const MS_PER_HOUR = 3600000;
-    const MS_PER_DAY = MS_PER_HOUR * 24;
-    const MS_PER_WEEK = MS_PER_DAY * 7;
-    const MS_PER_MONTH = MS_PER_DAY * 30.44; // Approximation
-    const MS_PER_YEAR = MS_PER_DAY * 365.25; // Approximation
-
-    const parts = s.match(/(\d+\.?\d*)\s*([HDWMY])/g) || [];
-    let totalMs = 0;
-
-    parts.forEach(part => {
-        const match = part.match(/(\d+\.?\d*)\s*([HDWMY])/);
-        if (!match) return;
-        const value = parseFloat(match[1]);
-        const unit = match[2];
-
-        switch (unit) {
-            case 'H':
-                totalMs += value * MS_PER_HOUR;
-                break;
-            case 'D':
-                totalMs += value * MS_PER_DAY;
-                break;
-            case 'W':
-                totalMs += value * MS_PER_WEEK;
-                break;
-            case 'M':
-                totalMs += value * MS_PER_MONTH;
-                break;
-            case 'Y':
-                totalMs += value * MS_PER_YEAR;
-                break;
+        // --- TIME CONVERSION FOR COMPARISON ---
+        function durationToMilliseconds(timeString) {
+            const s = timeString.toUpperCase();
+            if (s.includes("PERMANENT") || s.includes("LOCKDOWN") || s.includes("INFINITY")) {
+                return Number.MAX_SAFE_INTEGER;
+            }
+            if (s.includes("RE-SPIN") || s.includes("SPIN AGAIN")) {
+                return 0;
+            }
+            const MS_PER_HOUR = 3600000;
+            const MS_PER_DAY = MS_PER_HOUR * 24;
+            const MS_PER_WEEK = MS_PER_DAY * 7;
+            const MS_PER_MONTH = MS_PER_DAY * 30.44; // Approximation
+            const MS_PER_YEAR = MS_PER_DAY * 365.25; // Approximation
+            const parts = s.match(/(\d+\.?\d*)\s*([HDWMY])/g) || [];
+            let totalMs = 0;
+            parts.forEach(part => {
+                const match = part.match(/(\d+\.?\d*)\s*([HDWMY])/);
+                if (!match) return;
+                const value = parseFloat(match[1]);
+                const unit = match[2];
+                switch (unit) {
+                    case 'H': totalMs += value * MS_PER_HOUR; break;
+                    case 'D': totalMs += value * MS_PER_DAY; break;
+                    case 'W': totalMs += value * MS_PER_WEEK; break;
+                    case 'M': totalMs += value * MS_PER_MONTH; break;
+                    case 'Y': totalMs += value * MS_PER_YEAR; break;
+                }
+            });
+            return totalMs;
         }
-    });
 
-    return totalMs;
-}
-
-// --- DATE CALCULATION AND EXPANSION FUNCTIONS ---
-function calculateReleaseDate(timeString) {
-    const ms = durationToMilliseconds(timeString);
-    if (ms === Number.MAX_SAFE_INTEGER) return "NEVER";
-    if (ms === 0 && (timeString.includes("RE-SPIN") || timeString.includes("SPIN AGAIN"))) {
-        return "Spin Again!";
-    }
-    if (ms === 0) return "N/A"; // Should not happen for valid durations
-
-    const futureDate = new Date(Date.now() + ms);
-        
-    // --- OPTIONS FOR 12-HOUR FORMAT WITHOUT SECONDS ---
-    const options = { 
-        year: 'numeric', 
-        month: 'short', 
-        day: '2-digit', 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true // Use 12-hour clock (a.m./p.m.)
-    };
-    // Use 'en-US' locale for standardized AM/PM output
-    return futureDate.toLocaleString('en-US', options).replace(',', '');
-}
-
-/** * Converts abbreviated time strings (e.g., "1 D", "2 W") back to full words  
- * for clearer display in the results tracker (e.g., "1 Day", "2 Weeks"). 
- */
-function expandTime(abbreviatedString) {
-    if (abbreviatedString.includes("SPIN") || abbreviatedString.includes("LOCKDOWN") || abbreviatedString.includes("PERMANENT") || abbreviatedString.includes("INFINITY")) {
-        return abbreviatedString;
-    }
-        
-    let expanded = abbreviatedString
-        .replace(/ H\b/g, ' HOURS')
-        .replace(/ D\b/g, ' DAYS')
-        .replace(/ W\b/g, ' WEEKS')
-        .replace(/ M\b/g, ' MONTHS')
-        .replace(/ Y\b/g, ' YEARS');
-
-    // Handle singular form for aesthetic improvement
-    expanded = expanded
-        .replace(/1 HOURS\b/, '1 HOUR')
-        .replace(/1 DAYS\b/, '1 DAY')
-        .replace(/1 WEEKS\b/, '1 WEEK')
-        .replace(/1 MONTHS\b/, '1 MONTH')
-        .replace(/1 YEARS\b/, '1 YEAR');
-            
-    return expanded;
-}
-
-// --- SCREEN AND GAME MANAGEMENT FUNCTIONS ---
-function showScreen(screenId) {
-  document.getElementById('startScreen').style.display = 'none';
-  document.getElementById('rangeScreen').style.display = 'none';
-  document.getElementById('spinnerScreen').style.display = 'none';
-  document.getElementById('finalResultScreen').style.display = 'none';
-  document.getElementById(screenId).style.display = 'block';
-}
-
-function startGame(spins) {
-  totalSpins = spins;
-  currentSpin = 0;
-  spinResults = []; 
-     
-  let modeText = "";
-  if (spins === 1) modeText = "One and Only";
-  // The 'Best of Five' check has been removed here, only 1 and 3 remain
-  else if (spins === 3) modeText = "Best of Three";
-  document.getElementById('gameModeText').textContent = modeText;
-    
-  loadRangeButtons();
-  showScreen('rangeScreen');
-}
-
-function loadRangeButtons() {
-    const container = document.querySelector('.range-buttons');
-    container.innerHTML = ''; 
-        
-    ranges.forEach((range, index) => {
-        const button = document.createElement('button');
-        button.textContent = range.name;
-        button.onclick = () => selectRange(index);
-        container.appendChild(button);
-    });
-}
-
-function selectRange(index) {
-  selectedRange = ranges[index].times;
-  currentSpin = 1;
-  document.getElementById('totalSpins').textContent = totalSpins;
-  document.getElementById('currentSpinCount').textContent = currentSpin;
-  postSpinComment.textContent = "";
-
-  createGrid(selectedRange);
-  displayResults(); 
-     
-  // Set initial button/view state
-  document.getElementById('gridWrapper').style.display = 'block';
-  chooseFinalButton.style.display = 'none';
-  spinButton.style.display = 'block';
-  nextSpinButton.style.display = 'none';
-  spinButton.disabled = false;
-  
-  showScreen('spinnerScreen');
-}
-
-// --- SPINNER AND GAME FLOW LOGIC ---
-function createGrid(timesArray) {
-  grid.innerHTML = ''; 
-  const timesToUse = timesArray.slice(0, GRID_SIZE); 
-     
-  grid.style.gridTemplateColumns = `repeat(5, 1fr)`;
-
-  timesToUse.forEach(t => {
-    const cell = document.createElement("div");
-    cell.classList.add("cell");
-    cell.textContent = t;
-    grid.appendChild(cell);
-  });
-}
-
-function toggleSpin() {
-  if (!spinning) {
-    startSpin();
-  } else {
-    stopSpin();
-  }
-}
-
-function startSpin() {
-  spinning = true;
-  spinButton.textContent = "🛑 Stop";
-  spinButton.disabled = false;
-  nextSpinButton.style.display = 'none'; 
-  screenshotButton.disabled = true;
-  resetButton.disabled = true;
-  postSpinComment.textContent = ""; 
-
-  const cells = document.querySelectorAll("#grid .cell");
-  cells.forEach(c => c.classList.remove("highlight"));
-  
-  spinInterval = setInterval(() => {
-    if (currentIndex >= 0) {
-        cells[currentIndex].classList.remove("highlight");
-    }
-    currentIndex = Math.floor(Math.random() * GRID_SIZE);
-    cells[currentIndex].classList.add("highlight");
-  }, 30); 
-}
-
-function stopSpin() {
-  spinning = false;
-  clearInterval(spinInterval);
-  const resultTime = document.querySelectorAll("#grid .cell")[currentIndex].textContent;
-    
-  const msValue = durationToMilliseconds(resultTime);
-  const releaseDate = calculateReleaseDate(resultTime); 
-
-  spinResults.push({ 
-      spin: currentSpin, 
-      result: resultTime, 
-      release: releaseDate,
-      msValue: msValue // Store MS value for best/least comparison
-  });
-
-  displayResults();
-
-  screenshotButton.disabled = false;
-  resetButton.disabled = false;
-
-  if (currentSpin < totalSpins) {
-      nextSpinButton.style.display = 'block';
-      spinButton.style.display = 'none';
-      
-      // Results now only shown in the Tracker
-  } else {
-      handleEndOfGame();
-  }
-}
-
-function nextSpin() {
-    // When 'Next Spin' is clicked, spinning should begin immediately
-    currentSpin++;
-    document.getElementById('currentSpinCount').textContent = currentSpin;
-    
-    postSpinComment.textContent = ""; 
-    nextSpinButton.style.display = 'none';
-        
-    // Make the spin button visible again so startSpin() can turn it into the visible "Stop" button.
-    spinButton.style.display = 'block';
-        
-    // Start spinning immediately
-    startSpin();
-}
-
-function handleEndOfGame() {
-    // Hide the grid and spinning controls
-    document.getElementById('gridWrapper').style.display = 'none';
-    spinButton.style.display = 'none';
-    nextSpinButton.style.display = 'none';
-
-    // Special handling for "One and Only" (totalSpins === 1)
-    if (totalSpins === 1) {
-        // Find the one and only valid result
-        let finalResult = spinResults.find(r => r.msValue > 0) || spinResults[0];
-                
-        // Directly show the final selection screen with 'FINAL' decision type
-        showFinalSelectionScreen(finalResult, 'FINAL');
-             
-    } else {
-        // Existing logic for Best of Three
-        // This message is now moved to the existing postSpinComment area
-        postSpinComment.textContent = `All spins complete! Time for the final decision.`; 
-                
-        // Show new choice button
-        chooseFinalButton.style.display = 'block';
-                
-        // Show random cheeky comment
-        const randomIndex = Math.floor(Math.random() * cheekyComments.length);
-        postSpinComment.textContent += ' ' + cheekyComments[randomIndex]; // Append cheeky comment
-    }
-}
-
-function displayResults() {
-    resultsList.innerHTML = ''; 
-        
-    if (spinResults.length === 0) {
-        resultsList.innerHTML = '<li>Awaiting first spin...</li>';
-        return;
-    }
-    // Sort results by spin number
-    spinResults.sort((a, b) => a.spin - b.spin);
-        
-    spinResults.forEach(item => {
-        const expandedResult = expandTime(item.result); 
-        const li = document.createElement('li');
-        li.innerHTML = `
-            **Spin ${item.spin}: ${expandedResult}**
-            <span style="color: #444; font-size: 0.9em; font-weight: 500;">Release Date:</span>
-            <span>${item.release}</span>
-        `;
-        resultsList.appendChild(li);
-    });
-}
-
-// 3. CHOOSE BEST OR LEAST LOGIC
-function chooseFinalResult() {
-    // Filter out re-spins (msValue = 0) 
-    let validResults = spinResults.filter(r => r.msValue > 0);
-    
-    // Also include permanent locks if they exist
-    const permanentLock = validResults.find(r => r.msValue === Number.MAX_SAFE_INTEGER);
-    
-    // Re-filter validResults to exclude the permanent lock for min/max comparisons against time
-    let durationResults = validResults.filter(r => r.msValue < Number.MAX_SAFE_INTEGER);
-
-    if (durationResults.length === 0 && !permanentLock) {
-        postSpinComment.textContent = "ERROR: No valid duration spins recorded to choose from. Please reset.";
-        return;
-    }
-
-    // Randomly choose BEST (Longest) or LEAST (Shortest)
-    const decisionType = Math.random() < 0.5 ? 'BEST' : 'LEAST';
-    let chosenResult;
-
-    if (decisionType === 'BEST') {
-        // If Permanent Lock exists, that is the "Best" (longest)
-        if (permanentLock) {
-            chosenResult = permanentLock;
-        } else {
-            const maxMs = Math.max(...durationResults.map(r => r.msValue));
-            chosenResult = durationResults.find(r => r.msValue === maxMs);
+        // --- DATE CALCULATION AND EXPANSION FUNCTIONS ---
+        function calculateReleaseDate(timeString) {
+            const ms = durationToMilliseconds(timeString);
+            if (ms === Number.MAX_SAFE_INTEGER) return "NEVER";
+            if (ms === 0 && (timeString.includes("RE-SPIN") || timeString.includes("SPIN AGAIN"))) {
+                return "Spin Again!";
+            }
+            if (ms === 0) return "N/A";
+            const futureDate = new Date(Date.now() + ms);
+            const options = {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            };
+            return futureDate.toLocaleString('en-US', options).replace(',', '');
         }
-            
-    } else { // LEAST
-        const minMs = Math.min(...durationResults.map(r => r.msValue));
-        chosenResult = durationResults.find(r => r.msValue === minMs);
-    }
+        function expandTime(abbreviatedString) {
+            if (abbreviatedString.includes("SPIN") || abbreviatedString.includes("LOCKDOWN") || abbreviatedString.includes("PERMANENT") || abbreviatedString.includes("INFINITY")) {
+                return abbreviatedString;
+            }
+            let expanded = abbreviatedString
+                .replace(/ H\b/g, ' HOURS')
+                .replace(/ D\b/g, ' DAYS')
+                .replace(/ W\b/g, ' WEEKS')
+                .replace(/ M\b/g, ' MONTHS')
+                .replace(/ Y\b/g, ' YEARS');
+            expanded = expanded
+                .replace(/1 HOURS\b/, '1 HOUR')
+                .replace(/1 DAYS\b/, '1 DAY')
+                .replace(/1 WEEKS\b/, '1 WEEK')
+                .replace(/1 MONTHS\b/, '1 MONTH')
+                .replace(/1 YEARS\b/, '1 YEAR');
+            return expanded;
+        }
 
-    // Transition to the final selection display
-    showFinalSelectionScreen(chosenResult, decisionType);
-}
+        // --- SCREEN AND GAME MANAGEMENT FUNCTIONS ---
+        function showScreen(screenId) {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('rangeScreen').style.display = 'none';
+            document.getElementById('spinnerScreen').style.display = 'none';
+            document.getElementById('finalResultScreen').style.display = 'none';
+            document.getElementById('agreementInputScreen').style.display = 'none';
+            document.getElementById('agreementDisplayScreen').style.display = 'none';
+            document.getElementById(screenId).style.display = 'block';
+        }
+        function startGame(spins) {
+            totalSpins = spins;
+            currentSpin = 0;
+            spinResults = [];
+            finalChosenResultData = null;
+            let modeText = "";
+            if (spins === 1) modeText = "One and Only";
+            else if (spins === 3) modeText = "Best of Three";
+            document.getElementById('gameModeText').textContent = modeText;
+            loadRangeButtons();
+            showScreen('rangeScreen');
+        }
+        function loadRangeButtons() {
+            const container = document.querySelector('.range-buttons');
+            container.innerHTML = '';
+            ranges.forEach((range, index) => {
+                const button = document.createElement('button');
+                button.textContent = range.name;
+                button.onclick = () => selectRange(index);
+                container.appendChild(button);
+            });
+        }
+        function selectRange(index) {
+            selectedRange = ranges[index].times;
+            currentSpin = 1;
+            document.getElementById('totalSpins').textContent = totalSpins;
+            document.getElementById('currentSpinCount').textContent = currentSpin;
+            postSpinComment.textContent = "";
+            createGrid(selectedRange);
+            displayResults();
+            document.getElementById('gridWrapper').style.display = 'block';
+            chooseFinalButton.style.display = 'none';
+            spinButton.style.display = 'block';
+            nextSpinButton.style.display = 'none';
+            spinButton.disabled = false;
+            showScreen('spinnerScreen');
+        }
 
-function showFinalSelectionScreen(result, decisionType) {
-        // SHOW RESULTS IN A SINGLE PAGE
-    showScreen('finalResultScreen');
+        // --- SPINNER AND GAME FLOW LOGIC ---
+        function createGrid(timesArray) {
+            grid.innerHTML = '';
+            const timesToUse = timesArray.slice(0, GRID_SIZE);
+            grid.style.gridTemplateColumns = `repeat(5, 1fr)`;
+            timesToUse.forEach(t => {
+                const cell = document.createElement("div");
+                cell.classList.add("cell");
+                cell.textContent = t;
+                grid.appendChild(cell);
+            });
+        }
+        function toggleSpin() {
+            if (!spinning) {
+                startSpin();
+            } else {
+                stopSpin();
+            }
+        }
+        function startSpin() {
+            spinning = true;
+            spinButton.textContent = "🛑 Stop";
+            spinButton.disabled = false;
+            nextSpinButton.style.display = 'none';
+            screenshotButton.disabled = true;
+            resetButton.disabled = true;
+            postSpinComment.textContent = "";
+            const cells = document.querySelectorAll("#grid .cell");
+            cells.forEach(c => c.classList.remove("highlight"));
+            spinInterval = setInterval(() => {
+                if (currentIndex >= 0) {
+                    cells[currentIndex].classList.remove("highlight");
+                }
+                currentIndex = Math.floor(Math.random() * GRID_SIZE);
+                cells[currentIndex].classList.add("highlight");
+            }, 30);
+        }
+        function stopSpin() {
+            spinning = false;
+            clearInterval(spinInterval);
+            const resultTime = document.querySelectorAll("#grid .cell")[currentIndex].textContent;
+            const msValue = durationToMilliseconds(resultTime);
+            const releaseDate = calculateReleaseDate(resultTime);
+            spinResults.push({
+                spin: currentSpin,
+                result: resultTime,
+                release: releaseDate,
+                msValue: msValue
+            });
+            displayResults();
+            screenshotButton.disabled = false;
+            resetButton.disabled = false;
+            if (currentSpin < totalSpins) {
+                nextSpinButton.style.display = 'block';
+                spinButton.style.display = 'none';
+            } else {
+                handleEndOfGame();
+            }
+        }
+        function nextSpin() {
+            currentSpin++;
+            document.getElementById('currentSpinCount').textContent = currentSpin;
+            postSpinComment.textContent = "";
+            nextSpinButton.style.display = 'none';
+            spinButton.style.display = 'block';
+            startSpin();
+        }
+        function handleEndOfGame() {
+            document.getElementById('gridWrapper').style.display = 'none';
+            spinButton.style.display = 'none';
+            nextSpinButton.style.display = 'none';
+            if (totalSpins === 1) {
+                let finalResult = spinResults.find(r => r.msValue > 0) || spinResults[0];
+                finalChosenResultData = { result: finalResult, decisionType: 'FINAL' };
+                showFinalSelectionScreen(finalResult, 'FINAL');
+            } else {
+                postSpinComment.textContent = `All spins complete! Time for the final decision.`;
+                chooseFinalButton.style.display = 'block';
+                const randomIndex = Math.floor(Math.random() * cheekyComments.length);
+                postSpinComment.textContent += ' ' + cheekyComments[randomIndex];
+            }
+        }
+        function displayResults() {
+            resultsList.innerHTML = '';
+            if (spinResults.length === 0) {
+                resultsList.innerHTML = '<li>Awaiting first spin...</li>';
+                return;
+            }
+            spinResults.sort((a, b) => a.spin - b.spin);
+            spinResults.forEach(item => {
+                const expandedResult = expandTime(item.result);
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <strong>Spin ${item.spin}: ${expandedResult}</strong>
+                    <span style="color: #444; font-size: 0.9em; font-weight: 500;">Release Date:</span>
+                    <span>${item.release}</span>
+                `;
+                resultsList.appendChild(li);
+            });
+        }
+        // 3. CHOOSE BEST OR LEAST LOGIC
+        function chooseFinalResult() {
+            let validResults = spinResults.filter(r => r.msValue > 0);
+            const permanentLock = validResults.find(r => r.msValue === Number.MAX_SAFE_INTEGER);
+            let durationResults = validResults.filter(r => r.msValue < Number.MAX_SAFE_INTEGER);
+            if (durationResults.length === 0 && !permanentLock) {
+                postSpinComment.textContent = "ERROR: No valid duration spins recorded to choose from. Please reset.";
+                return;
+            }
+            const decisionType = Math.random() < 0.5 ? 'BEST' : 'LEAST';
+            let chosenResult;
+            if (decisionType === 'BEST') {
+                if (permanentLock) {
+                    chosenResult = permanentLock;
+                } else {
+                    const maxMs = Math.max(...durationResults.map(r => r.msValue));
+                    chosenResult = durationResults.find(r => r.msValue === maxMs);
+                }
+            } else { // LEAST
+                const minMs = Math.min(...durationResults.map(r => r.msValue));
+                chosenResult = durationResults.find(r => r.msValue === minMs);
+            }
+            finalChosenResultData = { result: chosenResult, decisionType: decisionType };
+            showFinalSelectionScreen(chosenResult, decisionType);
+        }
+        function showFinalSelectionScreen(result, decisionType) {
+            finalChosenResultData = { result: result, decisionType: decisionType };
+            showScreen('finalResultScreen');
+            let decisionText;
+            if (decisionType === 'FINAL') {
+                decisionText = 'FINAL RESULT';
+            } else {
+                decisionText = decisionType === 'BEST' ? 'MAXIMUM DURATION' : 'MINIMUM DURATION';
+            }
+            document.getElementById('finalDecisionText').textContent = decisionText;
+            document.getElementById('finalResultDuration').textContent = expandTime(result.result);
+            document.getElementById('finalResultDate').textContent = result.release;
+            const comments = finalDecisionComments[decisionType] || finalDecisionComments['FINAL'];
+            const commentIndex = Math.floor(Math.random() * comments.length);
+            document.getElementById('finalDecisionComment').textContent = comments[commentIndex];
+        }
 
-    let decisionText;
-    if (decisionType === 'FINAL') {
-        decisionText = 'FINAL RESULT';
-    } else {
-        decisionText = decisionType === 'BEST' ? 'MAXIMUM DURATION' : 'MINIMUM DURATION';
-    }
+        // --- AGREEMENT GENERATION FUNCTIONS ---
+        function generateAgreement() {
+            // Pre-fill if names were entered before in the same session or locally stored
+            document.getElementById('lockedNameInput').value = localStorage.getItem('lockedName') || '';
+            document.getElementById('keyholderNameInput').value = localStorage.getItem('keyholderName') || '';
+            showScreen('agreementInputScreen');
+        }
+        function createAgreement() {
+            const lockedName = document.getElementById('lockedNameInput').value.trim();
+            const keyholderName = document.getElementById('keyholderNameInput').value.trim();
+            const finalDuration = expandTime(finalChosenResultData.result.result);
+            const finalReleaseDate = finalChosenResultData.result.release;
 
-    document.getElementById('finalDecisionText').textContent = decisionText;
+            if (!lockedName || !keyholderName) {
+                alert("Please enter both names to generate the agreement.");
+                return;
+            }
 
-    // The result from the spin: e.g. "6 M"
-    document.getElementById('finalResultDuration').textContent = expandTime(result.result);
+            // Store names in local storage for persistence across sessions
+            localStorage.setItem('lockedName', lockedName);
+            localStorage.setItem('keyholderName', keyholderName);
 
-    // The calculated date:
-    document.getElementById('finalResultDate').textContent = result.release;
+            // Use <strong> HTML tags for bolding
+            // CORRECTED: Added hour and minute options to include time in the execution date
+            const executionDateTime = new Date().toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true
+            });
 
-    // Show a comment specific to the decision type
-    const comments = finalDecisionComments[decisionType] || finalDecisionComments['FINAL'];
-    const commentIndex = Math.floor(Math.random() * comments.length);
-    document.getElementById('finalDecisionComment').textContent = comments[commentIndex];
-}
+            const agreementText = `
+This Chastity Agreement is made between:
 
-// --- UTILITY FUNCTIONS ---
-function resetGame() {
-    spinning = false;
-    totalSpins = 1;
-    currentSpin = 0;
-    selectedRange = [];
-    spinResults = [];
-    clearInterval(spinInterval);
+<strong>The Keyholder:</strong> ${keyholderName}
+<strong>The Locked Individual:</strong> ${lockedName}
 
-    // Clear messages
-    postSpinComment.textContent = "";
+<strong>WHEREAS,</strong> the Locked Individual desires to submit to the Keyholder's control, and the Keyholder accepts this responsibility;
 
-    // Reset button states
-    spinButton.textContent = "🎲 Spin";
-    spinButton.style.display = 'block';
-    spinButton.disabled = false;
-    nextSpinButton.style.display = 'none';
-    screenshotButton.disabled = false;
-    resetButton.disabled = false;
-    chooseFinalButton.style.display = 'none';
+<strong>NOW, THEREFORE,</strong> the parties agree as follows:
 
-    displayResults();
+1.  <strong>Duration:</strong> The Locked Individual shall remain in chastity for a period of <strong>${finalDuration}</strong>, as determined by the Chastity Time Selector.
+2.  <strong>Release Date:</strong> The estimated release date and time for the Locked Individual is: <strong>${finalReleaseDate}</strong>.
+3.  <strong>Keyholder's Discretion:</strong> The Keyholder retains absolute discretion over the keys, the duration, and any rules or tasks associated with this period of chastity. The Keyholder may, at their sole discretion, extend or shorten this period.
+4.  <strong>Obedience:</strong> The Locked Individual agrees to absolute obedience and submission to the Keyholder's directives during this time.
+5.  <strong>No Negotiation:</strong> This agreement, once enacted, is final and non-negotiable by the Locked Individual.
 
-    showScreen('startScreen');
-}
+By proceeding, both parties acknowledge and agree to the terms outlined above.
 
-function takeScreenshot() {
-  // Determine which screen is currently visible to capture the correct one
-  let captureAreaId;
-  if (document.getElementById('finalResultScreen').style.display === 'block') {
-    captureAreaId = "finalResultScreen";
-  } else {
-    captureAreaId = "captureArea"; // This is the main container for start/range/spinner
-  }
+Executed on: ${executionDateTime}
+`;
+            document.getElementById('agreementContent').innerHTML = agreementText; // Use innerHTML to render <strong> tags
+            showScreen('agreementDisplayScreen');
+        }
 
-  const captureArea = document.getElementById(captureAreaId);
+        // --- UTILITY FUNCTIONS ---
+        function resetGame() {
+            spinning = false;
+            totalSpins = 1;
+            currentSpin = 0;
+            selectedRange = [];
+            spinResults = [];
+            finalChosenResultData = null;
+            clearInterval(spinInterval);
+            postSpinComment.textContent = "";
+            spinButton.textContent = "🎲 Spin";
+            spinButton.style.display = 'block';
+            spinButton.disabled = false;
+            nextSpinButton.style.display = 'none';
+            screenshotButton.disabled = false;
+            resetButton.disabled = false;
+            chooseFinalButton.style.display = 'none';
+            document.getElementById('lockedNameInput').value = '';
+            document.getElementById('keyholderNameInput').value = '';
+            displayResults();
+            showScreen('startScreen');
+        }
+        function takeScreenshot() {
+            let captureAreaElement;
+            let buttonsToHide = [];
+            if (document.getElementById('finalResultScreen').style.display === 'block') {
+                captureAreaElement = document.getElementById("captureArea"); // Main container
+                buttonsToHide = [document.getElementById('finalScreenshotButton'), document.getElementById('resetButton'), document.getElementById('generateAgreementButton')];
+            } else if (document.getElementById('agreementDisplayScreen').style.display === 'block') {
+                captureAreaElement = document.getElementById("agreementDisplayCaptureArea"); // Specific agreement container
+                const agreementScreenButtons = document.getElementById('agreementDisplayScreen').querySelectorAll('.btn-container button');
+                buttonsToHide = Array.from(agreementScreenButtons);
+            } else if (document.getElementById('agreementInputScreen').style.display === 'block') {
+                 captureAreaElement = document.getElementById("agreementInputCaptureArea"); // Specific agreement container
+                 const agreementInputScreenButtons = document.getElementById('agreementInputScreen').querySelectorAll('.btn-container button');
+                 buttonsToHide = Array.from(agreementInputScreenButtons);
+            }
+            else {
+                captureAreaElement = document.getElementById("captureArea");
+                buttonsToHide = [screenshotButton, resetButton, chooseFinalButton];
+            }
+            buttonsToHide.forEach(btn => btn && (btn.style.opacity = '0'));
+            html2canvas(captureAreaElement, { scale: 2, allowTaint: true, useCORS: true }).then(canvas => {
+                const link = document.createElement("a");
+                link.download = "chastity-time-result.png";
+                link.href = canvas.toDataURL();
+                link.click();
+                buttonsToHide.forEach(btn => btn && (btn.style.opacity = '1'));
+            });
+        }
 
-  // Temporarily hide control buttons to clean up the screenshot
-  const buttonsToHide = [screenshotButton, resetButton, chooseFinalButton, document.getElementById('finalScreenshotButton')];
-  buttonsToHide.forEach(btn => btn && (btn.style.opacity = '0'));
+        // --- Dynamic Footer ---
+        function updateFooterPhrase() {
+            const footerElement = document.getElementById('footerPhrase');
+            if (footerElement && footerPhrases.length > 0) {
+                const randomIndex = Math.floor(Math.random() * footerPhrases.length);
+                footerElement.textContent = footerPhrases[randomIndex];
+            }
+        }
 
-  html2canvas(captureArea, { scale: 2, allowTaint: true, useCORS: true }).then(canvas => {
-    const link = document.createElement("a");
-    link.download = "chastity-time-result.png";
-    link.href = canvas.toDataURL();
-    link.click();
-
-    // Restore opacity
-    buttonsToHide.forEach(btn => btn && (btn.style.opacity = '1'));
-  });
-}
-
-// --- Dynamic Footer ---
-function updateFooterPhrase() {
-    const footerElement = document.getElementById('footerPhrase');
-    if (footerElement && footerPhrases.length > 0) {
-        const randomIndex = Math.floor(Math.random() * footerPhrases.length);
-        footerElement.textContent = footerPhrases[randomIndex];
-    }
-}
-
-
-// Initialize the game state
-document.addEventListener('DOMContentLoaded', () => {
-    updateFooterPhrase();
-    showScreen('startScreen');
-});
-</script>
+        // Initialize the game state
+        document.addEventListener('DOMContentLoaded', () => {
+            updateFooterPhrase();
+            showScreen('startScreen');
+        });
+    </script>
 </body>
 </html>
