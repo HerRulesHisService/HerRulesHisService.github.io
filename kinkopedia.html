@@ -208,7 +208,7 @@
         </div>
 
         <div id="quiz" class="hidden">
-            <div class="score-display">Score: <span id="current-score">0</span>/<span id="total-questions">0</span></div>
+            <div class="score-display">Score: <span id="current-score">0</span></div>
         </div>
         
         <div id="quiz-buttons" class="hidden">
@@ -230,7 +230,6 @@
             const startOverBtn = document.getElementById('start-over-btn');
             const resultDiv = document.getElementById('result');
             const currentScoreSpan = document.getElementById('current-score');
-            const totalQuestionsSpan = document.getElementById('total-questions');
 
             let allQuestions = []; // Stores all questions from CSV
             let activeQuestions = []; // Stores questions for the selected category
@@ -240,6 +239,46 @@
             let answerChecked = false;
 
             // --- CSV Loading and Parsing ---
+
+            // Helper to parse CSV line with quoted fields
+            function parseCSVLine(line) {
+                const result = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    
+                    if (char === '"') {
+                        // Handle escaped quotes ("")
+                        if (i + 1 < line.length && line[i + 1] === '"') {
+                            current += '"';
+                            i++; // Skip next quote
+                        } else {
+                            inQuotes = !inQuotes;
+                        }
+                    } else if (char === ',' && !inQuotes) {
+                        result.push(current);
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                
+                result.push(current);
+                return result;
+            }
+
+            // Helper to convert numeric answer to option format
+            function numericToOptionFormat(numericValue) {
+                const optionMap = {
+                    '0': 'option_a',
+                    '1': 'option_b', 
+                    '2': 'option_c',
+                    '3': 'option_d'
+                };
+                return optionMap[numericValue] || numericValue;
+            }
 
             // Helper to get correct option index from text ID
             function getOptionIndex(id) {
@@ -261,17 +300,24 @@
                     const csvText = await response.text();
                     
                     const lines = csvText.trim().split('\n');
-                    const headers = lines[0].split(',');
                     
                     allQuestions = lines.slice(1).map(line => {
-                        const parts = line.split(',');
-                        // Use header names for clarity, assuming fixed order based on the new CSV
+                        const parts = parseCSVLine(line);
+                        
+                        // Remove quotes and trim each part
+                        const cleanParts = parts.map(part => 
+                            part.replace(/^"|"$/g, '').replace(/""/g, '"').trim()
+                        );
+                        
+                        // Convert numeric correct_answer to option format
+                        const correctAnswer = numericToOptionFormat(cleanParts[6]);
+                        
                         return {
-                            category: parts[0],
-                            question: parts[1],
-                            options: [parts[2], parts[3], parts[4], parts[5]],
-                            correctAnswer: parts[6], // e.g., 'option_b'
-                            explanation: parts[7]
+                            category: cleanParts[0],
+                            question: cleanParts[1],
+                            options: [cleanParts[2], cleanParts[3], cleanParts[4], cleanParts[5]],
+                            correctAnswer: correctAnswer,
+                            explanation: cleanParts[7]
                         };
                     });
 
@@ -283,7 +329,7 @@
 
                 } catch (error) {
                     console.error('Error loading or parsing CSV:', error);
-                    categorySelectionDiv.innerHTML = `<p>Error loading quiz data. Make sure 'questions.csv' is correct.</p>`;
+                    categorySelectionDiv.innerHTML = `<p>Error loading quiz data. Make sure 'kinktionary.csv' is correct and accessible.</p>`;
                 }
             }
 
@@ -330,7 +376,6 @@
                 
                 // Update score display
                 currentScoreSpan.textContent = score;
-                totalQuestionsSpan.textContent = activeQuestions.length;
                 
                 displayQuestion();
             }
@@ -352,7 +397,7 @@
                 // Add score display back
                 const scoreDisplay = document.createElement('div');
                 scoreDisplay.className = 'score-display';
-                scoreDisplay.innerHTML = `Score: <span id="current-score">${score}</span>/<span id="total-questions">${activeQuestions.length}</span>`;
+                scoreDisplay.innerHTML = `Score: <span id="current-score">${score}</span>`;
                 quizDiv.appendChild(scoreDisplay);
 
                 const q = activeQuestions[currentQuestionIndex];
@@ -398,10 +443,7 @@
                 checkAnswer();
             });
 
-            nextBtn.addEventListener('click', () => {
-                currentQuestionIndex++;
-                displayQuestion();
-            });
+            nextBtn.addEventListener('click', nextQuestionHandler);
 
             startOverBtn.addEventListener('click', () => {
                 // Reset to category selection
@@ -417,8 +459,12 @@
                 const q = activeQuestions[currentQuestionIndex];
                 const selectedElement = quizDiv.querySelector('.options-list li.selected');
 
+                if (!selectedElement) return;
+
                 // Disable all options and check answer button after selection
-                quizDiv.querySelectorAll('.options-list li').forEach(li => li.style.pointerEvents = 'none');
+                quizDiv.querySelectorAll('.options-list li').forEach(li => {
+                    li.style.pointerEvents = 'none';
+                });
                 checkAnswerBtn.disabled = true;
                 
                 // Create feedback message
@@ -436,8 +482,14 @@
                     selectedElement.classList.add('incorrect');
                     // Highlight the correct answer
                     const correctElement = quizDiv.querySelector(`[data-id="${q.correctAnswer}"]`);
-                    if (correctElement) correctElement.classList.add('correct');
-                    feedbackDiv.textContent = `Incorrect. The right answer is: ${q.options[getOptionIndex(q.correctAnswer)]}`;
+                    if (correctElement) {
+                        correctElement.classList.add('correct');
+                    }
+                    
+                    // Get the correct answer text
+                    const correctIndex = getOptionIndex(q.correctAnswer);
+                    const correctAnswerText = correctIndex !== -1 ? q.options[correctIndex] : "Unknown";
+                    feedbackDiv.textContent = `Incorrect. The right answer is: ${correctAnswerText}`;
                     feedbackDiv.classList.add('feedback-incorrect');
                 }
                 
@@ -499,9 +551,6 @@
                 restartBtn.addEventListener('click', () => location.reload());
                 resultDiv.appendChild(restartBtn);
             }
-
-            // Set up initial event listeners
-            nextBtn.addEventListener('click', nextQuestionHandler);
 
             // Start the quiz by loading data
             loadQuestions();
