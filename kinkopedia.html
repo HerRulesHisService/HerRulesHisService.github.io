@@ -304,7 +304,7 @@
 
             async function loadQuestions() {
                 try {
-                    const response = await fetch('kinktionary.csv');
+                    const response = await fetch('kinkopedia.csv');
                     if (!response.ok) {
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
@@ -335,12 +335,12 @@
                     if (allQuestions.length > 0) {
                         setupCategorySelection();
                     } else {
-                        categorySelectionDiv.innerHTML = "<p>No questions loaded. Check your CSV file.</p>";
+                        categorySelectionDiv.innerHTML = "<p>Error Loading Questions.</p>";
                     }
 
                 } catch (error) {
                     console.error('Error loading or parsing CSV:', error);
-                    categorySelectionDiv.innerHTML = `<p>Error loading quiz data. Make sure 'kinktionary.csv' is correct and accessible.</p>`;
+                    categorySelectionDiv.innerHTML = `<p>Error loading quiz data.</p>`;
                 }
             }
 
