@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheel of Misfortune</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            width: 100%;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            color: #e94560;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #ccc;
+        }
+        
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 40px;
+            width: 100%;
+        }
+        
+        .wheel-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+        
+        .wheel {
+            width: 350px;
+            height: 350px;
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .wheel-circle {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(
+                #ff6b6b 0deg 36deg,
+                #ffa36c 36deg 72deg,
+                #ffde7d 72deg 108deg,
+                #a3de83 108deg 144deg,
+                #6a67ce 144deg 180deg,
+                #845ec2 180deg 216deg,
+                #d65db1 216deg 252deg,
+                #ff6b6b 252deg 288deg,
+                #ffa36c 288deg 324deg,
+                #ffde7d 324deg 360deg
+            );
+            position: relative;
+            transition: transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            overflow: hidden;
+        }
+        
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: #1a1a2e;
+            border-radius: 50%;
+            z-index: 10;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Fixed pointer outside the wheel */
+        .wheel-pointer {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 50px;
+            background: #e94560;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+            z-index: 20;
+        }
+        
+        .wheel-number {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
+        }
+        
+        .wheel-number span {
+            position: absolute;
+            left: 50%;
+            transform-origin: 0 175px;
+            height: 175px;
+            text-align: center;
+            width: 20px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .severity-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .easy {
+            background: #a3de83;
+            color: #1a1a2e;
+        }
+        
+        .moderate {
+            background: #ffde7d;
+            color: #1a1a2e;
+        }
+        
+        .severe {
+            background: #ff6b6b;
+            color: white;
+        }
+        
+        .spin-btn {
+            background: #e94560;
+            color: white;
+            padding: 12px 40px;
+            font-size: 1.3rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .severity-btn:hover, .spin-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.4);
+        }
+        
+        .severity-btn:active, .spin-btn:active {
+            transform: translateY(1px);
+        }
+        
+        .result-container {
+            flex: 1;
+            min-width: 300px;
+            max-width: 500px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        
+        .result-title {
+            font-size: 1.8rem;
+            color: #e94560;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .punishment-count {
+            font-size: 4rem;
+            text-align: center;
+            margin: 20px 0;
+            color: #ffde7d;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .comments {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            font-style: italic;
+        }
+        
+        .comment {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .action-btn {
+            padding: 12px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        .screenshot-btn {
+            background: #6a67ce;
+            color: white;
+        }
+        
+        .agreement-btn {
+            background: #845ec2;
+            color: white;
+        }
+        
+        .agreement-btn:disabled {
+            background: #555;
+            color: #999;
+            cursor: not-allowed;
+        }
+        
+        /* Agreement page styles */
+        .agreement-page {
+            display: none;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .agreement-content {
+            background: #1a1a2e;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 0 30px rgba(233, 69, 96, 0.5);
+        }
+        
+        .agreement-title {
+            font-size: 2.5rem;
+            color: #e94560;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .agreement-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 8px;
+            color: #ffde7d;
+            font-size: 1.1rem;
+        }
+        
+        input {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #444;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        .agreement-text {
+            margin: 30px 0;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            line-height: 1.6;
+        }
+        
+        .agreement-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .reset-btn {
+            background: #e94560;
+            color: white;
+        }
+        
+        .back-btn {
+            background: #6a67ce;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .wheel-container, .result-container {
+                width: 100%;
+            }
+            
+            .controls {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .agreement-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="main-page">
+        <header>
+            <h1>Wheel of Misfortune</h1>
+            <p class="tagline">Your fate is just a spin away...</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="wheel-container">
+                <div class="wheel">
+                    <div class="wheel-circle" id="wheel">
+                        <div class="wheel-center"></div>
+                        <div class="wheel-number" id="wheel-numbers"></div>
+                    </div>
+                    <!-- Fixed pointer outside the wheel -->
+                    <div class="wheel-pointer"></div>
+                </div>
+                
+                <div class="controls">
+                    <button class="severity-btn easy" id="easy-btn">Easy</button>
+                    <button class="severity-btn moderate" id="moderate-btn">Moderate</button>
+                    <button class="severity-btn severe" id="severe-btn">Severe</button>
+                    <button class="spin-btn" id="spin-btn">Spin Wheel</button>
+                    <button class="action-btn screenshot-btn" id="screenshot-btn">Screenshot</button>
+                    <button class="action-btn agreement-btn" id="agreement-btn" disabled>Generate Agreement</button>
+                </div>
+            </div>
+            
+            <div class="result-container">
+                <h2 class="result-title">Your Punishment</h2>
+                <div class="punishment-count" id="punishment-count">-</div>
+                <div class="comments" id="comments">
+                    <p class="comment">Select a severity and spin the wheel to determine your fate.</p>
+                    <p class="comment">The wheel decides all!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Name Input Page (hidden by default) -->
+    <div class="agreement-page" id="name-input-page">
+        <div class="agreement-content">
+            <h2 class="agreement-title">Enter Names for Agreement</h2>
+            
+            <div class="agreement-form">
+                <div class="form-group">
+                    <label for="sub-name">Submissive's Name:</label>
+                    <input type="text" id="sub-name" placeholder="Enter submissive's name">
+                </div>
+                <div class="form-group">
+                    <label for="queen-name">Queen's Name:</label>
+                    <input type="text" id="queen-name" placeholder="Enter Queen's name">
+                </div>
+                <button class="action-btn" id="generate-agreement">Generate Agreement</button>
+            </div>
+            
+            <div class="agreement-footer">
+                <button class="action-btn back-btn" id="back-to-main-btn">Back to Wheel</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Agreement Page (hidden by default) -->
+    <div class="agreement-page" id="agreement-page">
+        <div class="agreement-content">
+            <h2 class="agreement-title">Spanking Agreement</h2>
+            
+            <div class="agreement-text" id="agreement-text">
+                <!-- Agreement content will be generated here -->
+            </div>
+            
+            <div class="agreement-footer">
+                <button class="action-btn back-btn" id="back-to-name-btn">Back to Names</button>
+                <button class="action-btn screenshot-btn">Screenshot Agreement</button>
+                <button class="action-btn reset-btn" id="reset-btn">Reset All</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const wheel = document.getElementById('wheel');
+        const wheelNumbers = document.getElementById('wheel-numbers');
+        const easyBtn = document.getElementById('easy-btn');
+        const moderateBtn = document.getElementById('moderate-btn');
+        const severeBtn = document.getElementById('severe-btn');
+        const spinBtn = document.getElementById('spin-btn');
+        const punishmentCount = document.getElementById('punishment-count');
+        const comments = document.getElementById('comments');
+        const screenshotBtn = document.getElementById('screenshot-btn');
+        const agreementBtn = document.getElementById('agreement-btn');
+        const mainPage = document.getElementById('main-page');
+        const nameInputPage = document.getElementById('name-input-page');
+        const agreementPage = document.getElementById('agreement-page');
+        const generateAgreementBtn = document.getElementById('generate-agreement');
+        const agreementText = document.getElementById('agreement-text');
+        const resetBtn = document.getElementById('reset-btn');
+        const backToMainBtn = document.getElementById('back-to-main-btn');
+        const backToNameBtn = document.getElementById('back-to-name-btn');
+        const subNameInput = document.getElementById('sub-name');
+        const queenNameInput = document.getElementById('queen-name');
+        
+        // Game state
+        let currentSeverity = 'easy';
+        let currentNumber = 0;
+        let isSpinning = false;
+        let punishmentDecided = false;
+        let selectedComment = '';
+        
+        // Comments based on severity
+        const easyComments = [
+            "That's just a warm-up! Your bottom will turn a lovely shade of pink.",
+            "A gentle reminder of who's in charge. Your skin will have a rosy glow.",
+            "Just a little sting to keep you on your toes. Pink and pretty!",
+            "A playful tap that will leave your cheeks blushing.",
+            "A light spanking that will make your bottom nicely pink. The punishment instrument is of the Goddess'/Queen's choice."
+        ];
+        
+        const moderateComments = [
+            "Now we're getting serious! Your bottom will be red and you might shed a tear.",
+            "This will definitely leave a mark! Bright red and possibly some tears.",
+            "A proper spanking that will turn your cheeks crimson and bring tears to your eyes.",
+            "You'll feel this for hours! Deep red and definitely crying.",
+            "A stern punishment that will leave your bottom fiery red and you sobbing. The punishment instrument is of the Goddess'/Queen's choice."
+        ];
+        
+        const severeComments = [
+            "This is extreme! Your bottom will be bright red, you'll be crying, and you won't sit comfortably for days!",
+            "Maximum intensity! Your cheeks will be blazing red, tears will flow, and sitting will be agony for 48 hours.",
+            "The ultimate punishment! Your bottom will be scarlet, you'll weep uncontrollably, and you'll need to stand for two days.",
+            "Brutal and unforgiving! Your skin will be crimson, you'll be sobbing, and chairs will be your enemy for two days.",
+            "The most severe punishment! Your bottom will be fire-engine red, you'll cry like a baby, and sitting will be impossible for two days. The punishment instrument is of the Goddess'/Queen's choice."
+        ];
+        
+        // Initialize the wheel with easy numbers (1-10)
+        initializeWheel(1, 10);
+        
+        // Event Listeners
+        easyBtn.addEventListener('click', () => setSeverity('easy'));
+        moderateBtn.addEventListener('click', () => setSeverity('moderate'));
+        severeBtn.addEventListener('click', () => setSeverity('severe'));
+        spinBtn.addEventListener('click', spinWheel);
+        screenshotBtn.addEventListener('click', takeScreenshot);
+        agreementBtn.addEventListener('click', showNameInputPage);
+        generateAgreementBtn.addEventListener('click', showAgreementPage);
+        resetBtn.addEventListener('click', resetAll);
+        backToMainBtn.addEventListener('click', showMainPage);
+        backToNameBtn.addEventListener('click', showNameInputPage);
+        
+        // Functions
+        function setSeverity(severity) {
+            currentSeverity = severity;
+            
+            // Update active button
+            easyBtn.classList.remove('active');
+            moderateBtn.classList.remove('active');
+            severeBtn.classList.remove('active');
+            
+            if (severity === 'easy') {
+                easyBtn.classList.add('active');
+                initializeWheel(1, 10);
+            } else if (severity === 'moderate') {
+                moderateBtn.classList.add('active');
+                initializeWheel(11, 20);
+            } else if (severity === 'severe') {
+                severeBtn.classList.add('active');
+                initializeWheel(21, 30);
+            }
+            
+            // Reset display
+            punishmentCount.textContent = '-';
+            punishmentDecided = false;
+            agreementBtn.disabled = true;
+            comments.innerHTML = '<p class="comment">Select a severity and spin the wheel to determine your fate.</p><p class="comment">The wheel decides all!</p>';
+        }
+        
+        function initializeWheel(start, end) {
+            wheelNumbers.innerHTML = '';
+            const numbers = [];
+            
+            for (let i = start; i <= end; i++) {
+                numbers.push(i);
+            }
+            
+            // Create number elements around the wheel
+            const angleIncrement = 360 / numbers.length;
+            
+            numbers.forEach((number, index) => {
+                const numberElement = document.createElement('span');
+                numberElement.textContent = number;
+                numberElement.style.transform = `rotate(${index * angleIncrement}deg)`;
+                wheelNumbers.appendChild(numberElement);
+            });
+        }
+        
+        function spinWheel() {
+            if (isSpinning) return;
+            
+            isSpinning = true;
+            
+            // Reset the wheel rotation to ensure proper spinning
+            wheel.style.transition = 'none';
+            wheel.style.transform = 'rotate(0deg)';
+            
+            // Force a reflow
+            void wheel.offsetWidth;
+            
+            // Re-enable the transition
+            wheel.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.83, 0.67)';
+            
+            // Determine range based on severity
+            let min, max;
+            if (currentSeverity === 'easy') {
+                min = 1;
+                max = 10;
+            } else if (currentSeverity === 'moderate') {
+                min = 11;
+                max = 20;
+            } else {
+                min = 21;
+                max = 30;
+            }
+            
+            // Generate a random number in the range
+            const result = Math.floor(Math.random() * (max - min + 1)) + min;
+            currentNumber = result;
+            
+            // Calculate rotation (multiple full rotations plus offset to land on the result)
+            const numbersCount = max - min + 1;
+            const angleIncrement = 360 / numbersCount;
+            const resultIndex = result - min;
+            const targetAngle = 360 * 5 + (360 - (resultIndex * angleIncrement));
+            
+            // Apply rotation
+            wheel.style.transform = `rotate(${targetAngle}deg)`;
+            
+            // Update result after spin completes
+            setTimeout(() => {
+                punishmentCount.textContent = `${result} spanking${result > 1 ? 's' : ''}`;
+                displayComments(result);
+                isSpinning = false;
+                punishmentDecided = true;
+                agreementBtn.disabled = false;
+            }, 4000);
+        }
+        
+        function displayComments(number) {
+            comments.innerHTML = '';
+            
+            let commentSet;
+            if (currentSeverity === 'easy') {
+                commentSet = easyComments;
+            } else if (currentSeverity === 'moderate') {
+                commentSet = moderateComments;
+            } else {
+                commentSet = severeComments;
+            }
+            
+            // Select one random comment
+            const shuffled = [...commentSet].sort(() => 0.5 - Math.random());
+            selectedComment = shuffled[0];
+            
+            const commentElement = document.createElement('p');
+            commentElement.classList.add('comment');
+            commentElement.textContent = selectedComment;
+            comments.appendChild(commentElement);
+        }
+        
+        function takeScreenshot() {
+            alert('Screenshot functionality would be implemented here. In a real application, this would use a library like html2canvas to capture the current state of the application.');
+        }
+        
+        function showNameInputPage() {
+            mainPage.style.display = 'none';
+            nameInputPage.style.display = 'block';
+            agreementPage.style.display = 'none';
+        }
+        
+        function showAgreementPage() {
+            const subName = subNameInput.value || 'the Submissive';
+            const queenName = queenNameInput.value || 'the Queen';
+            
+            if (!subName.trim() || !queenName.trim()) {
+                alert('Please enter both names before generating the agreement.');
+                return;
+            }
+            
+            generateAgreement(subName, queenName);
+            nameInputPage.style.display = 'none';
+            agreementPage.style.display = 'block';
+        }
+        
+        function showMainPage() {
+            nameInputPage.style.display = 'none';
+            agreementPage.style.display = 'none';
+            mainPage.style.display = 'flex';
+        }
+        
+        function generateAgreement(subName, queenName) {
+            agreementText.innerHTML = `
+                <h3>Spanking Agreement</h3>
+                <p>This agreement is made between <strong>${subName}</strong> (hereinafter referred to as "the Submissive") and <strong>${queenName}</strong> (hereinafter referred to as "the Queen").</p>
+                
+                <p>WHEREAS, the Submissive has willingly submitted to the Queen's authority;</p>
+                <p>WHEREAS, the Wheel of Misfortune has determined the punishment to be <strong>${currentNumber} spanking${currentNumber > 1 ? 's' : ''}</strong> at the <strong>${currentSeverity}</strong> severity level;</p>
+                
+                <p>NOW, THEREFORE, the parties agree as follows:</p>
+                
+                <ol>
+                    <li>The Submissive shall receive ${currentNumber} spanking${currentNumber > 1 ? 's' : ''} as determined by the Wheel of Misfortune.</li>
+                    <li>The severity level of the spanking is ${currentSeverity}.</li>
+                    <li>The Submissive agrees to accept this punishment without resistance.</li>
+                    <li>The Queen agrees to administer the punishment in a controlled manner.</li>
+                    <li>The punishment instrument is of the Queen's choice.</li>
+                    <li>This agreement is binding and shall be fulfilled immediately.</li>
+                </ol>
+                
+                <div class="punishment-details">
+                    <h4>Punishment Details:</h4>
+                    <p><strong>Number of Spankings:</strong> ${currentNumber}</p>
+                    <p><strong>Severity:</strong> ${currentSeverity}</p>
+                    <div class="comments">
+                        <h4>Comment:</h4>
+                        <p class="comment">${selectedComment}</p>
+                    </div>
+                </div>
+                
+                <p>IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.</p>
+                
+                <div style="display: flex; justify-content: space-between; margin-top: 30px;">
+                    <div>
+                        <p>_________________________</p>
+                        <p><strong>${subName}</strong></p>
+                        <p>The Submissive</p>
+                    </div>
+                    <div>
+                        <p>_________________________</p>
+                        <p><strong>${queenName}</strong></p>
+                        <p>The Queen</p>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 20px; text-align: center;">
+                    <p>Wheel of Misfortune Result: ${currentNumber} spanking${currentNumber > 1 ? 's' : ''} (${currentSeverity} severity)</p>
+                </div>
+            `;
+        }
+        
+        function resetAll() {
+            // Reset game state
+            currentSeverity = 'easy';
+            currentNumber = 0;
+            punishmentDecided = false;
+            
+            // Reset UI
+            setSeverity('easy');
+            wheel.style.transform = 'rotate(0deg)';
+            subNameInput.value = '';
+            queenNameInput.value = '';
+            agreementText.innerHTML = '';
+            agreementBtn.disabled = true;
+            
+            // Return to main page
+            showMainPage();
+        }
+    </script>
+</body>
+</html>
