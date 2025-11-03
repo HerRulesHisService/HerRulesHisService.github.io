@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kink-O-Pedia</title>
+    
+    <style>
+        body {
+            font-family: 'Georgia', serif;
+            background-color: #f8f4e3;
+            color: #3d342d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .quiz-container {
+            background-color: #ffffff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            color: #a0522d;
+            margin-bottom: 25px;
+            font-size: 1.8em;
+        }
+
+        .category-select-area {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #e0d9c4;
+            border-radius: 8px;
+            background-color: #fffaf0;
+        }
+        
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+            color: #8b4513;
+        }
+
+        #category-select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            width: 100%;
+            max-width: 300px;
+            font-size: 1em;
+            margin-bottom: 15px;
+        }
+
+        #start-quiz-btn {
+            background-color: #4CAF50; /* Green start button */
+            color: white;
+        }
+
+        .question-text {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-left: 5px solid #a0522d;
+            background-color: #fffaf0;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 30px;
+        }
+
+        .options-list li {
+            background-color: #f7f3e8;
+            margin-bottom: 10px;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            transition: background-color 0.2s;
+            border: 1px solid #e0d9c4;
+        }
+
+        .options-list li:hover {
+            background-color: #e8e0c8;
+        }
+
+        .options-list li.selected {
+            border: 3px solid #a0522d;
+            background-color: #ffe8d6;
+        }
+
+        .options-list li.correct {
+            border: 3px solid #4CAF50;
+            background-color: #e8f5e8;
+        }
+
+        .options-list li.incorrect {
+            border: 3px solid #f44336;
+            background-color: #ffe8e6;
+        }
+
+        button {
+            padding: 10px 25px;
+            font-size: 1em;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            background-color: #a0522d;
+            color: white;
+            transition: background-color 0.3s;
+            margin-top: 15px;
+            margin-right: 5px;
+        }
+
+        button:hover:not(:disabled) {
+            background-color: #8b4513;
+        }
+
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .result-message {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        /* Classy Finish Styles */
+        .result-message.perfect {
+            background-color: #e6f7ff;
+            color: #007bff;
+            border: 2px solid #007bff;
+        }
+
+        .result-message.good {
+            background-color: #fff9e6;
+            color: #ff9800;
+            border: 2px solid #ff9800;
+        }
+
+        .result-message.needs-work {
+            background-color: #fff0f0;
+            color: #f44336;
+            border: 2px solid #f44336;
+        }
+
+        .explanation-text {
+            margin-top: 15px;
+            font-size: 0.9em;
+            font-style: italic;
+            color: #555;
+            text-align: left;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .feedback-text {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 6px;
+        }
+
+        .feedback-correct {
+            background-color: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4CAF50;
+        }
+
+        .feedback-incorrect {
+            background-color: #ffe8e6;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+
+        .score-display {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #8b4513;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <h1>🍳 Kink-O-Pedia</h1>
+        
+        <div id="category-selection" class="category-select-area">
+            <p>Loading categories...</p>
+        </div>
+
+        <div id="quiz" class="hidden">
+            <div class="score-display">Score: <span id="current-score">0</span>/<span id="total-questions">0</span></div>
+        </div>
+        
+        <div id="quiz-buttons" class="hidden">
+            <button id="check-answer-btn">Check Answer</button>
+            <button id="next-btn" disabled>Next</button>
+            <button id="start-over-btn">Start Over</button>
+        </div>
+        
+        <div id="result" class="result-message hidden"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const categorySelectionDiv = document.getElementById('category-selection');
+            const quizDiv = document.getElementById('quiz');
+            const quizButtonsDiv = document.getElementById('quiz-buttons');
+            const checkAnswerBtn = document.getElementById('check-answer-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const startOverBtn = document.getElementById('start-over-btn');
+            const resultDiv = document.getElementById('result');
+            const currentScoreSpan = document.getElementById('current-score');
+            const totalQuestionsSpan = document.getElementById('total-questions');
+
+            let allQuestions = []; // Stores all questions from CSV
+            let activeQuestions = []; // Stores questions for the selected category
+            let currentQuestionIndex = 0;
+            let score = 0;
+            let selectedOptionId = null;
+            let answerChecked = false;
+
+            // --- CSV Loading and Parsing ---
+
+            // Helper to get correct option index from text ID
+            function getOptionIndex(id) {
+                switch(id) {
+                    case 'option_a': return 0;
+                    case 'option_b': return 1;
+                    case 'option_c': return 2;
+                    case 'option_d': return 3;
+                    default: return -1;
+                }
+            }
+
+            async function loadQuestions() {
+                try {
+                    const response = await fetch('kinktionary.csv');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const csvText = await response.text();
+                    
+                    const lines = csvText.trim().split('\n');
+                    const headers = lines[0].split(',');
+                    
+                    allQuestions = lines.slice(1).map(line => {
+                        const parts = line.split(',');
+                        // Use header names for clarity, assuming fixed order based on the new CSV
+                        return {
+                            category: parts[0],
+                            question: parts[1],
+                            options: [parts[2], parts[3], parts[4], parts[5]],
+                            correctAnswer: parts[6], // e.g., 'option_b'
+                            explanation: parts[7]
+                        };
+                    });
+
+                    if (allQuestions.length > 0) {
+                        setupCategorySelection();
+                    } else {
+                        categorySelectionDiv.innerHTML = "<p>No questions loaded. Check your CSV file.</p>";
+                    }
+
+                } catch (error) {
+                    console.error('Error loading or parsing CSV:', error);
+                    categorySelectionDiv.innerHTML = `<p>Error loading quiz data. Make sure 'questions.csv' is correct.</p>`;
+                }
+            }
+
+            // --- Category Selection Setup ---
+
+            function setupCategorySelection() {
+                const categories = [...new Set(allQuestions.map(q => q.category))];
+                
+                let html = `
+                    <label for="category-select">Choose a Culinary Category:</label>
+                    <select id="category-select">
+                        <option value="all">All Categories (${allQuestions.length} Questions)</option>
+                        ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
+                    </select>
+                    <button id="start-quiz-btn">Start Quiz</button>
+                `;
+                categorySelectionDiv.innerHTML = html;
+
+                document.getElementById('start-quiz-btn').addEventListener('click', startQuiz);
+            }
+
+            function startQuiz() {
+                const selectElement = document.getElementById('category-select');
+                const selectedCategory = selectElement.value;
+                
+                if (selectedCategory === 'all') {
+                    activeQuestions = [...allQuestions];
+                } else {
+                    activeQuestions = allQuestions.filter(q => q.category === selectedCategory);
+                }
+
+                if (activeQuestions.length === 0) {
+                    alert('No questions found for this category!');
+                    return;
+                }
+
+                // Initialize quiz state
+                currentQuestionIndex = 0;
+                score = 0;
+                answerChecked = false;
+                categorySelectionDiv.classList.add('hidden');
+                quizDiv.classList.remove('hidden');
+                quizButtonsDiv.classList.remove('hidden');
+                
+                // Update score display
+                currentScoreSpan.textContent = score;
+                totalQuestionsSpan.textContent = activeQuestions.length;
+                
+                displayQuestion();
+            }
+
+            // --- Quiz Display and Interaction ---
+
+            function displayQuestion() {
+                // Clear previous content and reset state
+                quizDiv.innerHTML = '';
+                resultDiv.classList.add('hidden');
+                resultDiv.innerHTML = '';
+                selectedOptionId = null;
+                answerChecked = false;
+                
+                // Reset buttons
+                checkAnswerBtn.disabled = true;
+                nextBtn.disabled = true;
+
+                // Add score display back
+                const scoreDisplay = document.createElement('div');
+                scoreDisplay.className = 'score-display';
+                scoreDisplay.innerHTML = `Score: <span id="current-score">${score}</span>/<span id="total-questions">${activeQuestions.length}</span>`;
+                quizDiv.appendChild(scoreDisplay);
+
+                const q = activeQuestions[currentQuestionIndex];
+                const optionIds = ['option_a', 'option_b', 'option_c', 'option_d'];
+
+                // 1. Question Text
+                const questionText = document.createElement('div');
+                questionText.className = 'question-text';
+                questionText.textContent = q.question;
+                quizDiv.appendChild(questionText);
+
+                // 2. Options List
+                const optionsList = document.createElement('ul');
+                optionsList.className = 'options-list';
+
+                q.options.forEach((option, index) => {
+                    const optionId = optionIds[index];
+                    const listItem = document.createElement('li');
+                    listItem.textContent = option;
+                    listItem.setAttribute('data-id', optionId);
+                    listItem.addEventListener('click', () => selectOption(listItem, optionId));
+                    optionsList.appendChild(listItem);
+                });
+                
+                quizDiv.appendChild(optionsList);
+            }
+
+            function selectOption(selectedElement, optionId) {
+                if (answerChecked) return; // Don't allow selection after answer is checked
+                
+                const listItems = quizDiv.querySelectorAll('.options-list li');
+                
+                listItems.forEach(item => item.classList.remove('selected'));
+                selectedElement.classList.add('selected');
+                
+                selectedOptionId = optionId;
+                checkAnswerBtn.disabled = false;
+            }
+
+            // --- Navigation and Scoring ---
+
+            checkAnswerBtn.addEventListener('click', () => {
+                checkAnswer();
+            });
+
+            nextBtn.addEventListener('click', () => {
+                currentQuestionIndex++;
+                displayQuestion();
+            });
+
+            startOverBtn.addEventListener('click', () => {
+                // Reset to category selection
+                categorySelectionDiv.classList.remove('hidden');
+                quizDiv.classList.add('hidden');
+                quizButtonsDiv.classList.add('hidden');
+                resultDiv.classList.add('hidden');
+            });
+
+            function checkAnswer() {
+                if (!selectedOptionId) return;
+
+                const q = activeQuestions[currentQuestionIndex];
+                const selectedElement = quizDiv.querySelector('.options-list li.selected');
+
+                // Disable all options and check answer button after selection
+                quizDiv.querySelectorAll('.options-list li').forEach(li => li.style.pointerEvents = 'none');
+                checkAnswerBtn.disabled = true;
+                
+                // Create feedback message
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.className = 'feedback-text';
+                
+                // Check and score
+                if (selectedOptionId === q.correctAnswer) {
+                    score++;
+                    currentScoreSpan.textContent = score;
+                    selectedElement.classList.add('correct');
+                    feedbackDiv.textContent = "Correct! Well done.";
+                    feedbackDiv.classList.add('feedback-correct');
+                } else {
+                    selectedElement.classList.add('incorrect');
+                    // Highlight the correct answer
+                    const correctElement = quizDiv.querySelector(`[data-id="${q.correctAnswer}"]`);
+                    if (correctElement) correctElement.classList.add('correct');
+                    feedbackDiv.textContent = `Incorrect. The right answer is: ${q.options[getOptionIndex(q.correctAnswer)]}`;
+                    feedbackDiv.classList.add('feedback-incorrect');
+                }
+                
+                quizDiv.appendChild(feedbackDiv);
+
+                // Show Explanation
+                const explanationDiv = document.createElement('div');
+                explanationDiv.className = 'explanation-text';
+                explanationDiv.innerHTML = `<strong>Explanation:</strong> ${q.explanation}`;
+                quizDiv.appendChild(explanationDiv);
+
+                // Enable Next button
+                nextBtn.disabled = false;
+                answerChecked = true;
+
+                // If this is the last question, change Next button to Submit
+                const isLastQuestion = currentQuestionIndex === activeQuestions.length - 1;
+                if (isLastQuestion) {
+                    nextBtn.textContent = 'Submit Quiz';
+                    nextBtn.removeEventListener('click', nextQuestionHandler);
+                    nextBtn.addEventListener('click', displayResult);
+                }
+            }
+
+            function nextQuestionHandler() {
+                currentQuestionIndex++;
+                displayQuestion();
+            }
+
+            function displayResult() {
+                quizDiv.classList.add('hidden'); 
+                quizButtonsDiv.classList.add('hidden');
+
+                const totalQuestions = activeQuestions.length;
+                const percentage = (score / totalQuestions) * 100;
+
+                let message = `You scored ${score} out of ${totalQuestions}! (${percentage.toFixed(0)}%)`;
+                let resultClass = 'needs-work';
+
+                // Set the Classy Finish Messages
+                if (percentage === 100) {
+                    message += "<br>👑 <strong>Perfect Technique!</strong> You've mastered the culinary craft. All hail the Sous Chef!";
+                    resultClass = 'perfect';
+                } else if (percentage >= 70) {
+                    message += "<br>⭐ <strong>Excellent Control.</strong> Your 'Mise en place' is strong. A true culinary professional.";
+                    resultClass = 'good';
+                } else {
+                    message += "<br>🥄 <strong>Time for Refinement.</strong> Back to the kitchen! Review your basic terms.";
+                    resultClass = 'needs-work';
+                }
+
+                resultDiv.innerHTML = message;
+                resultDiv.className = `result-message ${resultClass}`;
+                resultDiv.classList.remove('hidden');
+
+                // Add button to restart quiz
+                const restartBtn = document.createElement('button');
+                restartBtn.textContent = 'Restart Quiz';
+                restartBtn.addEventListener('click', () => location.reload());
+                resultDiv.appendChild(restartBtn);
+            }
+
+            // Set up initial event listeners
+            nextBtn.addEventListener('click', nextQuestionHandler);
+
+            // Start the quiz by loading data
+            loadQuestions();
+        });
+    </script>
+</body>
+</html>
