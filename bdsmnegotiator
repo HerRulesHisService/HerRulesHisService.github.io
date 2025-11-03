@@ -329,6 +329,12 @@
             background-color: var(--not-applicable);
         }
 
+        .category-description {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: var(--gray-dark);
+        }
+
         @media (max-width: 768px) {
             .activity {
                 flex-direction: column;
@@ -398,9 +404,10 @@
             </div>
 
             <div class="tab-content active" id="checklist">
-                <!-- Sensation Play -->
+                <!-- Sensation & Impact Play -->
                 <div class="category">
-                    <h3 class="category-title">Sensation Play</h3>
+                    <h3 class="category-title">Sensation & Impact Play</h3>
+                    <p class="category-description">Activities involving physical sensation, from gentle to intense</p>
                     
                     <div class="intensity">
                         <div class="intensity-title">Light</div>
@@ -415,7 +422,7 @@
                             </div>
                         </div>
                         <div class="activity">
-                            <div class="activity-name">Temperature play (warm/cold objects)</div>
+                            <div class="activity-name">Temperature play (warm/cold)</div>
                             <div class="activity-options">
                                 <label class="option-label never"><input type="radio" name="temperature-play" value="never"> Never</label>
                                 <label class="option-label want"><input type="radio" name="temperature-play" value="want"> Want to</label>
@@ -432,6 +439,16 @@
                                 <label class="option-label willing"><input type="radio" name="feather-tickling" value="willing"> Willing to</label>
                                 <label class="option-label love"><input type="radio" name="feather-tickling" value="love"> Love to</label>
                                 <label class="option-label not-applicable"><input type="radio" name="feather-tickling" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Sensory deprivation (blindfolds)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="sensory-deprivation" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="sensory-deprivation" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="sensory-deprivation" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="sensory-deprivation" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="sensory-deprivation" value="not-applicable"> N/A</label>
                             </div>
                         </div>
                     </div>
@@ -468,10 +485,20 @@
                                 <label class="option-label not-applicable"><input type="radio" name="clothespins" value="not-applicable"> N/A</label>
                             </div>
                         </div>
+                        <div class="activity">
+                            <div class="activity-name">Electroplay (mild)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="electroplay-mild" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="electroplay-mild" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="electroplay-mild" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="electroplay-mild" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="electroplay-mild" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
                     </div>
                     
                     <div class="intensity">
-                        <div class="intensity-title">Heavy/Extreme</div>
+                        <div class="intensity-title">Extreme</div>
                         <div class="activity">
                             <div class="activity-name">Heavy impact play (paddles, canes)</div>
                             <div class="activity-options">
@@ -480,16 +507,6 @@
                                 <label class="option-label willing"><input type="radio" name="heavy-impact" value="willing"> Willing to</label>
                                 <label class="option-label love"><input type="radio" name="heavy-impact" value="love"> Love to</label>
                                 <label class="option-label not-applicable"><input type="radio" name="heavy-impact" value="not-applicable"> N/A</label>
-                            </div>
-                        </div>
-                        <div class="activity">
-                            <div class="activity-name">Branding (temporary/permanent)</div>
-                            <div class="activity-options">
-                                <label class="option-label never"><input type="radio" name="branding" value="never"> Never</label>
-                                <label class="option-label want"><input type="radio" name="branding" value="want"> Want to</label>
-                                <label class="option-label willing"><input type="radio" name="branding" value="willing"> Willing to</label>
-                                <label class="option-label love"><input type="radio" name="branding" value="love"> Love to</label>
-                                <label class="option-label not-applicable"><input type="radio" name="branding" value="not-applicable"> N/A</label>
                             </div>
                         </div>
                         <div class="activity">
@@ -502,12 +519,33 @@
                                 <label class="option-label not-applicable"><input type="radio" name="fire-play" value="not-applicable"> N/A</label>
                             </div>
                         </div>
+                        <div class="activity">
+                            <div class="activity-name">Electroplay (intense)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="electroplay-intense" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="electroplay-intense" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="electroplay-intense" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="electroplay-intense" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="electroplay-intense" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Permanent marks</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="permanent-marks" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="permanent-marks" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="permanent-marks" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="permanent-marks" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="permanent-marks" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Bondage & Restraint -->
                 <div class="category">
                     <h3 class="category-title">Bondage & Restraint</h3>
+                    <p class="category-description">Physical restraint and confinement activities</p>
                     
                     <div class="intensity">
                         <div class="intensity-title">Light</div>
@@ -532,7 +570,7 @@
                             </div>
                         </div>
                         <div class="activity">
-                            <div class="activity-name">Light rope (single column ties)</div>
+                            <div class="activity-name">Light rope bondage</div>
                             <div class="activity-options">
                                 <label class="option-label never"><input type="radio" name="light-rope" value="never"> Never</label>
                                 <label class="option-label want"><input type="radio" name="light-rope" value="want"> Want to</label>
@@ -566,19 +604,19 @@
                             </div>
                         </div>
                         <div class="activity">
-                            <div class="activity-name">Spread eagle positions</div>
+                            <div class="activity-name">Partial suspension</div>
                             <div class="activity-options">
-                                <label class="option-label never"><input type="radio" name="spread-eagle" value="never"> Never</label>
-                                <label class="option-label want"><input type="radio" name="spread-eagle" value="want"> Want to</label>
-                                <label class="option-label willing"><input type="radio" name="spread-eagle" value="willing"> Willing to</label>
-                                <label class="option-label love"><input type="radio" name="spread-eagle" value="love"> Love to</label>
-                                <label class="option-label not-applicable"><input type="radio" name="spread-eagle" value="not-applicable"> N/A</label>
+                                <label class="option-label never"><input type="radio" name="partial-suspension" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="partial-suspension" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="partial-suspension" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="partial-suspension" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="partial-suspension" value="not-applicable"> N/A</label>
                             </div>
                         </div>
                     </div>
                     
                     <div class="intensity">
-                        <div class="intensity-title">Heavy/Extreme</div>
+                        <div class="intensity-title">Extreme</div>
                         <div class="activity">
                             <div class="activity-name">Full suspension</div>
                             <div class="activity-options">
@@ -587,16 +625,6 @@
                                 <label class="option-label willing"><input type="radio" name="full-suspension" value="willing"> Willing to</label>
                                 <label class="option-label love"><input type="radio" name="full-suspension" value="love"> Love to</label>
                                 <label class="option-label not-applicable"><input type="radio" name="full-suspension" value="not-applicable"> N/A</label>
-                            </div>
-                        </div>
-                        <div class="activity">
-                            <div class="activity-name">Tight, complex rope work</div>
-                            <div class="activity-options">
-                                <label class="option-label never"><input type="radio" name="complex-rope" value="never"> Never</label>
-                                <label class="option-label want"><input type="radio" name="complex-rope" value="want"> Want to</label>
-                                <label class="option-label willing"><input type="radio" name="complex-rope" value="willing"> Willing to</label>
-                                <label class="option-label love"><input type="radio" name="complex-rope" value="love"> Love to</label>
-                                <label class="option-label not-applicable"><input type="radio" name="complex-rope" value="not-applicable"> N/A</label>
                             </div>
                         </div>
                         <div class="activity">
@@ -609,10 +637,412 @@
                                 <label class="option-label not-applicable"><input type="radio" name="metal-restraints" value="not-applicable"> N/A</label>
                             </div>
                         </div>
+                        <div class="activity">
+                            <div class="activity-name">Chastity devices (long-term)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="chastity-long" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="chastity-long" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="chastity-long" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="chastity-long" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="chastity-long" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Confinement (cage, small space)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="confinement" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="confinement" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="confinement" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="confinement" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="confinement" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Add other categories similarly -->
+                <!-- Power Exchange & Psychological Play -->
+                <div class="category">
+                    <h3 class="category-title">Power Exchange & Psychological Play</h3>
+                    <p class="category-description">Activities involving dominance, submission, and mental play</p>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Light</div>
+                        <div class="activity">
+                            <div class="activity-name">Verbal commands</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="verbal-commands" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="verbal-commands" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="verbal-commands" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="verbal-commands" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="verbal-commands" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Pet names</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="pet-names" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="pet-names" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="pet-names" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="pet-names" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="pet-names" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Light protocol</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="light-protocol" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="light-protocol" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="light-protocol" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="light-protocol" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="light-protocol" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Medium</div>
+                        <div class="activity">
+                            <div class="activity-name">Rules and protocols</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="rules-protocols" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="rules-protocols" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="rules-protocols" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="rules-protocols" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="rules-protocols" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Service-oriented tasks</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="service-tasks" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="service-tasks" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="service-tasks" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="service-tasks" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="service-tasks" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Orgasm control (days)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="orgasm-control" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="orgasm-control" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="orgasm-control" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="orgasm-control" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="orgasm-control" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Humiliation/degradation</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="humiliation" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="humiliation" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="humiliation" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="humiliation" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="humiliation" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Extreme</div>
+                        <div class="activity">
+                            <div class="activity-name">24/7 power exchange</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="24-7-power" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="24-7-power" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="24-7-power" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="24-7-power" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="24-7-power" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Consensual non-consent (CNC)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="cnc" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="cnc" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="cnc" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="cnc" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="cnc" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Financial domination</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="financial-dom" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="financial-dom" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="financial-dom" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="financial-dom" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="financial-dom" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Long-term orgasm denial</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="long-term-denial" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="long-term-denial" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="long-term-denial" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="long-term-denial" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="long-term-denial" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Play & Fetish Activities -->
+                <div class="category">
+                    <h3 class="category-title">Role Play & Fetish Activities</h3>
+                    <p class="category-description">Fantasy scenarios and specific fetishes</p>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Light</div>
+                        <div class="activity">
+                            <div class="activity-name">Teacher/student role play</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="teacher-student" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="teacher-student" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="teacher-student" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="teacher-student" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="teacher-student" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Boss/employee role play</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="boss-employee" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="boss-employee" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="boss-employee" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="boss-employee" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="boss-employee" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Foot worship</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="foot-worship" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="foot-worship" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="foot-worship" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="foot-worship" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="foot-worship" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Medium</div>
+                        <div class="activity">
+                            <div class="activity-name">Master/slave role play</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="master-slave" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="master-slave" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="master-slave" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="master-slave" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="master-slave" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Interrogation scenes</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="interrogation" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="interrogation" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="interrogation" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="interrogation" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="interrogation" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Cuckolding (emotional)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="cuckolding-emotional" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="cuckolding-emotional" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="cuckolding-emotional" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="cuckolding-emotional" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="cuckolding-emotional" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Watersports (on body)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="watersports-body" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="watersports-body" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="watersports-body" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="watersports-body" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="watersports-body" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Extreme</div>
+                        <div class="activity">
+                            <div class="activity-name">Extreme CNC scenes</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="extreme-cnc" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="extreme-cnc" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="extreme-cnc" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="extreme-cnc" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="extreme-cnc" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Kidnapping scenarios</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="kidnapping" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="kidnapping" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="kidnapping" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="kidnapping" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="kidnapping" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Cuckolding (with humiliation)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="cuckolding-humiliation" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="cuckolding-humiliation" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="cuckolding-humiliation" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="cuckolding-humiliation" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="cuckolding-humiliation" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Watersports (consumption)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="watersports-consumption" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="watersports-consumption" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="watersports-consumption" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="watersports-consumption" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="watersports-consumption" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sexual Activities & Group Scenes -->
+                <div class="category">
+                    <h3 class="category-title">Sexual Activities & Group Scenes</h3>
+                    <p class="category-description">Sexual activities and multi-partner scenarios</p>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Light</div>
+                        <div class="activity">
+                            <div class="activity-name">Vanilla sex with D/s elements</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="vanilla-ds" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="vanilla-ds" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="vanilla-ds" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="vanilla-ds" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="vanilla-ds" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Oral sex</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="oral-sex" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="oral-sex" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="oral-sex" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="oral-sex" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="oral-sex" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Edging</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="edging" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="edging" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="edging" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="edging" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="edging" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Medium</div>
+                        <div class="activity">
+                            <div class="activity-name">Rough sex</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="rough-sex" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="rough-sex" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="rough-sex" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="rough-sex" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="rough-sex" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Face slapping (sexual context)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="face-slapping" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="face-slapping" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="face-slapping" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="face-slapping" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="face-slapping" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Forced orgasms</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="forced-orgasms" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="forced-orgasms" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="forced-orgasms" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="forced-orgasms" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="forced-orgasms" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Sex in semi-public places</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="semi-public-sex" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="semi-public-sex" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="semi-public-sex" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="semi-public-sex" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="semi-public-sex" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="intensity">
+                        <div class="intensity-title">Extreme</div>
+                        <div class="activity">
+                            <div class="activity-name">Gang bang</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="gang-bang" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="gang-bang" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="gang-bang" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="gang-bang" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="gang-bang" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Free use arrangements</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="free-use" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="free-use" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="free-use" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="free-use" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="free-use" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Sexual service to multiple partners</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="multiple-partners" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="multiple-partners" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="multiple-partners" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="multiple-partners" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="multiple-partners" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                        <div class="activity">
+                            <div class="activity-name">Public play (risky)</div>
+                            <div class="activity-options">
+                                <label class="option-label never"><input type="radio" name="risky-public" value="never"> Never</label>
+                                <label class="option-label want"><input type="radio" name="risky-public" value="want"> Want to</label>
+                                <label class="option-label willing"><input type="radio" name="risky-public" value="willing"> Willing to</label>
+                                <label class="option-label love"><input type="radio" name="risky-public" value="love"> Love to</label>
+                                <label class="option-label not-applicable"><input type="radio" name="risky-public" value="not-applicable"> N/A</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div class="action-buttons">
                     <button class="btn btn-primary" id="savePreferences">Save My Preferences</button>
@@ -651,6 +1081,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <script>
+        // JavaScript code remains the same as in the previous implementation
         document.addEventListener('DOMContentLoaded', function() {
             // Tab functionality
             const tabs = document.querySelectorAll('.tab');
