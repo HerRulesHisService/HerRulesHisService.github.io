@@ -208,7 +208,7 @@
         </div>
 
         <div id="quiz" class="hidden">
-            <div class="score-display">Score: <span id="current-score">0</span>/<span id="total-questions">0</span></div>
+            <div class="score-display">Score: <span id="current-score">0</span></div>
         </div>
         
         <div id="quiz-buttons" class="hidden">
@@ -230,7 +230,6 @@
             const startOverBtn = document.getElementById('start-over-btn');
             const resultDiv = document.getElementById('result');
             const currentScoreSpan = document.getElementById('current-score');
-            const totalQuestionsSpan = document.getElementById('total-questions');
 
             let allQuestions = []; // Stores all questions from CSV
             let activeQuestions = []; // Stores questions for the selected category
@@ -343,7 +342,6 @@
                 
                 // Update score display
                 currentScoreSpan.textContent = score;
-                totalQuestionsSpan.textContent = activeQuestions.length;
                 
                 displayQuestion();
             }
@@ -365,7 +363,7 @@
                 // Add score display back
                 const scoreDisplay = document.createElement('div');
                 scoreDisplay.className = 'score-display';
-                scoreDisplay.innerHTML = `Score: <span id="current-score">${score}</span>/<span id="total-questions">${activeQuestions.length}</span>`;
+                scoreDisplay.innerHTML = `Score: <span id="current-score">${score}</span>`;
                 quizDiv.appendChild(scoreDisplay);
 
                 const q = activeQuestions[currentQuestionIndex];
