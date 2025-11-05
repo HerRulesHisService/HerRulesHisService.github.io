@@ -19,7 +19,7 @@
             padding: 30px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-bottom: 20px; /* Add space above the footer */
+            margin-bottom: 20px;
         }
         h1 {
             color: #007bff;
@@ -27,12 +27,14 @@
             padding-bottom: 10px;
             margin-bottom: 30px;
         }
-        ul {
+        /* Updated List Styles */
+        #game-list {
             list-style-type: none;
             padding: 0;
             display: grid;
-            grid-template-columns: 1fr 1fr; /* Two columns for a cleaner layout */
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
+            min-height: 270px; /* Ensures container doesn't collapse when list is empty */
         }
         li {
             background-color: #e9ecef;
@@ -53,6 +55,40 @@
         a:hover {
             color: #0056b3;
         }
+        /* --- Pagination Styles --- */
+        .pagination {
+            margin-top: 30px;
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap; /* Allows pagination links to wrap if many pages */
+        }
+        .pagination button, .pagination span {
+            background: none;
+            border: none;
+            color: #007bff;
+            padding: 8px 12px;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s, color 0.3s;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .pagination button:hover:not(.active), .pagination span:hover:not(.active) {
+            background-color: #e9ecef;
+        }
+        .pagination .active {
+            background-color: #007bff;
+            color: white;
+            cursor: default;
+        }
+        .pagination button:disabled {
+            color: #ccc;
+            cursor: default;
+            background: none;
+        }
         /* --- Footer Styles --- */
         footer {
             margin-top: 20px;
@@ -64,39 +100,160 @@
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>Free BDSM, Femdom & Kink Games</h1>
-
         <p>A curated collection of kink games designed for nonstop fun.</p>
 
-        <ul>
-            <li><a href="https://herruleshisservice.github.io/chastityspinner.html" target="_blank" rel="noopener noreferrer">Chastity Spinner</a></li>
-            
-            <li><a href="https://herruleshisservice.github.io/kinkopedia.html" target="_blank" rel="noopener noreferrer">Kink-O-Pedia</a></li>
-            
-            <li><a href="https://herruleshisservice.github.io/hercuckdares.html" target="_blank" rel="noopener noreferrer">Cuckold Dares for Her</a></li>
-            
-            <li><a href="https://herruleshisservice.github.io/hiscuckdares.html" target="_blank" rel="noopener noreferrer">Cuckold Dares for Him</a></li>
-            
-            <li><a href="https://herruleshisservice.github.io/wheelofmisfortune1.html" target="_blank" rel="noopener noreferrer">Wheel of Misfortune I</a></li>
-            
-            <li><a href="https://herruleshisservice.github.io/wheelofmisfortune2.html" target="_blank" rel="noopener noreferrer">Wheel of Misfortune II</a></li>
-            
-            <li><a href="WWW.GOOGLE.COM" target="_blank" rel="noopener noreferrer">Coming Soon</a></li>
-            
-            <li><a href="WWW.GOOGLE.COM" target="_blank" rel="noopener noreferrer">Coming Soon</a></li>
-            
-            <li><a href="WWW.GOOGLE.COM" target="_blank" rel="noopener noreferrer">Coming Soon</a></li>
-            
-            <li><a href="PLACEHOLDER_URL_10" target="_blank" rel="noopener noreferrer">Coming Soon</a></li>
-        </ul>
+        <ul id="game-list">
+            </ul>
+
+        <div class="pagination" id="pagination-controls">
+            </div>
 
     </div>
-
     <footer>
         © Her Rules. His Service | All rights reserved
     </footer>
 
+    <script>
+        // Array containing all your game links and titles
+        const allGames = [
+            { title: "Chastity Spinner", url: "https://herruleshisservice.github.io/chastityspinner.html" },
+            { title: "Kink-O-Pedia", url: "https://herruleshisservice.github.io/kinkopedia.html" },
+            { title: "Cuckold Dares for Her", url: "https://herruleshisservice.github.io/hercuckdares.html" },
+            { title: "Cuckold Dares for Him", url: "https://herruleshisservice.github.io/hiscuckdares.html" },
+            { title: "Wheel of Misfortune I", url: "https://herruleshisservice.github.io/wheelofmisfortune1.html" },
+            { title: "Wheel of Misfortune II", url: "https://herruleshisservice.github.io/wheelofmisfortune2.html" },
+            { title: "Coming Soon (1)", url: "WWW.GOOGLE.COM" },
+            { title: "Coming Soon (2)", url: "WWW.GOOGLE.COM" },
+            { title: "Coming Soon (3)", url: "WWW.GOOGLE.COM" },
+            { title: "Coming Soon (4)", url: "PLACEHOLDER_URL_10" },
+            { title: "New Game Link 11 (Page 2)", url: "NEW_URL_11" },
+            { title: "New Game Link 12 (Page 2)", url: "NEW_URL_12" },
+            { title: "New Game Link 13 (Page 2)", url: "NEW_URL_13" },
+            { title: "New Game Link 14 (Page 2)", url: "NEW_URL_14" },
+            { title: "New Game Link 15 (Page 2)", url: "NEW_URL_15" },
+            { title: "New Game Link 16 (Page 2)", url: "NEW_URL_16" },
+            { title: "Extra Link 17 (Page 3)", url: "EXTRA_URL_17" },
+            // Add all future links here. The script will handle the rest.
+        ];
+
+        const gamesPerPage = 8;
+        let currentPage = 1;
+        const listElement = document.getElementById('game-list');
+        const paginationElement = document.getElementById('pagination-controls');
+
+        // --- Core Functions ---
+
+        /** Renders the list items for the current page */
+        function renderList() {
+            // Clear current list
+            listElement.innerHTML = ''; 
+
+            const start = (currentPage - 1) * gamesPerPage;
+            const end = start + gamesPerPage;
+            const gamesToDisplay = allGames.slice(start, end);
+
+            gamesToDisplay.forEach(game => {
+                const li = document.createElement('li');
+                const a = document.createElement('a');
+                a.href = game.url;
+                a.textContent = game.title;
+                a.target = "_blank";
+                a.rel = "noopener noreferrer"; // Good practice for external links
+                
+                li.appendChild(a);
+                listElement.appendChild(li);
+            });
+        }
+
+        /** Renders the pagination controls (Previous, 1, 2, 3, ..., Next) */
+        function renderPagination() {
+            paginationElement.innerHTML = ''; // Clear current controls
+            const totalPages = Math.ceil(allGames.length / gamesPerPage);
+
+            // 1. Previous Button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = 'Previous';
+            prevButton.disabled = currentPage === 1;
+            prevButton.onclick = () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateView();
+                }
+            };
+            paginationElement.appendChild(prevButton);
+
+            // 2. Page Number Links
+            const maxPageButtons = 5; // Number of page buttons to show (excluding ellipsis)
+            let startPage = Math.max(1, currentPage - Math.floor(maxPageButtons / 2));
+            let endPage = Math.min(totalPages, startPage + maxPageButtons - 1);
+
+            if (endPage - startPage + 1 < maxPageButtons) {
+                startPage = Math.max(1, endPage - maxPageButtons + 1);
+            }
+
+            // Show '1' and ellipsis if range doesn't start at 1
+            if (startPage > 1) {
+                createPageButton(1);
+                if (startPage > 2) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationElement.appendChild(ellipsis);
+                }
+            }
+
+            // Render the visible page buttons
+            for (let i = startPage; i <= endPage; i++) {
+                createPageButton(i);
+            }
+
+            // Show ellipsis and last page if range doesn't end at totalPages
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    const ellipsis = document.createElement('span');
+                    ellipsis.textContent = '...';
+                    paginationElement.appendChild(ellipsis);
+                }
+                createPageButton(totalPages);
+            }
+            
+            // 3. Next Button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = 'Next';
+            nextButton.disabled = currentPage === totalPages || totalPages === 0;
+            nextButton.onclick = () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateView();
+                }
+            };
+            paginationElement.appendChild(nextButton);
+        }
+
+        /** Helper function to create a single page number button */
+        function createPageButton(pageNumber) {
+            const button = document.createElement('button');
+            button.textContent = pageNumber;
+            button.className = pageNumber === currentPage ? 'active' : '';
+            button.onclick = () => {
+                currentPage = pageNumber;
+                updateView();
+            };
+            paginationElement.appendChild(button);
+        }
+
+        /** Master function to update both the list and the pagination controls */
+        function updateView() {
+            renderList();
+            renderPagination();
+            // Scroll to the top of the container after page change
+            document.querySelector('.container').scrollIntoView({ behavior: 'smooth' }); 
+        }
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', updateView);
+
+    </script>
 </body>
 </html>
