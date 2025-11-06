@@ -341,7 +341,7 @@
             gameScreen.style.display = 'block';
             
             // Load and parse CSV data
-            fetch('kinkwordquiz.csv')
+            fetch('kinktionary.csv')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Failed to load CSV file');
@@ -358,7 +358,7 @@
                     questionElement.textContent = 'Error loading quiz data';
                     optionsElement.innerHTML = `
                         <div class="error-message">
-                            <p>Unable to load the quiz data. Please make sure "kinkwordquiz.csv" is in the same directory as this HTML file.</p>
+                            <p>Unable to load the quiz data.</p>
                             <button class="btn" onclick="location.reload()">Reload Page</button>
                         </div>
                     `;
