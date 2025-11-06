@@ -3,346 +3,566 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kink Word Quiz</title>
-    <!-- Load Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Use Inter font -->
+    <title>Kinktionary Challenge</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
         body {
-            font-family: 'Inter', sans-serif;
-            /* Deep, adult background color */
-            background-color: #1a1a2e; /* Deep Navy/Violet */
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
         }
-        /* Custom styles for aesthetic appeal */
-        .card {
-            /* Shadow adjusted for dark background contrast */
-            box-shadow: 0 10px 30px -5px rgba(255, 255, 255, 0.08), 0 0 10px -5px rgba(255, 255, 255, 0.04);
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        .option-button {
-            transition: all 0.15s ease-in-out;
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c, #ffd56b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            font-style: italic;
+            color: #ffd56b;
+            margin-bottom: 20px;
+        }
+        
+        .game-screen {
+            display: none;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .start-screen {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .results-screen {
+            display: none;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
             cursor: pointer;
-            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
         }
-        .option-button:hover {
-            transform: translateY(-2px);
-            background-color: #3f3f46; /* Gray-700 on hover */
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.6);
         }
-        .option-button.correct {
-            background-color: #065f46 !important; /* Green-700 */
-            border-color: #10b981 !important; /* Emerald-500 */
-            color: white !important;
-            pointer-events: none;
+        
+        .btn:active {
+            transform: translateY(1px);
         }
-        .option-button.incorrect {
-            background-color: #991b1b !important; /* Red-700 */
-            border-color: #f87171 !important; /* Red-400 */
-            color: white !important;
-            pointer-events: none;
+        
+        .btn-secondary {
+            background: linear-gradient(45deg, #4e54c8, #8f94fb);
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        
+        .question-count {
+            text-align: right;
+            margin-bottom: 10px;
+            color: #ffd56b;
+        }
+        
+        .question {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option:hover {
+            background: rgba(255, 255, 255, 0.12);
+            transform: translateX(5px);
+        }
+        
+        .option.selected {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+        
+        .option.correct {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: #4caf50;
+        }
+        
+        .option.incorrect {
+            background: rgba(244, 67, 54, 0.3);
+            border-color: #f44336;
+        }
+        
+        .score {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #ffd56b;
+        }
+        
+        .final-score {
+            font-size: 4rem;
+            margin: 20px 0;
+            background: linear-gradient(45deg, #ff6b6b, #ffa36c, #ffd56b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .message {
+            margin: 20px 0;
+            font-size: 1.2rem;
+            min-height: 30px;
+        }
+        
+        .correct-answer {
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffd56b;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-top: 5px solid #ff6b6b;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .question {
+                font-size: 1.2rem;
+            }
+            
+            .stats {
+                flex-direction: column;
+                gap: 20px;
+            }
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
+    <div class="container">
+        <header>
+            <h1>Kinktionary Challenge</h1>
+            <div class="tagline">Test your knowledge of kink, BDSM, and fetish terminology</div>
+        </header>
+        
+        <div class="start-screen" id="startScreen">
+            <h2>Are you ready to play?</h2>
+            <p>Test your knowledge of 450 kink and BDSM terms in this challenging quiz.</p>
+            <p>Select the correct definition for each term from the options provided.</p>
+            <button class="btn" id="startBtn">Start Quiz</button>
+        </div>
+        
+        <div class="loading" id="loadingScreen">
+            <div class="spinner"></div>
+            <p>Loading quiz data...</p>
+        </div>
+        
+        <div class="game-screen" id="gameScreen">
+            <div class="question-count" id="questionCount">Question 1 of 10</div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div class="question" id="question"></div>
+            <div class="options" id="options"></div>
+            <div class="message" id="message"></div>
+            <button class="btn" id="nextBtn" style="display: none;">Next Question</button>
+        </div>
+        
+        <div class="results-screen" id="resultsScreen">
+            <h2>Quiz Complete!</h2>
+            <div class="final-score" id="finalScore"></div>
+            <div class="message" id="resultMessage"></div>
+            <div class="correct-answer" id="correctAnswer" style="display: none;"></div>
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="correctCount">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="incorrectCount">0</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="percentage">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+            <button class="btn" id="restartBtn">Play Again</button>
+            <button class="btn btn-secondary" id="reviewBtn">Review Answers</button>
+        </div>
+    </div>
 
-    <!-- Firebase SDKs for future functionality -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, query, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global variables must be defined before use
-        let app = null;
-        let db = null;
-        let auth = null;
-        let userId = null;
-
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        if (Object.keys(firebaseConfig).length > 0) {
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
-            // setLogLevel('debug'); // Uncomment for debugging
-        } else {
-            console.error("Firebase configuration is missing.");
-        }
-
-        // Authentication Setup
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                userId = user.uid;
-                console.log("User authenticated:", userId);
-            } else {
-                userId = crypto.randomUUID();
-                console.log("No user authenticated. Using generated ID:", userId);
-            }
-        });
-
-        const authenticate = async () => {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (error) {
-                console.error("Firebase authentication failed:", error);
-            }
-        };
-
-        if (auth) authenticate();
-
-        // --- QUIZ LOGIC AND DATA LOADING ---
+    <script>
+        // Game state
         let quizData = [];
-        const CSV_FILE_PATH = 'kinkwordquiz.csv';
-
         let currentQuestionIndex = 0;
         let score = 0;
-        let isAnswered = false; // Flag to prevent multiple clicks
-
-        const quizArea = document.getElementById('quiz-area');
-
-        // Utility to shuffle an array (Fisher-Yates)
-        const shuffleArray = (array) => {
+        let userAnswers = [];
+        let questionsAnswered = 0;
+        const totalQuestions = 10; // Number of questions per game
+        
+        // DOM elements
+        const startScreen = document.getElementById('startScreen');
+        const loadingScreen = document.getElementById('loadingScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const resultsScreen = document.getElementById('resultsScreen');
+        const startBtn = document.getElementById('startBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const restartBtn = document.getElementById('restartBtn');
+        const reviewBtn = document.getElementById('reviewBtn');
+        const questionElement = document.getElementById('question');
+        const optionsElement = document.getElementById('options');
+        const messageElement = document.getElementById('message');
+        const questionCountElement = document.getElementById('questionCount');
+        const progressBarElement = document.getElementById('progressBar');
+        const finalScoreElement = document.getElementById('finalScore');
+        const resultMessageElement = document.getElementById('resultMessage');
+        const correctAnswerElement = document.getElementById('correctAnswer');
+        const correctCountElement = document.getElementById('correctCount');
+        const incorrectCountElement = document.getElementById('incorrectCount');
+        const percentageElement = document.getElementById('percentage');
+        
+        // Event listeners
+        startBtn.addEventListener('click', startGame);
+        nextBtn.addEventListener('click', nextQuestion);
+        restartBtn.addEventListener('click', restartGame);
+        reviewBtn.addEventListener('click', reviewAnswers);
+        
+        // Start the game
+        function startGame() {
+            startScreen.style.display = 'none';
+            loadingScreen.style.display = 'block';
+            
+            // Load and parse CSV data
+            fetch('kinkwordquiz.csv')
+                .then(response => response.text())
+                .then(data => {
+                    parseCSV(data);
+                    loadingScreen.style.display = 'none';
+                    gameScreen.style.display = 'block';
+                    showQuestion();
+                })
+                .catch(error => {
+                    console.error('Error loading CSV:', error);
+                    loadingScreen.innerHTML = '<p>Error loading quiz data. Please make sure kinkwordquiz.csv is in the same directory.</p>';
+                });
+        }
+        
+        // Parse CSV data
+        function parseCSV(csvText) {
+            const lines = csvText.split('\n');
+            // Skip header row
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line) {
+                    // Simple CSV parsing - split by commas but handle quoted fields
+                    const fields = [];
+                    let currentField = '';
+                    let insideQuotes = false;
+                    
+                    for (let j = 0; j < line.length; j++) {
+                        const char = line[j];
+                        
+                        if (char === '"') {
+                            insideQuotes = !insideQuotes;
+                        } else if (char === ',' && !insideQuotes) {
+                            fields.push(currentField);
+                            currentField = '';
+                        } else {
+                            currentField += char;
+                        }
+                    }
+                    
+                    fields.push(currentField);
+                    
+                    if (fields.length >= 5) {
+                        quizData.push({
+                            term: fields[0],
+                            correct: fields[1],
+                            wrong1: fields[2],
+                            wrong2: fields[3],
+                            wrong3: fields[4]
+                        });
+                    }
+                }
+            }
+            
+            // Shuffle the questions
+            shuffleArray(quizData);
+        }
+        
+        // Fisher-Yates shuffle algorithm
+        function shuffleArray(array) {
             for (let i = array.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [array[i], array[j]] = [array[j], array[i]];
             }
-        };
-
-        // Function to parse the CSV text into a structured quiz array
-        const parseCSV = (text) => {
-            const lines = text.trim().split('\n').filter(line => line.trim() !== '');
-            if (lines.length <= 1) return []; // Needs header and at least one question
-            
-            // Skip the header line: "Term,Correct Definition,Wrong Definition 1,Wrong Definition 2,Wrong Definition 3"
-            const dataLines = lines.slice(1);
-            
-            const parsedData = dataLines.map(line => {
-                // Simple split by comma. Note: This assumes no commas within the definitions themselves.
-                const columns = line.split(',');
-                
-                // Ensure we have at least 5 columns: Term (Q) + 4 Definitions (A + 3 Wrongs)
-                if (columns.length < 5) return null; 
-
-                const term = columns[0].trim();
-                const correctDef = columns[1].trim();
-                const wrongDef1 = columns[2] ? columns[2].trim() : '';
-                const wrongDef2 = columns[3] ? columns[3].trim() : '';
-                const wrongDef3 = columns[4] ? columns[4].trim() : '';
-
-                // Combine all options and filter out any empty strings
-                let options = [correctDef, wrongDef1, wrongDef2, wrongDef3].filter(o => o !== '');
-
-                // Shuffle options for random button order
-                shuffleArray(options);
-                
-                return {
-                    question: `What does the term: "${term}" mean?`,
-                    options: options,
-                    answer: correctDef,
-                    // Use the correct definition as the explanation for simplicity
-                    explanation: correctDef
-                };
-            }).filter(item => item !== null && item.options.length === 4); // Only keep valid questions with 4 options
-
-            // Shuffle the order of the questions
-            shuffleArray(parsedData); 
-            return parsedData;
-        };
+        }
         
-        // Function to fetch and load data from the CSV file
-        const loadQuizData = async () => {
-            const loadingMessage = document.getElementById('loading-message');
-            const startButton = document.getElementById('start-quiz-button');
-            const welcomeTitle = document.getElementById('welcome-title');
-            
-            loadingMessage.innerHTML = 'Fetching terminology data...';
-            startButton.classList.add('hidden');
-            
-            try {
-                const response = await fetch(CSV_FILE_PATH);
-                if (!response.ok) {
-                    throw new Error(`Failed to load CSV: ${response.statusText}`);
-                }
-                const csvText = await response.text();
-                
-                quizData = parseCSV(csvText);
-                
-                if (quizData.length === 0) {
-                    throw new Error("CSV loaded, but no valid questions were found. Check file formatting (5 columns required per row).");
-                }
-
-                // Success state update
-                loadingMessage.innerHTML = `<span class="text-teal-400">${quizData.length} terms loaded.</span> Ready for your deep dive.`;
-                startButton.classList.remove('hidden');
-                welcomeTitle.textContent = "Welcome";
-
-            } catch (error) {
-                console.error("Error loading or parsing quiz data:", error);
-                loadingMessage.innerHTML = `<span class="text-pink-400 font-bold">Error:</span> Could not load quiz data. Ensure '${CSV_FILE_PATH}' is present and correctly formatted.`;
-                welcomeTitle.textContent = "Data Error";
-            }
-        };
-
-
-        // Function to render the current question
-        const renderQuestion = () => {
-            if (currentQuestionIndex >= quizData.length) {
-                finishQuiz();
+        // Display current question
+        function showQuestion() {
+            if (currentQuestionIndex >= totalQuestions) {
+                endGame();
                 return;
             }
-
-            const current = quizData[currentQuestionIndex];
-            isAnswered = false;
-
-            // Generate HTML for the question and options
-            const questionHtml = `
-                <div class="mb-6">
-                    <p class="text-lg font-medium text-pink-400">Question ${currentQuestionIndex + 1} of ${quizData.length}</p>
-                    <h3 class="text-3xl font-bold text-gray-100 mt-2">${current.question}</h3>
-                </div>
-                <div id="options-container" class="space-y-4">
-                    ${current.options.map((option) => `
-                        <button data-option="${option}"
-                                class="option-button w-full text-left p-4 rounded-lg bg-gray-700 text-gray-200 font-semibold shadow-md">
-                            ${option}
-                        </button>
-                    `).join('')}
-                </div>
-                <div id="feedback-area" class="mt-6 p-4 rounded-lg bg-gray-900 border border-gray-700 text-gray-300 hidden"></div>
-                <button id="next-button"
-                        class="mt-8 w-full py-3 px-4 bg-teal-600 hover:bg-teal-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform focus:outline-none focus:ring-4 focus:ring-teal-500 focus:ring-opacity-50 hidden">
-                    Next Question &rarr;
-                </button>
-            `;
-            quizArea.innerHTML = questionHtml;
-
-            // Attach event listeners to options
-            document.querySelectorAll('.option-button').forEach(button => {
-                button.addEventListener('click', () => checkAnswer(button.dataset.option, current));
+            
+            const question = quizData[currentQuestionIndex];
+            questionElement.textContent = question.term;
+            questionCountElement.textContent = `Question ${currentQuestionIndex + 1} of ${totalQuestions}`;
+            progressBarElement.style.width = `${((currentQuestionIndex + 1) / totalQuestions) * 100}%`;
+            
+            // Create options array and shuffle
+            const options = [
+                { text: question.correct, isCorrect: true },
+                { text: question.wrong1, isCorrect: false },
+                { text: question.wrong2, isCorrect: false },
+                { text: question.wrong3, isCorrect: false }
+            ];
+            shuffleArray(options);
+            
+            // Display options
+            optionsElement.innerHTML = '';
+            options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                optionElement.textContent = option.text;
+                optionElement.dataset.index = index;
+                optionElement.addEventListener('click', () => selectOption(optionElement, option.isCorrect, question.correct));
+                optionsElement.appendChild(optionElement);
             });
-            document.getElementById('next-button').addEventListener('click', nextQuestion);
-        };
-
-        // Function to check the selected answer
-        const checkAnswer = (selectedOption, current) => {
-            if (isAnswered) return;
-            isAnswered = true;
-
-            const feedbackArea = document.getElementById('feedback-area');
-            const nextButton = document.getElementById('next-button');
-            const options = document.querySelectorAll('.option-button');
-
-            // Find the correct and selected buttons for styling
-            let isCorrect = selectedOption === current.answer;
-
-            options.forEach(button => {
-                if (button.dataset.option === current.answer) {
-                    button.classList.add('correct');
-                }
-                if (button.dataset.option === selectedOption && !isCorrect) {
-                    button.classList.add('incorrect');
-                }
-                // Disable all buttons after choice
-                button.classList.add('pointer-events-none');
+            
+            messageElement.textContent = '';
+            nextBtn.style.display = 'none';
+            correctAnswerElement.style.display = 'none';
+        }
+        
+        // Handle option selection
+        function selectOption(optionElement, isCorrect, correctAnswer) {
+            // Disable all options
+            const allOptions = document.querySelectorAll('.option');
+            allOptions.forEach(opt => {
+                opt.style.pointerEvents = 'none';
             });
-
-            // Update score and feedback
+            
+            // Mark selected option
+            optionElement.classList.add('selected');
+            
+            // Show correct/incorrect
             if (isCorrect) {
+                optionElement.classList.add('correct');
+                messageElement.textContent = 'Correct!';
+                messageElement.style.color = '#4caf50';
                 score++;
-                feedbackArea.innerHTML = `<span class="text-teal-400 font-bold">Correct!</span> The definition is: ${current.explanation}`;
             } else {
-                feedbackArea.innerHTML = `<span class="text-pink-400 font-bold">Incorrect.</span> The correct definition was: "${current.answer}"`;
+                optionElement.classList.add('incorrect');
+                messageElement.textContent = 'Incorrect!';
+                messageElement.style.color = '#f44336';
+                
+                // Highlight correct answer
+                allOptions.forEach(opt => {
+                    if (opt.textContent === correctAnswer) {
+                        opt.classList.add('correct');
+                    }
+                });
+                
+                correctAnswerElement.textContent = `Correct answer: ${correctAnswer}`;
+                correctAnswerElement.style.display = 'block';
             }
-
-            feedbackArea.classList.remove('hidden');
-            nextButton.classList.remove('hidden');
-        };
-
-        // Function to move to the next question
-        const nextQuestion = () => {
+            
+            // Store user's answer
+            userAnswers[currentQuestionIndex] = {
+                question: quizData[currentQuestionIndex].term,
+                userAnswer: optionElement.textContent,
+                correctAnswer: correctAnswer,
+                isCorrect: isCorrect
+            };
+            
+            questionsAnswered++;
+            nextBtn.style.display = 'block';
+        }
+        
+        // Move to next question
+        function nextQuestion() {
             currentQuestionIndex++;
-            renderQuestion();
-        };
-
-        // Function to display final results
-        const finishQuiz = () => {
-            quizArea.innerHTML = `
-                <div class="p-8 text-center bg-gray-900 rounded-lg border-4 border-pink-500">
-                    <h2 class="text-4xl font-extrabold text-pink-400 mb-4">Quiz Complete!</h2>
-                    <p class="text-2xl text-gray-100">Your Score:</p>
-                    <p class="text-6xl font-black text-teal-400 mt-2">${score} / ${quizData.length}</p>
-                    <p class="text-gray-300 mt-4">You've finished the Kink Word Quiz. Understanding this lexicon is key to safer, deeper play.</p>
-                    <button id="restart-button"
-                            class="mt-8 py-3 px-6 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform">
-                        Restart Quiz
-                    </button>
-                </div>
-            `;
-             document.getElementById('restart-button').addEventListener('click', startQuiz);
-        };
-
-
-        // Main function to initialize the quiz
-        const startQuiz = () => {
-            if (quizData.length === 0) {
-                // Should only happen if user clicks fast or data load failed
-                document.getElementById('loading-message').innerHTML = '<span class="text-pink-400 font-bold">Error:</span> Quiz data is missing. Please refresh or check the CSV file.';
-                return;
+            showQuestion();
+        }
+        
+        // End the game
+        function endGame() {
+            gameScreen.style.display = 'none';
+            resultsScreen.style.display = 'block';
+            
+            const percentage = Math.round((score / totalQuestions) * 100);
+            finalScoreElement.textContent = `${score}/${totalQuestions}`;
+            correctCountElement.textContent = score;
+            incorrectCountElement.textContent = totalQuestions - score;
+            percentageElement.textContent = `${percentage}%`;
+            
+            // Set result message based on score
+            if (percentage >= 90) {
+                resultMessageElement.textContent = "Master of Kink! You're incredibly knowledgeable.";
+            } else if (percentage >= 70) {
+                resultMessageElement.textContent = "Well done! You have a solid understanding of kink terminology.";
+            } else if (percentage >= 50) {
+                resultMessageElement.textContent = "Good effort! You know the basics but there's more to explore.";
+            } else {
+                resultMessageElement.textContent = "A good start! Keep learning and exploring kink terminology.";
             }
-            document.getElementById('quiz-intro').classList.add('hidden');
-            quizArea.classList.remove('hidden');
+        }
+        
+        // Restart the game
+        function restartGame() {
             currentQuestionIndex = 0;
             score = 0;
-            renderQuestion();
-        };
-
-        // Attach event listeners and load data on window load
-        window.onload = () => {
-            const startButton = document.getElementById('start-quiz-button');
-            if (startButton) {
-                startButton.addEventListener('click', startQuiz);
-            }
-            loadQuizData();
-        };
+            userAnswers = [];
+            questionsAnswered = 0;
+            shuffleArray(quizData);
+            resultsScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+            showQuestion();
+        }
+        
+        // Review answers
+        function reviewAnswers() {
+            let reviewHTML = '<h3>Answer Review</h3>';
+            
+            userAnswers.forEach((answer, index) => {
+                reviewHTML += `
+                    <div class="correct-answer" style="margin-bottom: 15px;">
+                        <p><strong>Question ${index + 1}:</strong> ${answer.question}</p>
+                        <p>Your answer: <span style="color: ${answer.isCorrect ? '#4caf50' : '#f44336'}">${answer.userAnswer}</span></p>
+                        ${!answer.isCorrect ? `<p>Correct answer: <span style="color: #4caf50">${answer.correctAnswer}</span></p>` : ''}
+                    </div>
+                `;
+            });
+            
+            correctAnswerElement.innerHTML = reviewHTML;
+            correctAnswerElement.style.display = 'block';
+        }
     </script>
-
-    <!-- Main Card - adjusted colors for contrast on dark background -->
-    <div class="w-full max-w-2xl mx-auto bg-gray-800 p-8 md:p-12 rounded-xl card transition-all duration-300 border border-gray-700">
-        <header class="text-center mb-10">
-            <!-- Changed Header Title and Color -->
-            <h1 class="text-4xl font-extrabold text-pink-400">Kink Word Quiz</h1>
-        </header>
-
-        <section id="quiz-intro">
-            <!-- Intro Box - Darker background, vibrant border, light text -->
-            <div class="text-center bg-gray-900 p-6 rounded-lg mb-8 border-l-4 border-pink-500">
-                <h2 id="welcome-title" class="text-2xl font-semibold text-pink-300 mb-4">Loading Dictionary...</h2>
-                <p class="text-xl text-gray-300 leading-relaxed mb-4">
-                    Step into the world where <span class="font-bold text-teal-400">words hold power</span>.
-                    Before any journey into the realms of <span class="font-bold text-teal-400">dynamic play</span> or <span class="font-bold text-teal-400">conscious intimacy</span>, understanding the map is essential. Test your fluency in the language of consent, boundaries, and pleasure. Only then can you truly explore.
-                </p>
-                <p id="loading-message" class="text-lg font-medium text-gray-400">Fetching terminology data...</p>
-            </div>
-
-            <!-- Start Button - Hidden until data is loaded successfully -->
-            <button id="start-quiz-button"
-                    class="w-full py-3 px-4 bg-pink-600 hover:bg-pink-700 text-white font-semibold rounded-lg transition duration-200 ease-in-out transform hover:scale-[1.01] focus:outline-none focus:ring-4 focus:ring-pink-500 focus:ring-opacity-50 hidden">
-                Start the Test
-            </button>
-        </section>
-
-        <section id="quiz-area" class="hidden">
-            <!-- This area will be populated with quiz questions once started -->
-            <div class="text-center text-gray-400">
-                Awaiting quiz start...
-            </div>
-        </section>
-    </div>
 </body>
 </html>
-
