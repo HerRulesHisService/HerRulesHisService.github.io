@@ -222,24 +222,13 @@
             color: #aaa;
         }
         
-        .loading {
+        .error-message {
             text-align: center;
-            padding: 40px;
-        }
-        
-        .spinner {
-            border: 5px solid rgba(255, 255, 255, 0.1);
-            border-top: 5px solid #ff6b6b;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            padding: 20px;
+            background: rgba(244, 67, 54, 0.2);
+            border-radius: 10px;
+            border: 1px solid rgba(244, 67, 54, 0.5);
+            margin: 20px 0;
         }
         
         @media (max-width: 600px) {
@@ -274,11 +263,6 @@
             <p>Test your knowledge of 450 kink and BDSM terms in this challenging quiz.</p>
             <p>Select the correct definition for each term from the options provided.</p>
             <button class="btn" id="startBtn">Start Quiz</button>
-        </div>
-        
-        <div class="loading" id="loadingScreen">
-            <div class="spinner"></div>
-            <p>Loading quiz data...</p>
         </div>
         
         <div class="game-screen" id="gameScreen">
@@ -327,7 +311,6 @@
         
         // DOM elements
         const startScreen = document.getElementById('startScreen');
-        const loadingScreen = document.getElementById('loadingScreen');
         const gameScreen = document.getElementById('gameScreen');
         const resultsScreen = document.getElementById('resultsScreen');
         const startBtn = document.getElementById('startBtn');
@@ -355,20 +338,31 @@
         // Start the game
         function startGame() {
             startScreen.style.display = 'none';
-            loadingScreen.style.display = 'block';
+            gameScreen.style.display = 'block';
             
             // Load and parse CSV data
             fetch('kinkwordquiz.csv')
-                .then(response => response.text())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load CSV file');
+                    }
+                    return response.text();
+                })
                 .then(data => {
                     parseCSV(data);
-                    loadingScreen.style.display = 'none';
-                    gameScreen.style.display = 'block';
                     showQuestion();
                 })
                 .catch(error => {
                     console.error('Error loading CSV:', error);
-                    loadingScreen.innerHTML = '<p>Error loading quiz data. Please make sure kinkwordquiz.csv is in the same directory.</p>';
+                    // Show error message to user
+                    questionElement.textContent = 'Error loading quiz data';
+                    optionsElement.innerHTML = `
+                        <div class="error-message">
+                            <p>Unable to load the quiz data. Please make sure "kinkwordquiz.csv" is in the same directory as this HTML file.</p>
+                            <button class="btn" onclick="location.reload()">Reload Page</button>
+                        </div>
+                    `;
+                    nextBtn.style.display = 'none';
                 });
         }
         
