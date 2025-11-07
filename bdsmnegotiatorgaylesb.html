@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LGBTQ+ Intimacy Checklist & Scene Negotiator</title>
+    <style>
+        :root {
+            --primary: #e91e63;
+            --primary-light: #ec407a;
+            --primary-dark: #c2185b;
+            --secondary: #2196f3;
+            --dark: #2d2d3a;
+            --light: #f8f9fa;
+            --gray: #e9ecef;
+            --gray-dark: #adb5bd;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --danger: #ff6b6b;
+            --never: #6c757d;
+            --not-applicable: #868e96;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 2rem 1rem;
+            text-align: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--gray);
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .category {
+            margin-bottom: 2rem;
+        }
+
+        .category-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--gray);
+            color: var(--primary);
+        }
+
+        .activity {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background: white;
+            border-radius: var(--border-radius);
+            transition: all 0.3s;
+        }
+
+        .activity:hover {
+            background: #f1f3f5;
+        }
+
+        .activity-name {
+            flex: 1;
+        }
+
+        .activity-options {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 0.9rem;
+            border: 2px solid #000;
+            background-color: white;
+            color: black;
+        }
+
+        .option-label.never.selected {
+            background-color: var(--never);
+            color: white;
+        }
+
+        .option-label.want.selected {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .option-label.willing.selected {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+
+        .option-label.love.selected {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .option-label.not-applicable.selected {
+            background-color: var(--not-applicable);
+            color: white;
+        }
+
+        .option-label.selected {
+            transform: scale(1.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-light);
+        }
+
+        .btn-secondary {
+            background-color: var(--gray);
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--gray-dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .comparison-results {
+            margin-top: 2rem;
+        }
+
+        .result-item {
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .result-item.match {
+            background-color: rgba(81, 207, 102, 0.2);
+            border-left: 4px solid var(--success);
+        }
+
+        .result-item.potential {
+            background-color: rgba(255, 212, 59, 0.2);
+            border-left: 4px solid var(--warning);
+        }
+
+        .result-item.limit {
+            background-color: rgba(255, 107, 107, 0.2);
+            border-left: 4px solid var(--danger);
+        }
+
+        .instructions {
+            background-color: rgba(233, 30, 99, 0.1);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            margin-bottom: 2rem;
+        }
+
+        .instructions h3 {
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.5rem;
+        }
+
+        .instructions li {
+            margin-bottom: 0.5rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem 1rem;
+            background-color: var(--dark);
+            color: white;
+            margin-top: 3rem;
+        }
+
+        .disclaimer {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            max-width: 800px;
+            margin: 0 auto 1rem;
+        }
+
+        .preference-legend {
+            display: flex;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            border: 2px solid #000;
+        }
+
+        .legend-color.never {
+            background-color: var(--never);
+        }
+
+        .legend-color.want {
+            background-color: var(--success);
+        }
+
+        .legend-color.willing {
+            background-color: var(--warning);
+        }
+
+        .legend-color.love {
+            background-color: var(--danger);
+        }
+
+        .legend-color.not-applicable {
+            background-color: var(--not-applicable);
+        }
+
+        .category-description {
+            font-style: italic;
+            margin-bottom: 1rem;
+            color: var(--gray-dark);
+        }
+
+        @media (max-width: 768px) {
+            .activity {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .activity-options {
+                margin-top: 0.5rem;
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .option-label {
+                flex: 1;
+                text-align: center;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>LGBTQ+ Intimacy Checklist & Scene Negotiator</h1>
+        <p class="subtitle">A comprehensive digital tool for exploring and negotiating intimacy interests with partners in a safe, private environment.</p>
+    </header>
+
+    <div class="container">
+        <div class="instructions card">
+            <h3>How to Use This Tool</h3>
+            <ol>
+                <li><strong>Complete Your Checklist:</strong> Go through each category and select your preference for each activity using the color-coded options.</li>
+                <li><strong>Save Your Preferences:</strong> Click "Save My Preferences" to store your selections.</li>
+                <li><strong>Compare with Partner:</strong> Have your partner complete their checklist on their own device.</li>
+                <li><strong>Share and Compare:</strong> Ask your partner to download their JSON file and share it with you. Then use the "Import Partner's Preferences" button to load their file and compare with yours.</li>
+                <li><strong>Negotiate Your Scene:</strong> Use the comparison results as a starting point for discussing and planning your intimate encounters.</li>
+            </ol>
+            <p><strong>Remember:</strong> This tool is for negotiation purposes only. Always practice informed consent and maintain open communication with your partner(s).</p>
+            
+            <div class="preference-legend">
+                <div class="legend-item">
+                    <div class="legend-color never"></div>
+                    <span>Never</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color want"></div>
+                    <span>Want to</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color willing"></div>
+                    <span>Willing to</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color love"></div>
+                    <span>Love to</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color not-applicable"></div>
+                    <span>Not Applicable</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <div class="tab active" data-tab="checklist">My Checklist</div>
+                <div class="tab" data-tab="comparison">Compare Preferences</div>
+            </div>
+
+            <div class="tab-content active" id="checklist">
+                <!-- Oral & Manual Stimulation -->
+                <div class="category">
+                    <h3 class="category-title">Oral & Manual Stimulation</h3>
+                    <p class="category-description">Activities involving mouth and hand stimulation</p>
+                    
+                    <div class="activity">
+                        <div class="activity-name">Cunnilingus (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="cunnilingus-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="cunnilingus-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="cunnilingus-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="cunnilingus-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="cunnilingus-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Cunnilingus (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="cunnilingus-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="cunnilingus-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="cunnilingus-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="cunnilingus-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="cunnilingus-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Fellatio (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="fellatio-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="fellatio-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="fellatio-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="fellatio-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="fellatio-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Fellatio (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="fellatio-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="fellatio-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="fellatio-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="fellatio-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="fellatio-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Manual stimulation (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="manual-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="manual-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="manual-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="manual-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="manual-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Manual stimulation (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="manual-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="manual-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="manual-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="manual-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="manual-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Anal & Penetrative Activities -->
+                <div class="category">
+                    <h3 class="category-title">Anal & Penetrative Activities</h3>
+                    <p class="category-description">Activities involving anal penetration and stimulation</p>
+                    
+                    <div class="activity">
+                        <div class="activity-name">Anal fingering (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="anal-fingering-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="anal-fingering-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="anal-fingering-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="anal-fingering-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="anal-fingering-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Anal fingering (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="anal-fingering-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="anal-fingering-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="anal-fingering-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="anal-fingering-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="anal-fingering-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Anal intercourse (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="anal-intercourse-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="anal-intercourse-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="anal-intercourse-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="anal-intercourse-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="anal-intercourse-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Anal intercourse (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="anal-intercourse-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="anal-intercourse-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="anal-intercourse-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="anal-intercourse-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="anal-intercourse-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Strap-on play (giving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="strap-on-giving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="strap-on-giving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="strap-on-giving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="strap-on-giving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="strap-on-giving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Strap-on play (receiving)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="strap-on-receiving" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="strap-on-receiving" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="strap-on-receiving" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="strap-on-receiving" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="strap-on-receiving" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sensation & Erotic Play -->
+                <div class="category">
+                    <h3 class="category-title">Sensation & Erotic Play</h3>
+                    <p class="category-description">Activities involving sensory stimulation and erotic exploration</p>
+                    
+                    <div class="activity">
+                        <div class="activity-name">Nipple play</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="nipple-play" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="nipple-play" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="nipple-play" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="nipple-play" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="nipple-play" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Biting/scratching</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="biting-scratching" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="biting-scratching" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="biting-scratching" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="biting-scratching" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="biting-scratching" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Temperature play</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="temperature-play" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="temperature-play" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="temperature-play" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="temperature-play" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="temperature-play" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Sensory deprivation</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="sensory-deprivation" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="sensory-deprivation" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="sensory-deprivation" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="sensory-deprivation" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="sensory-deprivation" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Erotic massage</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="erotic-massage" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="erotic-massage" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="erotic-massage" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="erotic-massage" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="erotic-massage" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Role Play & Fantasy -->
+                <div class="category">
+                    <h3 class="category-title">Role Play & Fantasy</h3>
+                    <p class="category-description">Activities involving fantasy scenarios and role playing</p>
+                    
+                    <div class="activity">
+                        <div class="activity-name">Power exchange (Dom/sub)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="power-exchange" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="power-exchange" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="power-exchange" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="power-exchange" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="power-exchange" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Role play scenarios</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="role-play" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="role-play" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="role-play" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="role-play" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="role-play" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Costume/dress-up play</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="costume-play" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="costume-play" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="costume-play" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="costume-play" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="costume-play" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Consensual non-consent (CNC)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="cnc" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="cnc" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="cnc" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="cnc" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="cnc" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group & Public Scenes -->
+                <div class="category">
+                    <h3 class="category-title">Group & Public Scenes</h3>
+                    <p class="category-description">Activities involving multiple partners or public settings</p>
+                    
+                    <div class="activity">
+                        <div class="activity-name">Threesomes</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="threesomes" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="threesomes" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="threesomes" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="threesomes" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="threesomes" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Group sex (3+ partners)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="group-sex" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="group-sex" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="group-sex" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="group-sex" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="group-sex" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Public play (risk of being seen)</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="public-play" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="public-play" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="public-play" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="public-play" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="public-play" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                    <div class="activity">
+                        <div class="activity-name">Sex clubs/parties</div>
+                        <div class="activity-options">
+                            <label class="option-label never"><input type="radio" name="sex-clubs" value="never"> Never</label>
+                            <label class="option-label want"><input type="radio" name="sex-clubs" value="want"> Want to</label>
+                            <label class="option-label willing"><input type="radio" name="sex-clubs" value="willing"> Willing to</label>
+                            <label class="option-label love"><input type="radio" name="sex-clubs" value="love"> Love to</label>
+                            <label class="option-label not-applicable"><input type="radio" name="sex-clubs" value="not-applicable"> N/A</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="savePreferences">Save My Preferences</button>
+                    <button class="btn btn-secondary" id="clearPreferences">Reset All</button>
+                    <button class="btn btn-secondary" id="screenshotBtn">Take Screenshot</button>
+                </div>
+            </div>
+
+            <div class="tab-content" id="comparison">
+                <div class="card">
+                    <h3>Compare Preferences</h3>
+                    <p>To compare preferences with a partner, both of you need to complete your checklists separately. Then, one person can export their preferences and share them with the other for comparison.</p>
+                    
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="exportPreferences">Export My Preferences</button>
+                        <button class="btn btn-secondary" id="importPreferences">Import Partner's Preferences</button>
+                    </div>
+                    
+                    <div id="comparisonResults" class="comparison-results" style="display: none;">
+                        <h3>Comparison Results</h3>
+                        <div id="matchList"></div>
+                        <div id="potentialList"></div>
+                        <div id="limitList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="disclaimer">This tool is designed for educational and negotiation purposes only. Always practice informed consent, communicate openly with partners, and prioritize safety in all intimate activities.</p>
+        <p>LGBTQ+ Intimacy Checklist & Scene Negotiator &copy; 2023</p>
+    </footer>
+
+    <!-- Include html2canvas library for screenshot functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Tab functionality
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const tabId = tab.getAttribute('data-tab');
+                    
+                    // Update active tab
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Show active tab content
+                    tabContents.forEach(content => {
+                        content.classList.remove('active');
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        }
+                    });
+                });
+            });
+            
+            // Preference selection
+            const optionInputs = document.querySelectorAll('input[type="radio"]');
+            let userPreferences = JSON.parse(localStorage.getItem('lgbtqPreferences')) || {};
+            
+            // Load saved preferences
+            function loadPreferences() {
+                for (const activity in userPreferences) {
+                    const preference = userPreferences[activity];
+                    const input = document.querySelector(`input[name="${activity}"][value="${preference}"]`);
+                    
+                    if (input) {
+                        input.checked = true;
+                        input.parentElement.classList.add('selected');
+                    }
+                }
+            }
+            
+            loadPreferences();
+            
+            // Handle preference selection
+            optionInputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    const activity = this.name;
+                    const preference = this.value;
+                    
+                    // Remove selected class from all labels for this activity
+                    const activityLabels = document.querySelectorAll(`input[name="${activity}"]`);
+                    activityLabels.forEach(labelInput => {
+                        labelInput.parentElement.classList.remove('selected');
+                    });
+                    
+                    // Add selected class to clicked label
+                    this.parentElement.classList.add('selected');
+                    
+                    // Save preference
+                    userPreferences[activity] = preference;
+                });
+            });
+            
+            // Save preferences
+            document.getElementById('savePreferences').addEventListener('click', function() {
+                localStorage.setItem('lgbtqPreferences', JSON.stringify(userPreferences));
+                alert('Your preferences have been saved!');
+            });
+            
+            // Clear preferences
+            document.getElementById('clearPreferences').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all your preferences?')) {
+                    userPreferences = {};
+                    localStorage.removeItem('lgbtqPreferences');
+                    optionInputs.forEach(input => {
+                        input.checked = false;
+                        input.parentElement.classList.remove('selected');
+                    });
+                    alert('All preferences have been cleared.');
+                }
+            });
+            
+            // Screenshot functionality
+            document.getElementById('screenshotBtn').addEventListener('click', function() {
+                html2canvas(document.querySelector('#checklist')).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'lgbtq-intimacy-checklist.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                });
+            });
+            
+            // Export preferences
+            document.getElementById('exportPreferences').addEventListener('click', function() {
+                if (Object.keys(userPreferences).length === 0) {
+                    alert('Please complete your checklist before exporting.');
+                    return;
+                }
+                
+                const exportData = JSON.stringify(userPreferences);
+                const blob = new Blob([exportData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'lgbtq-intimacy-preferences.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                alert('Your preferences have been exported. Share this file with your partner for comparison.');
+            });
+            
+            // Import preferences
+            document.getElementById('importPreferences').addEventListener('click', function() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                
+                input.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (!file) return;
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        try {
+                            const partnerPreferences = JSON.parse(e.target.result);
+                            comparePreferences(partnerPreferences);
+                        } catch (error) {
+                            alert('Error reading the file. Please make sure it is a valid preferences file.');
+                        }
+                    };
+                    reader.readAsText(file);
+                });
+                
+                input.click();
+            });
+            
+            // Compare preferences
+            function comparePreferences(partnerPreferences) {
+                if (Object.keys(userPreferences).length === 0) {
+                    alert('Please complete your checklist before comparing.');
+                    return;
+                }
+                
+                const matchList = document.getElementById('matchList');
+                const potentialList = document.getElementById('potentialList');
+                const limitList = document.getElementById('limitList');
+                
+                matchList.innerHTML = '<h4>Compatible Interests</h4>';
+                potentialList.innerHTML = '<h4>Potential Interests</h4>';
+                limitList.innerHTML = '<h4>Limits to Discuss</h4>';
+                
+                let matchCount = 0;
+                let potentialCount = 0;
+                let limitCount = 0;
+                
+                // Get all activities
+                const allActivities = new Set([
+                    ...Object.keys(userPreferences),
+                    ...Object.keys(partnerPreferences)
+                ]);
+                
+                allActivities.forEach(activity => {
+                    const userPref = userPreferences[activity];
+                    const partnerPref = partnerPreferences[activity];
+                    
+                    if (!userPref || !partnerPref) return;
+                    
+                    const activityName = document.querySelector(`input[name="${activity}"]`).closest('.activity').querySelector('.activity-name').textContent;
+                    
+                    if ((userPref === 'love' && partnerPref === 'love') || 
+                        (userPref === 'want' && partnerPref === 'want')) {
+                        matchList.innerHTML += `<div class="result-item match">${activityName} - Both enthusiastic</div>`;
+                        matchCount++;
+                    } else if ((userPref === 'love' && (partnerPref === 'want' || partnerPref === 'willing')) || 
+                              (userPref === 'want' && partnerPref === 'love') ||
+                              (userPref === 'willing' && partnerPref === 'love')) {
+                        potentialList.innerHTML += `<div class="result-item potential">${activityName} - High interest alignment</div>`;
+                        potentialCount++;
+                    } else if (userPref === 'never' || partnerPref === 'never') {
+                        limitList.innerHTML += `<div class="result-item limit">${activityName} - One or both have set as never</div>`;
+                        limitCount++;
+                    } else if ((userPref === 'willing' && partnerPref === 'willing') ||
+                              (userPref === 'want' && partnerPref === 'willing') ||
+                              (userPref === 'willing' && partnerPref === 'want')) {
+                        potentialList.innerHTML += `<div class="result-item potential">${activityName} - Moderate interest alignment</div>`;
+                        potentialCount++;
+                    }
+                });
+                
+                // Show results
+                document.getElementById('comparisonResults').style.display = 'block';
+                
+                // Add summary
+                const summary = document.createElement('div');
+                summary.innerHTML = `<p><strong>Summary:</strong> ${matchCount} compatible interests, ${potentialCount} potential interests, ${limitCount} limits to discuss</p>`;
+                document.getElementById('comparisonResults').prepend(summary);
+            }
+        });
+    </script>
+</body>
+</html>
