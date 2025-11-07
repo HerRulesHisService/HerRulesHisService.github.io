@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BDSM Character Explorer | Comprehensive Educational Test</title>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <style>
+        :root {
+            --primary: #7e57c2;
+            --primary-light: #b085f5;
+            --primary-dark: #4d2c91;
+            --secondary: #26a69a;
+            --accent: #ff6e40;
+            --text: #333;
+            --text-light: #666;
+            --background: #f9f7ff;
+            --surface: #ffffff;
+            --border: #e0e0e0;
+            --shadow: 0 2px 10px rgba(0,0,0,0.08);
+            --radius: 12px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 40px 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border-radius: var(--radius);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100" opacity="0.1"><path d="M30,30 L70,30 L70,70 L30,70 Z" fill="white" stroke="white" stroke-width="2"/><circle cx="50" cy="50" r="20" fill="none" stroke="white" stroke-width="2"/></svg>');
+            background-size: 200px;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .disclaimer {
+            background-color: #fff8e1;
+            border-left: 4px solid #ffc107;
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+        }
+        
+        h3 {
+            color: var(--primary);
+            margin: 20px 0 10px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-accent {
+            background: var(--accent);
+        }
+        
+        .btn-accent:hover {
+            background: #e65c30;
+        }
+        
+        .question {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .question:last-of-type {
+            border-bottom: none;
+        }
+        
+        .question-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+        }
+        
+        .options {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+        
+        .option {
+            flex: 1;
+            min-width: 120px;
+            margin: 5px;
+            text-align: center;
+        }
+        
+        .option input {
+            display: none;
+        }
+        
+        .option label {
+            display: block;
+            padding: 10px 5px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .option label:hover {
+            background: #eeeeee;
+        }
+        
+        .option input:checked + label {
+            background: var(--primary-light);
+            color: white;
+            font-weight: 500;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+            background: #f0f0f0;
+            border-radius: 10px;
+            height: 12px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .results-container {
+            display: none;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--primary);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .result-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--primary-dark);
+        }
+        
+        .result-percentage {
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+        
+        .result-bar {
+            height: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        
+        .result-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 5px;
+            width: 0%;
+            transition: width 1s ease;
+        }
+        
+        .result-description {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        .category-title {
+            grid-column: 1 / -1;
+            font-size: 1.4rem;
+            margin: 20px 0 10px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary-light);
+            color: var(--primary-dark);
+        }
+        
+        .definition {
+            background: #f8f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 5px;
+            font-size: 0.9rem;
+            display: none;
+        }
+        
+        .show-definition {
+            color: var(--primary);
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+        
+        .results-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            justify-content: center;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+        
+        .results-summary {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #f8f5ff, #e8e2ff);
+            border-radius: var(--radius);
+        }
+        
+        .dominant-traits {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-weight: 600;
+            color: var(--primary-dark);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                flex-direction: column;
+            }
+            
+            .option {
+                margin: 3px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .results-actions {
+                flex-direction: column;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>BDSM Character Explorer</h1>
+            <p class="subtitle">A comprehensive educational tool for self-reflection and understanding relationship dynamics</p>
+        </header>
+        
+        <div class="card disclaimer">
+            <h2>Important Disclaimer</h2>
+            <p>This tool is created for <strong>educational and introspective purposes only</strong>. It is not a diagnostic tool or a substitute for professional advice.</p>
+            <p>The foundation of all healthy BDSM practices is <strong>Safe, Sane, and Consensual (SSC)</strong> and <strong>Risk-Aware Consensual Kink (RACK)</strong>. Always prioritize explicit communication, enthusiastic consent, and safety in any relationship or activity.</p>
+        </div>
+        
+        <div class="card" id="instructions">
+            <h2>How This Works</h2>
+            <p>This comprehensive test consists of statements about preferences, feelings, and interests. For each statement, indicate how much you agree or disagree using the scale provided.</p>
+            <p>There are no right or wrong answers. Be honest with yourself for the most accurate reflection of your characteristics.</p>
+            <button class="btn btn-large" id="start-test">Begin Exploration</button>
+        </div>
+        
+        <div class="card" id="test-container" style="display: none;">
+            <h2>BDSM Character Exploration</h2>
+            <p>Answer each question according to your genuine feelings and interests.</p>
+            
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            
+            <div id="questions">
+                <!-- Questions will be dynamically inserted here -->
+            </div>
+            
+            <button class="btn btn-large" id="calculate-results" disabled>Calculate My Results</button>
+        </div>
+        
+        <div class="card results-container" id="results-container">
+            <div class="results-summary">
+                <h2>Your Exploration Results</h2>
+                <p>These results represent a snapshot of your current preferences for educational purposes. Remember that human sexuality and preferences are fluid and can change over time.</p>
+                <div class="dominant-traits" id="dominant-traits"></div>
+            </div>
+            
+            <div id="results-list">
+                <!-- Results will be dynamically inserted here -->
+            </div>
+            
+            <div class="results-actions">
+                <button class="btn" id="retake-test">Retake Test</button>
+                <button class="btn btn-accent" id="screenshot-btn">Save Results as Image</button>
+                <button class="btn" id="learn-more">Learn More About These Terms</button>
+            </div>
+        </div>
+        
+        <!-- Modal for name input -->
+        <div class="modal" id="name-modal">
+            <div class="modal-content">
+                <h3>Personalize Your Results</h3>
+                <p>Would you like to include your name in the results image?</p>
+                <div class="modal-buttons">
+                    <button class="btn" id="no-name">No, Download Without Name</button>
+                    <button class="btn btn-accent" id="yes-name">Yes, Include My Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal for entering name -->
+        <div class="modal" id="enter-name-modal">
+            <div class="modal-content">
+                <h3>Enter Your Name</h3>
+                <p>Your name will be displayed at the top of the results image.</p>
+                <input type="text" class="input-field" id="user-name" placeholder="Enter your name">
+                <div class="modal-buttons">
+                    <button class="btn" id="cancel-name">Cancel</button>
+                    <button class="btn btn-accent" id="save-with-name">Save with Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>BDSM Character Explorer | Created for Educational Purposes</p>
+            <p>Always practice Safe, Sane, and Consensual (SSC) interactions</p>
+        </footer>
+    </div>
+
+    <script>
+        // Questions and their mappings to BDSM characteristics
+        const questions = [
+            // Power Dynamics (10 questions)
+            { text: "I enjoy the feeling of giving up control to a trusted partner.", traits: ["submissive", "slave"] },
+            { text: "I feel energized when I take control in intimate situations.", traits: ["dominant", "master/mistress"] },
+            { text: "I could enjoy being both dominant and submissive depending on the situation.", traits: ["switch"] },
+            { text: "I desire to have ownership over a consenting partner.", traits: ["owner"] },
+            { text: "I enjoy serving a partner and fulfilling their needs.", traits: ["servant", "slave"] },
+            { text: "Making decisions for a willing partner is satisfying to me.", traits: ["dominant", "master/mistress"] },
+            { text: "I prefer relationships with clear power dynamics.", traits: ["dominant", "submissive"] },
+            { text: "I enjoy the responsibility of caring for a submissive partner.", traits: ["caregiver", "dominant"] },
+            { text: "I find comfort in following someone else's guidance.", traits: ["submissive", "little"] },
+            { text: "I enjoy training a partner to follow my rules.", traits: ["master/mistress", "trainer"] },
+            
+            // Activity Preferences (15 questions)
+            { text: "The idea of being tied up or restrained is exciting to me.", traits: ["rope bunny", "masochist"] },
+            { text: "I enjoy the process of tying up or restraining a partner.", traits: ["rigger", "sadist"] },
+            { text: "I receive pleasure from physical pain or intense sensation.", traits: ["masochist"] },
+            { text: "I derive pleasure from giving consensual pain or intense sensation.", traits: ["sadist"] },
+            { text: "Being humiliated or demeaned in a consensual context is arousing to me.", traits: ["degradee"] },
+            { text: "I find it arousing to humiliate or demean a consenting partner.", traits: ["degrader"] },
+            { text: "I enjoy being watched during intimate moments.", traits: ["exhibitionist"] },
+            { text: "I enjoy watching others in intimate situations.", traits: ["voyeur"] },
+            { text: "I enjoy the thrill of being 'hunted' or captured in roleplay.", traits: ["primal (prey)"] },
+            { text: "I enjoy the 'hunting' or capturing role in primal play.", traits: ["primal (hunter)"] },
+            { text: "I enjoy impact play (spanking, flogging, etc.) as a receiver.", traits: ["masochist", "rope bunny"] },
+            { text: "I enjoy impact play (spanking, flogging, etc.) as a giver.", traits: ["sadist", "rigger"] },
+            { text: "Sensory deprivation (blindfolds, earplugs) intrigues me.", traits: ["submissive", "experimentalist"] },
+            { text: "I'm interested in temperature play (wax, ice).", traits: ["experimentalist", "masochist"] },
+            { text: "The idea of consensual forced scenarios appeals to me.", traits: ["submissive", "rope bunny"] },
+            
+            // Behavioral Styles (10 questions)
+            { text: "I enjoy playful disobedience to provoke a reaction from a partner.", traits: ["brat"] },
+            { text: "I enjoy managing and responding to a partner's playful disobedience.", traits: ["brat tamer"] },
+            { text: "I enjoy being in a pet-like role (e.g., puppy, kitten).", traits: ["pet"] },
+            { text: "I enjoy training someone in a pet-like role.", traits: ["handler", "trainer"] },
+            { text: "I enjoy age play dynamics (caregiver/little).", traits: ["caregiver", "little", "ageplayer"] },
+            { text: "I enjoy structured rules and protocols in relationships.", traits: ["protocol follower"] },
+            { text: "I prefer spontaneous, unstructured interactions.", traits: ["vanilla", "experimentalist"] },
+            { text: "I enjoy role-playing different scenarios and characters.", traits: ["roleplayer", "experimentalist"] },
+            { text: "I enjoy pushing boundaries and testing limits.", traits: ["brat", "experimentalist"] },
+            { text: "I prefer predictable, safe interactions.", traits: ["vanilla"] },
+            
+            // Relationship & Sexual Orientation (10 questions)
+            { text: "I'm open to trying new sexual experiences and exploring boundaries.", traits: ["experimentalist"] },
+            { text: "I'm comfortable with or interested in consensual non-monogamous relationships.", traits: ["non-monogamist"] },
+            { text: "I prefer traditional monogamous relationships.", traits: ["monogamist", "vanilla"] },
+            { text: "I focus heavily on the safety and well-being of my partner.", traits: ["guardian"] },
+            { text: "I value clear communication and explicit consent agreements.", traits: ["negotiator"] },
+            { text: "I prefer keeping BDSM practices confined to specific scenes rather than a lifestyle.", traits: ["bedroom only"] },
+            { text: "I would like BDSM to be part of my daily life.", traits: ["lifestyle"] },
+            { text: "Traditional romantic relationships without power dynamics appeal to me.", traits: ["vanilla"] },
+            { text: "I'm attracted to people regardless of their gender.", traits: ["bisexual", "pansexual"] },
+            { text: "I'm primarily attracted to people of the same gender.", traits: ["gay", "lesbian"] },
+            
+            // Additional Characteristics (5 questions)
+            { text: "I'm curious about exploring same-gender attractions.", traits: ["bicurious"] },
+            { text: "I'm primarily attracted to people of a different gender.", traits: ["heterosexual"] },
+            { text: "I enjoy medical play scenarios.", traits: ["medical player", "experimentalist"] },
+            { text: "I find intelligence and mental connection more important than physical acts.", traits: ["mentalist", "sensualist"] },
+            { text: "I enjoy incorporating spiritual elements into intimacy.", traits: ["spiritualist"] }
+        ];
+
+        // Definitions of BDSM terms
+        const definitions = {
+            "submissive": "A person who willingly transfers power and control to a trusted partner within agreed limits.",
+            "dominant": "A person who takes control and responsibility in a BDSM relationship or scene.",
+            "switch": "Someone who can enjoy both dominant and submissive roles depending on the situation or partner.",
+            "slave": "A submissive who typically enjoys a higher degree of service and protocol in a power exchange relationship.",
+            "master/mistress": "A dominant who typically enjoys a higher degree of control and ownership in a power exchange relationship.",
+            "owner": "A person who desires to have ownership over a consenting partner.",
+            "servant": "Someone who focuses on the act of service itself in a power dynamic.",
+            "caregiver": "A person who focuses on nurturing and guidance in a relationship dynamic.",
+            "trainer": "Someone who enjoys teaching and training a partner in specific skills or behaviors.",
+            "rope bunny": "Someone who enjoys being tied up or restrained with rope or other bondage equipment.",
+            "rigger": "A person who enjoys tying up or restraining a partner with rope or other bondage equipment.",
+            "masochist": "Someone who receives pleasure from experiencing physical pain or intense sensation.",
+            "sadist": "A person who derives pleasure from giving consensual physical pain or intense sensation.",
+            "degradee": "Someone who receives pleasure from being humiliated or demeaned in a consensual context.",
+            "degrader": "A person who finds arousal in humiliating or demeaning a consenting partner.",
+            "exhibitionist": "Someone who enjoys being seen by others in intimate or sexual situations.",
+            "voyeur": "A person who enjoys watching others in intimate or sexual situations.",
+            "primal (prey)": "A person who enjoys the thrill of being 'hunted' or captured in raw, instinctual roleplay.",
+            "primal (hunter)": "Someone who enjoys the 'hunting' or capturing role in primal play.",
+            "brat": "Someone who enjoys playful disobedience to provoke a reaction from their partner.",
+            "brat tamer": "A person who enjoys managing and responding to a partner's playful disobedience.",
+            "pet": "Someone who enjoys being in a pet-like role (e.g., puppy, kitten), focusing on obedience, care, and headspace.",
+            "handler": "The counterpart to a Pet who enjoys caring for and training them.",
+            "ageplayer": "Someone who enjoys age play dynamics, typically involving caregiver/little roles.",
+            "little": "A person who enjoys taking on a younger persona in age play dynamics.",
+            "protocol follower": "Someone who enjoys structured rules and etiquette in relationships.",
+            "roleplayer": "A person who enjoys acting out different scenarios and characters in intimate settings.",
+            "vanilla": "A term used to describe sexual preferences without BDSM elements.",
+            "experimentalist": "Someone who is open to trying new experiences and exploring boundaries.",
+            "non-monogamist": "A person comfortable with or desiring consensual non-monogamous relationships.",
+            "monogamist": "Someone who prefers exclusive one-on-one relationships.",
+            "guardian": "A person who focuses heavily on the safety and well-being of their partner.",
+            "negotiator": "Someone who values clear communication and explicit consent agreements.",
+            "bedroom only": "A practitioner who prefers to keep BDSM activities confined to specific scenes.",
+            "lifestyle": "Someone who integrates BDSM into their daily life and identity.",
+            "bisexual": "A person attracted to more than one gender.",
+            "pansexual": "Someone attracted to others regardless of gender.",
+            "gay": "A man attracted to other men.",
+            "lesbian": "A woman attracted to other women.",
+            "bicurious": "Someone curious about exploring attraction to the same gender.",
+            "heterosexual": "A person attracted to the opposite gender.",
+            "medical player": "Someone who enjoys medical-themed roleplay or scenes.",
+            "mentalist": "A person who finds intellectual and psychological aspects of BDSM most appealing.",
+            "sensualist": "Someone who prioritizes sensory experiences and connection over power dynamics.",
+            "spiritualist": "A person who enjoys incorporating spiritual or sacred elements into BDSM practices."
+        };
+
+        // Categorize traits for better organization in results
+        const traitCategories = {
+            "Power Dynamics": ["submissive", "dominant", "switch", "slave", "master/mistress", "owner", "servant", "caregiver", "trainer"],
+            "Activity Preferences": ["rope bunny", "rigger", "masochist", "sadist", "degradee", "degrader", "exhibitionist", "voyeur", "primal (prey)", "primal (hunter)"],
+            "Behavioral Styles": ["brat", "brat tamer", "pet", "handler", "ageplayer", "little", "protocol follower", "roleplayer"],
+            "Relationship & Sexuality": ["vanilla", "experimentalist", "non-monogamist", "monogamist", "guardian", "negotiator", "bedroom only", "lifestyle", "bisexual", "pansexual", "gay", "lesbian", "bicurious", "heterosexual"],
+            "Additional Characteristics": ["medical player", "mentalist", "sensualist", "spiritualist"]
+        };
+
+        // Initialize the test
+        document.addEventListener('DOMContentLoaded', function() {
+            const startTestBtn = document.getElementById('start-test');
+            const instructions = document.getElementById('instructions');
+            const testContainer = document.getElementById('test-container');
+            const questionsContainer = document.getElementById('questions');
+            const calculateResultsBtn = document.getElementById('calculate-results');
+            const resultsContainer = document.getElementById('results-container');
+            const resultsList = document.getElementById('results-list');
+            const retakeTestBtn = document.getElementById('retake-test');
+            const learnMoreBtn = document.getElementById('learn-more');
+            const screenshotBtn = document.getElementById('screenshot-btn');
+            const progressBar = document.getElementById('progress-bar');
+            const dominantTraits = document.getElementById('dominant-traits');
+            
+            // Modal elements
+            const nameModal = document.getElementById('name-modal');
+            const enterNameModal = document.getElementById('enter-name-modal');
+            const noNameBtn = document.getElementById('no-name');
+            const yesNameBtn = document.getElementById('yes-name');
+            const cancelNameBtn = document.getElementById('cancel-name');
+            const saveWithNameBtn = document.getElementById('save-with-name');
+            const userNameInput = document.getElementById('user-name');
+            
+            // Start the test
+            startTestBtn.addEventListener('click', function() {
+                instructions.style.display = 'none';
+                testContainer.style.display = 'block';
+                renderQuestions();
+            });
+            
+            // Render questions
+            function renderQuestions() {
+                questionsContainer.innerHTML = '';
+                
+                questions.forEach((question, index) => {
+                    const questionEl = document.createElement('div');
+                    questionEl.className = 'question';
+                    questionEl.innerHTML = `
+                        <div class="question-text">${index + 1}. ${question.text}</div>
+                        <div class="options">
+                            <div class="option">
+                                <input type="radio" id="q${index}_1" name="q${index}" value="1">
+                                <label for="q${index}_1">Strongly Disagree</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q${index}_2" name="q${index}" value="2">
+                                <label for="q${index}_2">Disagree</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q${index}_3" name="q${index}" value="3">
+                                <label for="q${index}_3">Neutral</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q${index}_4" name="q${index}" value="4">
+                                <label for="q${index}_4">Agree</label>
+                            </div>
+                            <div class="option">
+                                <input type="radio" id="q${index}_5" name="q${index}" value="5">
+                                <label for="q${index}_5">Strongly Agree</label>
+                            </div>
+                        </div>
+                    `;
+                    questionsContainer.appendChild(questionEl);
+                    
+                    // Add event listener to update progress
+                    const inputs = questionEl.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        input.addEventListener('change', updateProgress);
+                    });
+                });
+            }
+            
+            // Update progress bar
+            function updateProgress() {
+                const totalQuestions = questions.length;
+                let answered = 0;
+                
+                for (let i = 0; i < totalQuestions; i++) {
+                    const inputs = document.querySelectorAll(`input[name="q${i}"]`);
+                    let answeredThis = false;
+                    
+                    inputs.forEach(input => {
+                        if (input.checked) answeredThis = true;
+                    });
+                    
+                    if (answeredThis) answered++;
+                }
+                
+                const progress = (answered / totalQuestions) * 100;
+                progressBar.style.width = `${progress}%`;
+                
+                // Enable calculate button if all questions answered
+                calculateResultsBtn.disabled = answered !== totalQuestions;
+            }
+            
+            // Calculate results
+            calculateResultsBtn.addEventListener('click', function() {
+                // Initialize trait scores
+                const traitScores = {};
+                Object.keys(definitions).forEach(trait => {
+                    traitScores[trait] = { total: 0, count: 0 };
+                });
+                
+                // Calculate scores for each trait
+                questions.forEach((question, index) => {
+                    const selected = document.querySelector(`input[name="q${index}"]:checked`);
+                    if (selected) {
+                        const value = parseInt(selected.value);
+                        question.traits.forEach(trait => {
+                            if (traitScores[trait]) {
+                                traitScores[trait].total += value;
+                                traitScores[trait].count++;
+                            }
+                        });
+                    }
+                });
+                
+                // Calculate percentages
+                const results = [];
+                Object.keys(traitScores).forEach(trait => {
+                    if (traitScores[trait].count > 0) {
+                        const avg = traitScores[trait].total / traitScores[trait].count;
+                        const percentage = Math.min(100, Math.round((avg / 5) * 100));
+                        results.push({ trait, percentage });
+                    }
+                });
+                
+                // Sort by percentage (highest first)
+                results.sort((a, b) => b.percentage - a.percentage);
+                
+                // Display results
+                displayResults(results);
+            });
+            
+            // Display results
+            function displayResults(results) {
+                testContainer.style.display = 'none';
+                resultsContainer.style.display = 'block';
+                
+                // Find dominant traits (over 70%)
+                const highTraits = results.filter(r => r.percentage >= 70).slice(0, 3);
+                if (highTraits.length > 0) {
+                    const traitNames = highTraits.map(t => t.trait.charAt(0).toUpperCase() + t.trait.slice(1));
+                    dominantTraits.textContent = `Your dominant traits: ${traitNames.join(', ')}`;
+                } else {
+                    dominantTraits.textContent = "You have a balanced profile with no strongly dominant traits";
+                }
+                
+                resultsList.innerHTML = '';
+                
+                // Organize results by category
+                Object.keys(traitCategories).forEach(category => {
+                    const categoryResults = results.filter(result => 
+                        traitCategories[category].includes(result.trait) && result.percentage > 10
+                    );
+                    
+                    if (categoryResults.length > 0) {
+                        const categoryTitle = document.createElement('div');
+                        categoryTitle.className = 'category-title';
+                        categoryTitle.textContent = category;
+                        resultsList.appendChild(categoryTitle);
+                        
+                        const categoryGrid = document.createElement('div');
+                        categoryGrid.className = 'results-grid';
+                        
+                        categoryResults.forEach(result => {
+                            const resultCard = document.createElement('div');
+                            resultCard.className = 'result-card';
+                            resultCard.innerHTML = `
+                                <div class="result-header">
+                                    <div class="result-name">${result.trait.charAt(0).toUpperCase() + result.trait.slice(1)}</div>
+                                    <div class="result-percentage">${result.percentage}%</div>
+                                </div>
+                                <div class="result-bar">
+                                    <div class="result-fill" style="width: ${result.percentage}%"></div>
+                                </div>
+                                <div class="result-description">${definitions[result.trait]}</div>
+                            `;
+                            categoryGrid.appendChild(resultCard);
+                        });
+                        
+                        resultsList.appendChild(categoryGrid);
+                    }
+                });
+                
+                // Scroll to results
+                resultsContainer.scrollIntoView({ behavior: 'smooth' });
+                
+                // Animate result bars
+                setTimeout(() => {
+                    document.querySelectorAll('.result-fill').forEach(bar => {
+                        const width = bar.style.width;
+                        bar.style.width = '0%';
+                        setTimeout(() => {
+                            bar.style.width = width;
+                        }, 100);
+                    });
+                }, 500);
+            }
+            
+            // Retake test
+            retakeTestBtn.addEventListener('click', function() {
+                resultsContainer.style.display = 'none';
+                testContainer.style.display = 'block';
+                renderQuestions();
+                updateProgress();
+            });
+            
+            // Learn more button
+            learnMoreBtn.addEventListener('click', function() {
+                alert("For comprehensive educational resources about BDSM, consent, and safety, please consult reputable sources, educational websites, and books by recognized experts in the field. Always prioritize communication, consent, and safety in any relationship dynamic.");
+            });
+            
+            // Screenshot functionality
+            screenshotBtn.addEventListener('click', function() {
+                nameModal.style.display = 'flex';
+            });
+            
+            // No name button - download without name
+            noNameBtn.addEventListener('click', function() {
+                nameModal.style.display = 'none';
+                downloadResults();
+            });
+            
+            // Yes name button - show name input modal
+            yesNameBtn.addEventListener('click', function() {
+                nameModal.style.display = 'none';
+                enterNameModal.style.display = 'flex';
+                userNameInput.focus();
+            });
+            
+            // Cancel name input
+            cancelNameBtn.addEventListener('click', function() {
+                enterNameModal.style.display = 'none';
+                userNameInput.value = '';
+            });
+            
+            // Save with name
+            saveWithNameBtn.addEventListener('click', function() {
+                const userName = userNameInput.value.trim();
+                if (userName) {
+                    enterNameModal.style.display = 'none';
+                    downloadResults(userName);
+                    userNameInput.value = '';
+                } else {
+                    alert("Please enter your name or click Cancel.");
+                }
+            });
+            
+            // Function to download results as image
+            function downloadResults(userName = null) {
+                // Create a temporary container for the screenshot
+                const tempContainer = document.createElement('div');
+                tempContainer.style.position = 'absolute';
+                tempContainer.style.left = '-9999px';
+                tempContainer.style.width = resultsContainer.offsetWidth + 'px';
+                tempContainer.style.backgroundColor = 'white';
+                tempContainer.style.padding = '20px';
+                tempContainer.style.borderRadius = '12px';
+                
+                // Clone the results container
+                const resultsClone = resultsContainer.cloneNode(true);
+                
+                // Add user name if provided
+                if (userName) {
+                    const nameHeader = document.createElement('div');
+                    nameHeader.style.textAlign = 'center';
+                    nameHeader.style.marginBottom = '20px';
+                    nameHeader.style.fontSize = '1.5rem';
+                    nameHeader.style.fontWeight = 'bold';
+                    nameHeader.style.color = 'var(--primary-dark)';
+                    nameHeader.textContent = `${userName}'s BDSM Character Explorer Results`;
+                    
+                    resultsClone.insertBefore(nameHeader, resultsClone.firstChild);
+                }
+                
+                tempContainer.appendChild(resultsClone);
+                document.body.appendChild(tempContainer);
+                
+                // Take screenshot
+                html2canvas(tempContainer, {
+                    scale: 2,
+                    useCORS: true,
+                    logging: false
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    if (userName) {
+                        link.download = `bdsm-character-explorer-results-${userName.replace(/\s+/g, '-').toLowerCase()}.png`;
+                    } else {
+                        link.download = 'bdsm-character-explorer-results.png';
+                    }
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                    
+                    // Clean up
+                    document.body.removeChild(tempContainer);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
