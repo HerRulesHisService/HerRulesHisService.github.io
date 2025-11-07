@@ -146,6 +146,14 @@
             background: #e65c30;
         }
         
+        .btn-success {
+            background: var(--secondary);
+        }
+        
+        .btn-success:hover {
+            background: #1e887e;
+        }
+        
         .question {
             margin-bottom: 25px;
             padding-bottom: 20px;
@@ -366,6 +374,34 @@
             margin-top: 10px;
         }
         
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--secondary);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            z-index: 1001;
+            display: none;
+            animation: fadeInOut 3s ease;
+        }
+        
+        .test-source {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateY(10px); }
+            20% { opacity: 1; transform: translateY(0); }
+            80% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(10px); }
+        }
+        
         @media (max-width: 768px) {
             .options {
                 flex-direction: column;
@@ -390,6 +426,12 @@
             .modal-content {
                 width: 95%;
                 padding: 20px;
+            }
+            
+            .toast {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
             }
         }
     </style>
@@ -432,7 +474,8 @@
         <div class="card results-container" id="results-container">
             <div class="results-summary">
                 <h2>Your Exploration Results</h2>
-                <p>These results represent a snapshot of your current preferences for educational purposes. Remember that human sexuality and preferences are fluid and can change over time. Visit <strong></strong>HerRulesHisService.Github.io</strong></p>
+                <p>These results represent a snapshot of your current preferences for educational purposes. Remember that human sexuality and preferences are fluid and can change over time.</p>
+                <div class="test-source">Test Result from HerRuleHisService</div>
                 <div class="dominant-traits" id="dominant-traits"></div>
             </div>
             
@@ -443,11 +486,11 @@
             <div class="results-actions">
                 <button class="btn" id="retake-test">Retake Test</button>
                 <button class="btn btn-accent" id="screenshot-btn">Save Results as Image</button>
-                <button class="btn" id="learn-more">Learn More About These Terms</button>
+                <button class="btn btn-success" id="copy-text-btn">Copy Results as Text</button>
             </div>
         </div>
         
-        <!-- Modal for name input -->
+        <!-- Modal for name input for images -->
         <div class="modal" id="name-modal">
             <div class="modal-content">
                 <h3>Personalize Your Results</h3>
@@ -459,7 +502,7 @@
             </div>
         </div>
         
-        <!-- Modal for entering name -->
+        <!-- Modal for entering name for images -->
         <div class="modal" id="enter-name-modal">
             <div class="modal-content">
                 <h3>Enter Your Name</h3>
@@ -471,6 +514,34 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Modal for name input for text -->
+        <div class="modal" id="text-name-modal">
+            <div class="modal-content">
+                <h3>Personalize Your Results</h3>
+                <p>Would you like to include your name in the text results?</p>
+                <div class="modal-buttons">
+                    <button class="btn" id="no-name-text">No, Copy Without Name</button>
+                    <button class="btn btn-success" id="yes-name-text">Yes, Include My Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Modal for entering name for text -->
+        <div class="modal" id="enter-name-text-modal">
+            <div class="modal-content">
+                <h3>Enter Your Name</h3>
+                <p>Your name will be included at the top of the text results.</p>
+                <input type="text" class="input-field" id="user-name-text" placeholder="Enter your name">
+                <div class="modal-buttons">
+                    <button class="btn" id="cancel-name-text">Cancel</button>
+                    <button class="btn btn-success" id="save-with-name-text">Copy with Name</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast notification -->
+        <div class="toast" id="toast">Results copied to clipboard!</div>
         
         <footer>
             <p>BDSM Character Explorer | Created for Educational Purposes</p>
@@ -600,6 +671,9 @@
             "Additional Characteristics": ["medical player", "mentalist", "sensualist", "spiritualist"]
         };
 
+        // Global variable to store current results
+        let currentResults = [];
+
         // Initialize the test
         document.addEventListener('DOMContentLoaded', function() {
             const startTestBtn = document.getElementById('start-test');
@@ -610,10 +684,11 @@
             const resultsContainer = document.getElementById('results-container');
             const resultsList = document.getElementById('results-list');
             const retakeTestBtn = document.getElementById('retake-test');
-            const learnMoreBtn = document.getElementById('learn-more');
+            const copyTextBtn = document.getElementById('copy-text-btn');
             const screenshotBtn = document.getElementById('screenshot-btn');
             const progressBar = document.getElementById('progress-bar');
             const dominantTraits = document.getElementById('dominant-traits');
+            const toast = document.getElementById('toast');
             
             // Modal elements
             const nameModal = document.getElementById('name-modal');
@@ -623,6 +698,15 @@
             const cancelNameBtn = document.getElementById('cancel-name');
             const saveWithNameBtn = document.getElementById('save-with-name');
             const userNameInput = document.getElementById('user-name');
+            
+            // Text modal elements
+            const textNameModal = document.getElementById('text-name-modal');
+            const enterNameTextModal = document.getElementById('enter-name-text-modal');
+            const noNameTextBtn = document.getElementById('no-name-text');
+            const yesNameTextBtn = document.getElementById('yes-name-text');
+            const cancelNameTextBtn = document.getElementById('cancel-name-text');
+            const saveWithNameTextBtn = document.getElementById('save-with-name-text');
+            const userNameTextInput = document.getElementById('user-name-text');
             
             // Start the test
             startTestBtn.addEventListener('click', function() {
@@ -719,20 +803,20 @@
                 });
                 
                 // Calculate percentages
-                const results = [];
+                currentResults = [];
                 Object.keys(traitScores).forEach(trait => {
                     if (traitScores[trait].count > 0) {
                         const avg = traitScores[trait].total / traitScores[trait].count;
                         const percentage = Math.min(100, Math.round((avg / 5) * 100));
-                        results.push({ trait, percentage });
+                        currentResults.push({ trait, percentage });
                     }
                 });
                 
                 // Sort by percentage (highest first)
-                results.sort((a, b) => b.percentage - a.percentage);
+                currentResults.sort((a, b) => b.percentage - a.percentage);
                 
                 // Display results
-                displayResults(results);
+                displayResults(currentResults);
             });
             
             // Display results
@@ -809,10 +893,63 @@
                 updateProgress();
             });
             
-            // Learn more button
-            learnMoreBtn.addEventListener('click', function() {
-                alert("For comprehensive educational resources about BDSM, consent, and safety, please consult reputable sources, educational websites, and books by recognized experts in the field. Always prioritize communication, consent, and safety in any relationship dynamic.");
+            // Copy results as text
+            copyTextBtn.addEventListener('click', function() {
+                textNameModal.style.display = 'flex';
             });
+            
+            // Function to copy results to clipboard
+            function copyResultsToClipboard(userName = null) {
+                if (currentResults.length === 0) {
+                    alert("No results to copy. Please complete the test first.");
+                    return;
+                }
+                
+                let textToCopy = "BDSM Character Explorer Test Result\n";
+                textToCopy += "Test Result from HerRuleHisService\n\n";
+                
+                // Add user name if provided
+                if (userName) {
+                    textToCopy += `Results for: ${userName}\n\n`;
+                }
+                
+                // Add dominant traits
+                const highTraits = currentResults.filter(r => r.percentage >= 70).slice(0, 3);
+                if (highTraits.length > 0) {
+                    const traitNames = highTraits.map(t => t.trait.charAt(0).toUpperCase() + t.trait.slice(1));
+                    textToCopy += `Dominant Traits: ${traitNames.join(', ')}\n\n`;
+                }
+                
+                // Organize results by category
+                Object.keys(traitCategories).forEach(category => {
+                    const categoryResults = currentResults.filter(result => 
+                        traitCategories[category].includes(result.trait) && result.percentage > 10
+                    );
+                    
+                    if (categoryResults.length > 0) {
+                        textToCopy += `**${category}**\n`;
+                        
+                        categoryResults.forEach(result => {
+                            const traitName = result.trait.charAt(0).toUpperCase() + result.trait.slice(1);
+                            textToCopy += `${traitName} - ${result.percentage}%\n`;
+                        });
+                        
+                        textToCopy += "\n";
+                    }
+                });
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(textToCopy).then(function() {
+                    // Show success toast
+                    toast.style.display = 'block';
+                    setTimeout(() => {
+                        toast.style.display = 'none';
+                    }, 3000);
+                }, function(err) {
+                    console.error('Could not copy text: ', err);
+                    alert("Failed to copy results to clipboard. Please try again.");
+                });
+            }
             
             // Screenshot functionality
             screenshotBtn.addEventListener('click', function() {
@@ -845,6 +982,34 @@
                     enterNameModal.style.display = 'none';
                     downloadResults(userName);
                     userNameInput.value = '';
+                } else {
+                    alert("Please enter your name or click Cancel.");
+                }
+            });
+            
+            // Text modal handlers
+            noNameTextBtn.addEventListener('click', function() {
+                textNameModal.style.display = 'none';
+                copyResultsToClipboard();
+            });
+            
+            yesNameTextBtn.addEventListener('click', function() {
+                textNameModal.style.display = 'none';
+                enterNameTextModal.style.display = 'flex';
+                userNameTextInput.focus();
+            });
+            
+            cancelNameTextBtn.addEventListener('click', function() {
+                enterNameTextModal.style.display = 'none';
+                userNameTextInput.value = '';
+            });
+            
+            saveWithNameTextBtn.addEventListener('click', function() {
+                const userName = userNameTextInput.value.trim();
+                if (userName) {
+                    enterNameTextModal.style.display = 'none';
+                    copyResultsToClipboard(userName);
+                    userNameTextInput.value = '';
                 } else {
                     alert("Please enter your name or click Cancel.");
                 }
