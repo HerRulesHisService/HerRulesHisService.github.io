@@ -27,6 +27,7 @@
     .landed-both{background:#ffffff;color:#10221a;border-color:#ffffff}
     .cell.go-back {background:linear-gradient(135deg, #2A0E0E, #691414); border-color: #8B0000; color: #fff;}
     .cell.setback {background:linear-gradient(135deg, #1A1A00, #4D4D00); border-color: #CCCC00; color: #fff;}
+    .cell.finished { background: linear-gradient(135deg, #103c15, #176f2c); border-color: #28a745; color: #fff; }
 
 
     .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:1000}
@@ -267,8 +268,8 @@
             <button id="implConfirmBtn" class="btn secondary">Completed - Continue</button>
         </div>
         
-        <!-- Button for Go Back action -->
-        <button id="goBackConfirmBtn" class="btn" style="width:100%; display:none;">A Little Detour. Continue!</button>
+        <!-- Button for Go Back action / Game Over button (reused for versatility) -->
+        <button id="modalActionBtn" class="btn" style="width:100%; display:none;"></button>
     </div>
 </div>
 
@@ -337,7 +338,7 @@
     const implButtons = document.getElementById("implButtons");
     const implRandomBtn = document.getElementById("implRandomBtn");
     const implConfirmBtn = document.getElementById("implConfirmBtn");
-    const goBackConfirmBtn = document.getElementById("goBackConfirmBtn"); 
+    const modalActionBtn = document.getElementById("modalActionBtn"); // Reusing this for Go Back and Game Over
     const implResult = document.getElementById("implResult");
     const implModalTitle = document.getElementById("implModalTitle");
     const implModalText = document.getElementById("implModalText");
@@ -434,6 +435,7 @@
     }
 
     function cellTitle(i) {
+        if (i === 50) return "The Finish!";
         if (i === 8) return "Safe";
         if (GO_BACK_SPOTS.hasOwnProperty(i)) return `Go back to #${GO_BACK_SPOTS[i]}`;
         if ([6, 13, 26, 33].includes(i)) return "Implement roll";
@@ -443,21 +445,33 @@
     }
 
     function highlightPlayers() {
-        document.querySelectorAll('.cell').forEach(el => el.classList.remove('landed-p1', 'landed-p2', 'landed-both'));
-        // Use optional chaining since player2 may not exist in single-player mode
-        const p1 = appState.players.player1?.position;
-        const p2 = appState.players.player2?.position;
+        document.querySelectorAll('.cell').forEach(el => {
+            el.classList.remove('landed-p1', 'landed-p2', 'landed-both');
+            el.classList.remove('finished');
+        });
         
-        const cell1 = document.querySelector(`.cell[data-idx="${p1}"]`);
-        const cell2 = document.querySelector(`.cell[data-idx="${p2}"]`);
+        const p1 = appState.players.player1;
+        const p2 = appState.players.player2;
 
-        // Check if both players exist AND positions are equal
-        if (appState.mode === 2 && p1 > 0 && p2 > 0 && p1 === p2) {
-            if(cell1) cell1.classList.add('landed-both');
-        } else {
-            if (p1 > 0 && cell1) cell1.classList.add('landed-p1');
-            // Only highlight P2 if P2 exists (mode === 2)
-            if (appState.mode === 2 && p2 > 0 && cell2) cell2.classList.add('landed-p2');
+        const cell1 = document.querySelector(`.cell[data-idx="${p1.position}"]`);
+        const cell2 = appState.mode === 2 ? document.querySelector(`.cell[data-idx="${p2.position}"]`) : null;
+
+        // Apply finish status style
+        if (p1.finished && cell1) cell1.classList.add('finished');
+        if (appState.mode === 2 && p2.finished && cell2) cell2.classList.add('finished');
+
+
+        // Highlight current position (only if not finished or if it's the final spot)
+        if (p1.position > 0 && cell1) {
+            if (appState.mode === 2 && p2.position === p1.position) {
+                cell1.classList.add('landed-both');
+            } else {
+                cell1.classList.add('landed-p1');
+            }
+        }
+        
+        if (appState.mode === 2 && p2.position > 0 && cell2 && p2.position !== p1.position) {
+            cell2.classList.add('landed-p2');
         }
     }
 
@@ -469,31 +483,78 @@
         const d = document.createElement('div');
         d.textContent = txt;
         
-        // --- KEY CHANGE: Prepend the new entry to the history container ---
+        // Prepend the new entry to the history container (Flexbox column-reverse handles visual order)
         const firstChild = historyEl.querySelector('div');
         if (firstChild) {
             historyEl.insertBefore(d, firstChild);
         } else {
             historyEl.appendChild(d);
         }
-        // Since the CSS uses flex-direction: column-reverse, the first child 
-        // in the DOM is visually at the bottom. The last child in the DOM 
-        // is visually at the top. Inserting before the first child ensures
-        // the new entry is visually at the top (and is the last DOM child).
+    }
+
+    function updateDiceControls() {
+        const player = appState.players[appState.currentPlayerKey];
+        const isFinished = player && player.finished;
+        const isDisabled = isFinished || !!appState.pending;
+        
+        if (appState.diceMode === 'computer') {
+            rollBtn.disabled = isDisabled;
+        } else {
+            submitRollBtn.disabled = isDisabled;
+            manualRollInput.disabled = isDisabled;
+            if (isFinished) {
+                manualRollError.textContent = `${player.name} finished! Waiting for others.`;
+            } else if (appState.pending) {
+                 manualRollError.textContent = 'Finish pending action first.';
+            } else {
+                 manualRollError.textContent = '';
+            }
+        }
+        
+        if (appState.mode === 1 && isFinished) {
+            // Single player finished: Hide all dice controls
+            document.getElementById('diceControlArea').classList.add('hidden');
+            turnIndicator.textContent = `${player.name} - GAME OVER`;
+        } else if (isFinished) {
+             turnIndicator.textContent = `${player.name} (Finished)`;
+        }
+        // If the game continues, ensure controls are visible again if they were hidden for a single player finish
+        if(appState.mode === 2 && !appState.players.player1.finished || !appState.players.player2.finished){
+             document.getElementById('diceControlArea').classList.remove('hidden');
+        }
     }
 
     function switchTurn() {
-        // Only switch turns if in Two-Player mode
+        const p1 = appState.players.player1;
+        const p2 = appState.players.player2;
+        
+        // Only switch turns if in Two-Player mode and not all players are finished
         if (appState.mode === 2) {
-            appState.currentPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
+            let nextKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
+            let nextPlayer = appState.players[nextKey];
+
+            // If the intended next player is finished, switch back to the other one
+            if (nextPlayer.finished) {
+                nextKey = nextKey === 'player1' ? 'player2' : 'player1';
+                nextPlayer = appState.players[nextKey];
+            }
+
+            // Only switch if the next player isn't the current player (meaning both are not finished)
+            if (nextPlayer.key !== appState.currentPlayerKey && !nextPlayer.finished) {
+                appState.currentPlayerKey = nextKey;
+            } else if (p1.finished && p2.finished) {
+                // Both finished, set to the finisher. Dice controls will be disabled.
+            }
         } 
-        // If mode === 1 (Single Player), currentPlayerKey remains 'player1'
+        
         updateTurnIndicator();
+        updateDiceControls();
     }
 
     function updateTurnIndicator() {
         if (appState.players[appState.currentPlayerKey]) {
-            turnIndicator.textContent = appState.players[appState.currentPlayerKey].name;
+            const player = appState.players[appState.currentPlayerKey];
+            turnIndicator.textContent = player.name + (player.finished ? " (Finished)" : "");
         } else {
             turnIndicator.textContent = "—";
         }
@@ -506,7 +567,7 @@
         
         let newPosition = player.position + val;
 
-        if (newPosition > appState.boardCells) {
+        if (newPosition >= appState.boardCells) {
             newPosition = appState.boardCells;
         }
         
@@ -516,13 +577,13 @@
         addHistory(`🎲 ${player.name} moved ${val} and landed on ${player.position}`);
         highlightPlayers();
 
-        // Check for and handle the cell action (no CPU logic needed here)
+        // Check for and handle the cell action 
         handleCellAction(player, player.position);
     }
     
     // --- Manual Dice Handler ---
     function manualRollSubmitHandler() {
-        if (appState.pending) {
+        if (appState.pending || submitRollBtn.disabled) {
             manualRollError.textContent = 'Finish pending action first.';
             return;
         }
@@ -542,14 +603,93 @@
         processPlayerMove(rollValue);
     }
 
-    // --- Roll and Action Handlers ---
+    // --- Modal Logic ---
+
+    function twoPlayerFinishTransition() {
+        implModal.classList.add('hidden');
+        
+        // Restore default button listener and text
+        modalActionBtn.removeEventListener('click', twoPlayerFinishTransition);
+        modalActionBtn.addEventListener('click', goBackConfirmHandler);
+        modalActionBtn.textContent = 'A Little Detour. Continue!';
+        
+        // Find the next active player and transition control
+        let nextPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
+        let nextPlayer = appState.players[nextPlayerKey];
+        
+        if(nextPlayer.finished) { // If P2 also finished, check P1
+             nextPlayerKey = nextPlayerKey === 'player1' ? 'player2' : 'player1';
+             nextPlayer = appState.players[nextPlayerKey];
+        }
+        
+        // If there's an active player remaining, switch the turn
+        if(!nextPlayer.finished) {
+            appState.currentPlayerKey = nextPlayerKey;
+            addHistory(`Control transferred to ${nextPlayer.name}. Finish the race!`);
+        } else {
+             // Both finished, switch back to player 1 (for display purposes)
+             appState.currentPlayerKey = 'player1';
+        }
+        
+        switchTurn(); // Calls updateTurnIndicator() and updateDiceControls()
+    }
+
+    function openGameOverModal(finisher) {
+        implChipsContainer.classList.add("hidden");
+        implButtons.classList.add("hidden");
+        
+        // Reset and show the action button
+        modalActionBtn.style.display = 'block'; 
+        
+        implModalTitle.textContent = "🥳 CONGRATULATIONS! 🥳";
+        
+        let message = `<p style="color:#222; margin-bottom:10px;">
+            A huge, well-deserved congratulation, ${finisher.name}! You have reached the final box and completed your sentence. Time to relax and enjoy the rest of the evening! 😉
+        </p>`;
+
+        if (appState.mode === 2) {
+            const otherPlayerKey = finisher.key === 'player1' ? 'player2' : 'player1';
+            const otherPlayer = appState.players[otherPlayerKey];
+            
+            if (!otherPlayer.finished) {
+                 message += `<p style="font-weight:700; color:#ff6b9d;">
+                    But don't get too comfy! The dice now belong entirely to ${otherPlayer.name}. It's their turn to race to the finish!
+                 </p>`;
+                 
+                 modalActionBtn.textContent = `Hand Dice to ${otherPlayer.name}`;
+                 modalActionBtn.removeEventListener('click', goBackConfirmHandler);
+                 modalActionBtn.addEventListener('click', twoPlayerFinishTransition);
+            } else {
+                 // Both players finished
+                 message += `<p style="font-weight:700; color:#ff6b9d;">
+                    And ${otherPlayer.name} has finished too! The game is now completely over. Great job, both of you!
+                 </p>`;
+                 
+                 modalActionBtn.textContent = `Game Over. Reset?`;
+                 modalActionBtn.removeEventListener('click', twoPlayerFinishTransition);
+                 modalActionBtn.removeEventListener('click', goBackConfirmHandler);
+                 modalActionBtn.addEventListener('click', () => location.reload()); 
+            }
+        } else {
+            // Single Player Finish
+            modalActionBtn.textContent = `Game Over. Reset?`;
+            modalActionBtn.removeEventListener('click', goBackConfirmHandler);
+            modalActionBtn.addEventListener('click', () => location.reload()); 
+        }
+
+        implModalText.innerHTML = message;
+        implModal.classList.remove("hidden");
+    }
 
     function openActionModal() {
         const p = appState.pending;
-        const player = appState.players[p.playerKey];
         
-        implResult.textContent = ""; // Always clear previous result
-        implResult.classList.add("hidden"); // Start by hiding result area for all cases
+        implResult.textContent = ""; 
+        implResult.classList.add("hidden"); 
+        
+        // Hide/Reset all buttons initially
+        implButtons.classList.add("hidden"); 
+        modalActionBtn.style.display = 'none';
 
         if (p.type === 'GO_BACK') {
             implModalTitle.textContent = "Detour! Naughty, Naughty...";
@@ -558,10 +698,12 @@
             
             // HIDE implement UI
             implChipsContainer.classList.add("hidden");
-            implButtons.classList.add("hidden");
             
-            // SHOW Go Back button
-            goBackConfirmBtn.style.display = 'block'; 
+            // SHOW Go Back button (modalActionBtn)
+            modalActionBtn.style.display = 'block'; 
+            modalActionBtn.textContent = 'A Little Detour. Continue!';
+            modalActionBtn.removeEventListener('click', twoPlayerFinishTransition);
+            modalActionBtn.addEventListener('click', goBackConfirmHandler);
 
         } else if (p.type === 'IMPLEMENT') {
             implModalTitle.textContent = `Action Required on Box #${p.cell}`;
@@ -570,10 +712,7 @@
             // SHOW implement UI
             implChipsContainer.classList.remove("hidden");
             implButtons.classList.remove("hidden");
-            implResult.classList.remove("hidden"); // Show result area for implement selection
-
-            // HIDE Go Back button
-            goBackConfirmBtn.style.display = 'none'; 
+            implResult.classList.remove("hidden"); 
 
             // Populate implement chips
             implChips.innerHTML = "";
@@ -592,12 +731,81 @@
         implModal.classList.remove("hidden");
     }
 
+    // --- Implement Modal Handler ---
+    function selectImplChip(el) {
+        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        implResult.textContent = `Selected: ${el.dataset.impl}`;
+    }
+
+    implRandomBtn.addEventListener('click', () => {
+        const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+        const chosen = pool[randInt(0, pool.length - 1)];
+        implResult.textContent = `Rolled implement: ${chosen}`;
+        
+        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
+        const t = [...implChips.querySelectorAll('.chip')].find(c => c.dataset.impl === chosen);
+        if (t) t.classList.add('selected');
+    });
+
+    implConfirmBtn.addEventListener('click', () => {
+        const sel = implChips.querySelector('.chip.selected');
+        let chosen;
+        
+        if (sel) {
+            chosen = sel.dataset.impl;
+        } else {
+            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+            chosen = pool[randInt(0, pool.length - 1)];
+        }
+
+        const p = appState.pending;
+        if (p && p.type === 'IMPLEMENT') {
+            const player = appState.players[p.playerKey];
+            addHistory(`✅ ${player.name} receives ${p.count} ${p.intensity} spanks on ${p.target} using ${chosen}.`);
+            
+            // CHECK FOR GAME COMPLETION (Landing on Box 50 and action completed)
+            if (player.position === appState.boardCells) { 
+                player.finished = true;
+                openGameOverModal(player);
+                appState.pending = null;
+                return; 
+            }
+        }
+
+        appState.pending = null;
+        implModal.classList.add('hidden');
+        switchTurn(); 
+    });
+    
+    // --- Go Back Confirm Handler ---
+    function goBackConfirmHandler() {
+        const p = appState.pending;
+        if (p && p.type === 'GO_BACK') {
+            const player = appState.players[p.playerKey];
+            
+            // Set the player position back to the new position
+            player.position = p.newPos; 
+            
+            addHistory(`⚡ ${player.name} accepted the detour from Box #${p.oldPos} and is now at Box #${p.newPos}.`);
+            highlightPlayers();
+        }
+        
+        appState.pending = null;
+        implModal.classList.add('hidden');
+        switchTurn(); 
+    }
+    
+    // Add listener for goBackConfirmHandler once during init (it gets removed/added in openGameOverModal)
+    modalActionBtn.addEventListener('click', goBackConfirmHandler);
+
+    // --- Core Action Logic ---
+
     function handleCellAction(player, idx) {
         // 1. Check for Go Back Action
         if (GO_BACK_SPOTS.hasOwnProperty(idx)) {
             const newPos = GO_BACK_SPOTS[idx];
             
-            // Human player: Player lands on the spot (idx), then is moved back (newPos) on modal confirmation.
             appState.pending = {
                 type: 'GO_BACK',
                 playerKey: appState.currentPlayerKey,
@@ -613,27 +821,27 @@
             addHistory(`⚠️ ${player.name} landed on a SETBACK space. Action is deferred or determined by house rules.`);
         }
         
-        // 3. Spank/Implement Action (Default action)
+        // 3. Spank/Implement Action (Default action, including Box 50)
         const mod = idx % 3;
-        const intensity = mod === 0 ? "light" : mod === 1 ? "medium" : "heavy";
-        const ranges = { light: [5, 15], medium: [15, 30], heavy: [30, 40] };
+        const intensity = idx === appState.boardCells ? "FINISHING" : mod === 0 ? "light" : mod === 1 ? "medium" : "heavy";
+        const ranges = { light: [5, 15], medium: [15, 30], heavy: [30, 40], FINISHING: [50, 60] };
         const count = randInt(...ranges[intensity]);
 
         const g = player.gender;
         const targets = g === "man" ? ["butt", "balls"] : g === "woman" ? ["pussy", "butt", "boobs"] : ["butt", "seat"];
         const target = targets[randInt(0, targets.length - 1)];
 
-        // Human player opens the modal
         appState.pending = {
             type: 'IMPLEMENT',
             playerKey: appState.currentPlayerKey,
             cell: idx,
             count,
             target,
-            intensity
+            intensity: intensity.charAt(0) + intensity.slice(1).toLowerCase() // Fix capitalization for display
         };
         openActionModal();
     }
+
 
     // --- Event Listeners ---
 
@@ -675,26 +883,20 @@
     startGameBtn.addEventListener("click", () => {
         if (!appState.mode || !appState.diceMode) {
             console.warn("Select player mode and dice mode first.");
-            // Provide visual feedback
-            [singleBtn, twoBtn, computerDiceBtn, manualDiceBtn].forEach(el => {
-                el.style.outline = '2px solid red';
-                setTimeout(() => el.style.outline = 'none', 1000);
-            });
             return;
         }
         
         const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
         const p1Gender = document.getElementById("p1Gender").value;
 
-        appState.players.player1 = { name: p1Name, gender: p1Gender, position: 0 };
+        appState.players.player1 = { key: 'player1', name: p1Name, gender: p1Gender, position: 0, finished: false };
         appState.currentPlayerKey = 'player1';
 
         if (appState.mode === 2) {
             const p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
             const p2Gender = document.getElementById("p2Gender").value;
-            appState.players.player2 = { name: p2Name, gender: p2Gender, position: 0 };
+            appState.players.player2 = { key: 'player2', name: p2Name, gender: p2Gender, position: 0, finished: false };
         } else {
-            // Explicitly ensure only player1 exists in single player mode
             appState.players = { player1: appState.players.player1 };
         }
 
@@ -703,13 +905,11 @@
         setupSection.classList.add("hidden");
         gameSection.classList.remove("hidden");
         
-        // --- DICE MODE UI TOGGLE ---
         if (appState.diceMode === 'computer') {
             computerRollUI.classList.remove('hidden');
             computerRollUI.style.display = 'flex'; 
             manualRollUI.classList.add('hidden');
             manualRollUI.style.display = 'none'; 
-            // Set initial dice state
             diceEl.dataset.roll = 0;
         } else {
             computerRollUI.classList.add('hidden');
@@ -720,13 +920,13 @@
         
         buildBoard();
         updateTurnIndicator();
+        updateDiceControls();
         addHistory("Game started. Roll the dice to begin!");
     });
 
     // Listener for Computer Dice Roll (Updated with animation logic)
     rollBtn.addEventListener('click', () => {
         if (appState.pending || rollBtn.disabled) { 
-            console.warn('Finish pending action first or wait for roll.');
             return;
         }
         
@@ -734,83 +934,21 @@
 
         const finalVal = randInt(1, 6);
         let rollCount = 0;
-        const maxRolls = 10; // Number of flashes
+        const maxRolls = 10; 
         
         const rollInterval = setInterval(() => {
             if (rollCount < maxRolls) {
-                // Flash random numbers
                 diceEl.dataset.roll = randInt(1, 6); 
                 rollCount++;
             } else {
                 clearInterval(rollInterval);
-                // Set final value and process move
                 diceEl.dataset.roll = finalVal; 
                 processPlayerMove(finalVal); 
                 rollBtn.disabled = false;
             }
-        }, 100); // 100ms flash interval
+        }, 100); 
     });
     
-    // --- Implement Modal Logic ---
-
-    function selectImplChip(el) {
-        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
-        el.classList.add('selected');
-        implResult.textContent = `Selected: ${el.dataset.impl}`;
-    }
-
-    implRandomBtn.addEventListener('click', () => {
-        const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
-        const chosen = pool[randInt(0, pool.length - 1)];
-        implResult.textContent = `Rolled implement: ${chosen}`;
-        
-        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
-        const t = [...implChips.querySelectorAll('.chip')].find(c => c.dataset.impl === chosen);
-        if (t) t.classList.add('selected');
-    });
-
-    implConfirmBtn.addEventListener('click', () => {
-        const sel = implChips.querySelector('.chip.selected');
-        let chosen;
-        
-        if (sel) {
-            chosen = sel.dataset.impl;
-        } else {
-            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
-            chosen = pool[randInt(0, pool.length - 1)];
-        }
-
-        const p = appState.pending;
-        if (p && p.type === 'IMPLEMENT') {
-            const player = appState.players[p.playerKey];
-            addHistory(`✅ ${player.name} receives ${p.count} ${p.intensity} spanks on ${p.target} using ${chosen}.`);
-        }
-
-        appState.pending = null;
-        implModal.classList.add('hidden');
-        switchTurn(); // Switches turn if in 2-player mode, does nothing in 1-player mode
-    });
-    
-    // --- Go Back Confirm Logic ---
-    goBackConfirmBtn.addEventListener('click', () => {
-        const p = appState.pending;
-        if (p && p.type === 'GO_BACK') {
-            const player = appState.players[p.playerKey];
-            
-            // Set the player position back to the new position
-            player.position = p.newPos; 
-            
-            addHistory(`⚡ ${player.name} accepted the detour from Box #${p.oldPos} and is now at Box #${p.newPos}.`);
-            
-            // Re-highlight players on the board after the position update
-            highlightPlayers();
-        }
-        
-        appState.pending = null;
-        implModal.classList.add('hidden');
-        switchTurn(); // Switches turn if in 2-player mode, does nothing in 1-player mode
-    });
-
     initSetup();
 
 </script>
