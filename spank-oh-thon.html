@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Spank-Oh-Thon</title>
+<style>
+    :root{ --p1:#ffd54f; --p2:#cfd8dc; --bg:#0b1220; --panel:#0f1724; --muted:#9aa6bf }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
+    body{background:linear-gradient(180deg,#071028 0%,#0b1220 100%);color:#eef2f7;padding:18px}
+    .app{max-width:1100px;margin:0 auto}
+    header{text-align:center;margin-bottom:18px}
+    h1{color:#ff9aa2}
+    .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03)}
+    .center{display:flex;justify-content:center;align-items:center}
+    input,select,button{font-size:14px}
+
+    #board{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:14px}
+    .cell{background:rgba(255,255,255,0.03);height:66px;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--muted);border:2px solid transparent;transition:all 0.3s ease;}
+    .cell .num{font-weight:700;color:#fff}
+    .cell .title{font-size:0.75rem;color:var(--muted)}
+
+    .landed-p1{background:linear-gradient(135deg,#fff6d6,#ffd54f);color:#10221a;border-color:#f0c843}
+    .landed-p2{background:linear-gradient(135deg,#f2f6f8,#cfd8dc);color:#10221a;border-color:#bfc9cc}
+    .landed-both{background:#ffffff;color:#10221a;border-color:#ffffff}
+    .cell.go-back {background:linear-gradient(135deg, #2A0E0E, #691414); border-color: #8B0000; color: #fff;}
+    .cell.setback {background:linear-gradient(135deg, #1A1A00, #4D4D00); border-color: #CCCC00; color: #fff;}
+
+
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;justify-content:center;align-items:center;z-index:1000}
+    .modal{background:#fff;color:#111;padding:18px;border-radius:10px;width:420px;max-width:94%}
+    .hidden{display:none}
+
+    .implements-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:10px}
+    .chip{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:#555;color:#fff;cursor:pointer;text-align:left;transition:background 0.2s}
+    .chip.selected{background:#ff9aa2; color:#111; outline:3px solid #ff6b9d}
+
+    .controls{margin-top:12px;display:flex;gap:8px}
+    .btn{background:linear-gradient(135deg,#ff9aa2,#ff6b9d);color:#111;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:700;transition:background 0.2s, transform 0.1s}
+    .btn:hover{background:linear-gradient(135deg,#ff6b9d,#ff9aa2);}
+    .btn:active{transform:scale(0.98);}
+
+    .btn.secondary{background:transparent;color:#cbd6e6;border:1px solid rgba(255,255,255,0.06);transition:border-color 0.2s, background 0.2s;}
+    .btn.secondary:hover{border-color:rgba(255,255,255,0.15);}
+    .btn.secondary:active{background:rgba(255,255,255,0.05); transform:scale(0.98);}
+
+    .history{margin-top:10px;max-height:180px;overflow:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px}
+
+    footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
+
+    @media(max-width:900px){#board{grid-template-columns:repeat(5,1fr)} }
+</style>
+</head>
+<body onload="initSetup()">
+<div class="app">
+    <header>
+        <h1>Spank-Oh-Thon</h1>
+        <p style="color:var(--muted)">Adults only. Play consensually and respect boundaries.</p>
+    </header>
+
+    <main class="card">
+        <section id="setupSection">
+            <label style="color:var(--muted); font-weight: 600;">1. Choose Player Mode</label>
+            <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:10px; margin-top: 8px;">
+                <button id="singleBtn" class="btn secondary">Single Player</button>
+                <button id="twoBtn" class="btn secondary">Two Players</button>
+            </div>
+
+            <div id="playersForm" class="hidden">
+                <label style="color:var(--muted); font-weight: 600;">2. Enter Player Details & Implements</label>
+                <!-- Player 1 Form -->
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px; margin-top: 8px;">
+                    <div style="flex:1;min-width:220px">
+                        <label style="color:var(--muted)">Player 1 — Name</label>
+                        <input id="p1Name" type="text" placeholder="Player 1 name" style="width:100%;padding:8px;border-radius:6px;margin-top:6px; background:#2d3748; color:#fff; border:none;" />
+                    </div>
+                    <div style="width:160px">
+                        <label style="color:var(--muted)">Player 1 — Gender</label>
+                        <select id="p1Gender" style="width:100%;padding:8px;border-radius:6px;margin-top:6px; background:#2d3748; color:#fff; border:none;"><option value="woman">Woman</option><option value="man">Man</option><option value="other">Other</option></select>
+                    </div>
+                </div>
+
+                <!-- Player 2 Form - Starts hidden and is only shown when 'Two Players' is selected -->
+                <div id="player2Form" class="hidden" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px">
+                    <div style="flex:1;min-width:220px">
+                        <label style="color:var(--muted)">Player 2 — Name</label>
+                        <input id="p2Name" type="text" placeholder="Player 2 name" style="width:100%;padding:8px;border-radius:6px;margin-top:6px; background:#2d3748; color:#fff; border:none;" />
+                    </div>
+                    <div style="width:160px">
+                        <label style="color:var(--muted)">Player 2 — Gender</label>
+                        <select id="p2Gender" style="width:100%;padding:8px;border-radius:6px;margin-top:6px; background:#2d3748; color:#fff; border:none;"><option value="man">Man</option><option value="woman">Woman</option><option value="other">Other</option></select>
+                    </div>
+                </div>
+
+                <!-- Implements Selection -->
+                <div style="margin-top:10px">
+                    <label style="color:var(--muted)">Choose up to 6 implements (or add custom)</label>
+                    <div class="implements-grid" id="implementsGrid"></div>
+                    <div style="display:flex;gap:8px;margin-top:8px">
+                        <input id="customImplement" type="text" placeholder="Custom implement" style="flex:1;padding:8px;border-radius:6px; background:#2d3748; color:#fff; border:none;" />
+                        <button id="addCustomBtn" class="btn secondary">Add</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dice Mode Selection -->
+            <div id="diceModeSection" class="hidden" style="margin-top:12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.06);">
+                <label style="color:var(--muted); font-weight: 600;">3. Choose Dice Mode</label>
+                <div style="display:flex;gap:10px;align-items:center;justify-content:center;margin-top:8px">
+                    <button id="computerDiceBtn" class="btn secondary">Computer Dice (Automatic)</button>
+                    <button id="manualDiceBtn" class="btn secondary">Manual Input Dice (Physical Roll)</button>
+                </div>
+            </div>
+
+
+            <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:12px">
+                <button id="resetSetup" class="btn secondary">Reset</button>
+                <button id="startGameBtn" class="btn" disabled>Start Game</button>
+            </div>
+        </section>
+
+        <section id="gameSection" class="hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                <div>
+                    <div style="font-size:14px;color:var(--muted)">Turn</div>
+                    <div id="turnIndicator" style="font-weight:800;font-size:16px">—</div>
+                </div>
+                
+                <!-- Dice Control Area - Now uses Flexbox for horizontal layout -->
+                <div id="diceControlArea" style="display: flex; gap: 12px; align-items: flex-end; justify-content: center;">
+                    <!-- Computer Roll UI - Now a horizontal flex group for compactness -->
+                    <div id="computerRollUI" class="hidden" style="display: flex; gap: 12px; align-items: center;">
+                        <div class="dice" id="dice" style="width:50px;height:50px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#111;font-size:20px;cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">?</div>
+                        <!-- Roll Button -->
+                        <button id="rollBtn" class="btn" style="padding: 6px 10px;">Roll Dice</button>
+                    </div>
+
+                    <!-- Manual Roll UI (Kept vertical for input/submit) -->
+                    <div id="manualRollUI" class="hidden" style="flex-direction: column; align-items: center;">
+                        <label style="color:var(--muted); font-size:11px; display:block; text-align: center;">Enter Roll (1-6)</label>
+                        <input type="number" id="manualRollInput" min="1" max="6" placeholder="1-6" style="width:50px;padding:4px;border-radius:4px; background:#2d3748; color:#fff; border:none; text-align:center; margin-top: 4px;" />
+                        <button id="submitRollBtn" class="btn" style="margin-top:4px; padding: 4px 8px; font-size: 12px;">Submit</button>
+                        <div id="manualRollError" style="color:#ff6b9d; font-size:10px; min-height: 18px;"></div>
+                    </div>
+                    
+                    <!-- Reset button is a sibling, positioned horizontally alongside the roll UIs -->
+                    <button id="resetBtn" class="btn secondary" style="padding: 6px 10px;">Reset Game</button>
+                </div>
+
+                <div style="width:220px;text-align:right">
+                    <div style="color:var(--muted);font-size:13px">Selected Implements</div>
+                    <div id="selectedImpls" style="margin-top:6px;color:#fff;font-size:13px; min-height: 24px;"></div>
+                </div>
+            </div>
+
+            <div id="board"></div>
+
+            <div class="history card" id="history">
+                <strong style="display:block;margin-bottom:6px">Action History</strong>
+            </div>
+        </section>
+    </main>
+
+    <footer>Use responsibly — consensual adult play only.</footer>
+</div>
+
+<!-- Implement Selection Modal -->
+<div id="implModal" class="modal-backdrop hidden">
+    <div class="modal">
+        <h3 style="margin-bottom:8px" id="implModalTitle">Action Required</h3>
+        <p style="color:#444;margin-bottom:10px" id="implModalText"></p>
+
+        <!-- Implement Specific UI -->
+        <div id="implChipsContainer">
+            <div id="implChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>
+        </div>
+        
+        <div id="implResult" style="margin-top:10px;color:#222;font-weight:700"></div>
+
+        <!-- Buttons for Implement action -->
+        <div id="implButtons" style="display:flex;justify-content:space-between;gap:8px">
+            <button id="implRandomBtn" class="btn">Roll Implement</button>
+            <button id="implConfirmBtn" class="btn secondary">Completed - Continue</button>
+        </div>
+        
+        <!-- Button for Go Back action -->
+        <button id="goBackConfirmBtn" class="btn" style="width:100%; display:none;">A Little Detour. Continue!</button>
+    </div>
+</div>
+
+<script>
+    // Constants for the "Go Back" mechanic
+    const GO_BACK_SPOTS = {
+        // Spot: Go Back To Spot
+        10: 5, 18: 12, 25: 19, 32: 24, 38: 30, 45: 35, 47: 1 
+    };
+    
+    // Messages for the Go Back spots
+    const GO_BACK_MESSAGES = [
+        "Looks like you're not done teasing me yet. Let's go back for another round!",
+        "Oops! Did you think it would be that easy? Time for a sexy setback.",
+        "Your obedience needs a tune-up. Back you go, my dear.",
+        "The game says 'Not so fast!' I guess I get to enjoy watching you struggle a bit longer.",
+        "A detour is just a chance for more fun. We're rewinding the clock!",
+        "Someone's been naughty! This little punishment sets you back a few spaces.",
+        "Back to the start of the line! Don't worry, I'll keep you company.",
+        "You've been too good. Time to be bad again. Enjoy the trip back!"
+    ];
+
+    const DEFAULT_IMPLEMENTS = ["Leather belt", "Plastic comb", "Kitchen spatula", "Wooden spoon", "Hairbrush", "Rolling pin", "Slipper (soft)", "Small paddle", "Silicone spatula", "Towel (folded)"];
+    
+    let appState = {
+        mode: null, // 1 or 2
+        diceMode: null, // 'computer' or 'manual'
+        players: {},
+        currentPlayerKey: "player1",
+        chosenImplements: [],
+        boardCells: 50,
+        history: [],
+        pending: null // { type: 'IMPLEMENT' | 'GO_BACK', ...data }
+    };
+
+    // DOM Elements
+    const singleBtn = document.getElementById("singleBtn");
+    const twoBtn = document.getElementById("twoBtn");
+    const playersForm = document.getElementById("playersForm");
+    const player2Form = document.getElementById("player2Form");
+    const implementsGrid = document.getElementById("implementsGrid");
+    const addCustomBtn = document.getElementById("addCustomBtn");
+    const customImplementInput = document.getElementById("customImplement");
+    const startGameBtn = document.getElementById("startGameBtn");
+    const resetSetupBtn = document.getElementById("resetSetup");
+    const gameSection = document.getElementById("gameSection");
+    const setupSection = document.getElementById("setupSection");
+    const boardEl = document.getElementById("board");
+    const diceEl = document.getElementById("dice");
+    const rollBtn = document.getElementById("rollBtn");
+    const resetBtn = document.getElementById("resetBtn"); 
+    
+    // New Dice Mode Elements
+    const diceModeSection = document.getElementById("diceModeSection");
+    const computerDiceBtn = document.getElementById("computerDiceBtn");
+    const manualDiceBtn = document.getElementById("manualDiceBtn");
+    const computerRollUI = document.getElementById("computerRollUI");
+    const manualRollUI = document.getElementById("manualRollUI");
+    const manualRollInput = document.getElementById("manualRollInput");
+    const submitRollBtn = document.getElementById("submitRollBtn");
+    const manualRollError = document.getElementById("manualRollError");
+
+    const implModal = document.getElementById("implModal");
+    const implChipsContainer = document.getElementById("implChipsContainer");
+    const implChips = document.getElementById("implChips");
+    const implButtons = document.getElementById("implButtons");
+    const implRandomBtn = document.getElementById("implRandomBtn");
+    const implConfirmBtn = document.getElementById("implConfirmBtn");
+    const goBackConfirmBtn = document.getElementById("goBackConfirmBtn"); 
+    const implResult = document.getElementById("implResult");
+    const implModalTitle = document.getElementById("implModalTitle");
+    const implModalText = document.getElementById("implModalText");
+    const turnIndicator = document.getElementById("turnIndicator");
+    const historyEl = document.getElementById("history");
+    const selectedImplsEl = document.getElementById("selectedImpls");
+
+    let implPool = [...DEFAULT_IMPLEMENTS];
+    let implSelections = [];
+
+    // --- Initial Setup and UI Functions ---
+
+    function initSetup() {
+        player2Form.style.display = 'none';
+        resetBtn.addEventListener("click", () => location.reload());
+        resetSetupBtn.addEventListener("click", () => location.reload());
+        
+        // Setup initial listeners for dice mode selection
+        computerDiceBtn.addEventListener("click", () => selectDiceMode('computer'));
+        manualDiceBtn.addEventListener("click", () => selectDiceMode('manual'));
+        submitRollBtn.addEventListener('click', manualRollSubmitHandler);
+    }
+
+    function renderImplementsGrid() {
+        implementsGrid.innerHTML = "";
+        implPool.forEach(name => {
+            const d = document.createElement("div");
+            d.className = "chip";
+            d.textContent = name;
+            d.dataset.impl = name;
+            d.addEventListener("click", () => toggleImplementSelection(d));
+            implementsGrid.appendChild(d);
+            if (implSelections.includes(name)) {
+                d.classList.add("selected");
+            }
+        });
+        selectedImplsEl.textContent = implSelections.join(", ");
+    }
+
+    function toggleImplementSelection(el) {
+        const name = el.dataset.impl;
+        if (el.classList.contains("selected")) {
+            el.classList.remove("selected");
+            implSelections = implSelections.filter(x => x !== name);
+        } else {
+            if (implSelections.length >= 6) {
+                console.error("Max 6 implements selected.");
+                el.style.borderColor = '#ff6b9d';
+                setTimeout(() => el.style.borderColor = '', 500);
+                return;
+            }
+            el.classList.add("selected");
+            implSelections.push(name);
+        }
+        selectedImplsEl.textContent = implSelections.join(", ");
+    }
+
+    function selectDiceMode(mode) {
+        appState.diceMode = mode;
+        startGameBtn.disabled = false;
+
+        if (mode === 'computer') {
+            computerDiceBtn.classList.remove('secondary');
+            manualDiceBtn.classList.add('secondary');
+        } else {
+            manualDiceBtn.classList.remove('secondary');
+            computerDiceBtn.classList.add('secondary');
+        }
+    }
+
+
+    // --- Game Logic Helpers ---
+
+    function buildBoard() {
+        boardEl.innerHTML = "";
+        for (let i = 1; i <= appState.boardCells; i++) {
+            const c = document.createElement("div");
+            c.className = "cell";
+            c.dataset.idx = i;
+            c.innerHTML = `<div class="num">${i}</div><div class="title">${cellTitle(i)}</div>`;
+
+            if (GO_BACK_SPOTS.hasOwnProperty(i)) {
+                c.classList.add('go-back');
+            } else if ([11, 21, 30].includes(i)) {
+                c.classList.add('setback'); 
+            }
+
+            boardEl.appendChild(c);
+        }
+        highlightPlayers();
+    }
+
+    function cellTitle(i) {
+        if (i === 8) return "Safe";
+        if (GO_BACK_SPOTS.hasOwnProperty(i)) return `Go back to #${GO_BACK_SPOTS[i]}`;
+        if ([6, 13, 26, 33].includes(i)) return "Implement roll";
+        if ([11, 21, 30].includes(i)) return "Setback";
+        const t = ["Light", "Medium", "Heavy"];
+        return `${t[i % 3]} spanks`;
+    }
+
+    function highlightPlayers() {
+        document.querySelectorAll('.cell').forEach(el => el.classList.remove('landed-p1', 'landed-p2', 'landed-both'));
+        const p1 = appState.players.player1.position,
+            p2 = appState.players.player2.position;
+        
+        const cell1 = document.querySelector(`.cell[data-idx="${p1}"]`);
+        const cell2 = document.querySelector(`.cell[data-idx="${p2}"]`);
+
+        if (p1 > 0 && p2 > 0 && p1 === p2) {
+            if(cell1) cell1.classList.add('landed-both');
+        } else {
+            if (p1 > 0 && cell1) cell1.classList.add('landed-p1');
+            if (appState.mode === 2 && p2 > 0 && cell2) cell2.classList.add('landed-p2');
+        }
+    }
+
+    function randInt(min, max) {
+        return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function addHistory(txt) {
+        const d = document.createElement('div');
+        d.style.padding = '6px 4px';
+        d.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+        d.textContent = txt;
+        historyEl.appendChild(d);
+        historyEl.scrollTop = historyEl.scrollHeight;
+    }
+
+    function switchTurn() {
+        if (appState.mode === 1) {
+            // In single-player, always switches between player 1 and CPU (player 2)
+            appState.currentPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
+        } else {
+            // Two players: switches between player 1 and player 2
+            appState.currentPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
+        }
+        updateTurnIndicator();
+    }
+
+    function updateTurnIndicator() {
+        if (appState.players[appState.currentPlayerKey]) {
+            turnIndicator.textContent = appState.players[appState.currentPlayerKey].name;
+        } else {
+            turnIndicator.textContent = "—";
+        }
+    }
+
+    // --- Core Move Logic ---
+    function processPlayerMove(val) {
+        const key = appState.currentPlayerKey;
+        const player = appState.players[key];
+        
+        let newPosition = player.position + val;
+
+        if (newPosition > appState.boardCells) {
+            newPosition = appState.boardCells;
+        }
+        
+        // Update position to the landing spot
+        player.position = newPosition; 
+
+        addHistory(`🎲 ${player.name} moved ${val} and landed on ${player.position}`);
+        highlightPlayers();
+
+        // Check for and handle the cell action
+        handleCellAction(player, player.position, false);
+    }
+    
+    // --- Manual Dice Handler ---
+    function manualRollSubmitHandler() {
+        if (appState.pending) {
+            manualRollError.textContent = 'Finish pending action first.';
+            return;
+        }
+        
+        const rollValue = parseInt(manualRollInput.value);
+        
+        if (isNaN(rollValue) || rollValue < 1 || rollValue > 6) {
+            manualRollError.textContent = 'Enter a number between 1 and 6.';
+            manualRollInput.value = '';
+            return;
+        }
+
+        manualRollError.textContent = ''; 
+        manualRollInput.value = ''; 
+        
+        // Process the valid manual move
+        processPlayerMove(rollValue);
+    }
+
+    // --- CPU Logic ---
+
+    function cpuAutoRoll() {
+        const val = randInt(1, 6);
+        diceEl.textContent = val;
+        const player = appState.players.player2;
+        
+        let newPosition = player.position + val;
+
+        // Check for GO BACK - CPU moves immediately
+        if (GO_BACK_SPOTS.hasOwnProperty(newPosition)) {
+            const oldPos = newPosition;
+            newPosition = GO_BACK_SPOTS[newPosition];
+            player.position = newPosition; 
+            addHistory(`⚡ ${player.name} hit the 'Go Back' space (${oldPos}) and is moved to Box #${newPosition}!`);
+            highlightPlayers(); // Highlight immediate CPU movement
+        }
+
+        if (newPosition > appState.boardCells) {
+            newPosition = appState.boardCells;
+        }
+
+        player.position = newPosition;
+        
+        addHistory(`${player.name} rolled ${val} and landed on ${player.position}`);
+        highlightPlayers();
+
+        // CPU resolves action and switches turn instantly
+        handleCellAction(player, player.position, true);
+    }
+
+
+    // --- Roll and Action Handlers ---
+
+    function openActionModal() {
+        const p = appState.pending;
+        const player = appState.players[p.playerKey];
+        
+        implResult.textContent = ""; // Always clear previous result
+        implResult.classList.add("hidden"); // Start by hiding result area for all cases
+
+        if (p.type === 'GO_BACK') {
+            implModalTitle.textContent = "Detour! Naughty, Naughty...";
+            const message = GO_BACK_MESSAGES[randInt(0, GO_BACK_MESSAGES.length - 1)];
+            implModalText.textContent = `${message} You are now back at Box #${p.newPos}. Click continue to accept your sexy setback.`;
+            
+            // HIDE implement UI
+            implChipsContainer.classList.add("hidden");
+            implButtons.classList.add("hidden");
+            
+            // SHOW Go Back button
+            goBackConfirmBtn.style.display = 'block'; 
+
+        } else if (p.type === 'IMPLEMENT') {
+            implModalTitle.textContent = `Action Required on Box #${p.cell}`;
+            implModalText.textContent = `Action: ${p.count} ${p.intensity} spanks on ${p.target}. Pick implement.`;
+            
+            // SHOW implement UI
+            implChipsContainer.classList.remove("hidden");
+            implButtons.classList.remove("hidden");
+            implResult.classList.remove("hidden"); // Show result area for implement selection
+
+            // HIDE Go Back button
+            goBackConfirmBtn.style.display = 'none'; 
+
+            // Populate implement chips
+            implChips.innerHTML = "";
+            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+            
+            pool.forEach(name => {
+                const d = document.createElement("div");
+                d.className = "chip";
+                d.textContent = name;
+                d.dataset.impl = name;
+                d.addEventListener("click", () => selectImplChip(d));
+                implChips.appendChild(d)
+            });
+        }
+        
+        implModal.classList.remove("hidden");
+    }
+
+    function handleCellAction(player, idx, isCPU) {
+        // 1. Check for Go Back Action
+        if (GO_BACK_SPOTS.hasOwnProperty(idx)) {
+            const newPos = GO_BACK_SPOTS[idx];
+            
+            if (isCPU) {
+                // CPU logic is resolved instantly in cpuAutoRoll
+                return;
+            }
+
+            // Human player: Player lands on the spot (idx), then is moved back (newPos) on modal confirmation.
+            appState.pending = {
+                type: 'GO_BACK',
+                playerKey: appState.currentPlayerKey,
+                oldPos: idx,
+                newPos: newPos
+            };
+            openActionModal();
+            return;
+        }
+
+        // 2. Check for Setback
+        if ([11, 21, 30].includes(idx)) {
+            addHistory(`⚠️ ${player.name} landed on a SETBACK space. Action is deferred or determined by house rules.`);
+        }
+        
+        // 3. Spank/Implement Action (Default action)
+        const mod = idx % 3;
+        const intensity = mod === 0 ? "light" : mod === 1 ? "medium" : "heavy";
+        const ranges = { light: [5, 15], medium: [15, 30], heavy: [30, 40] };
+        const count = randInt(...ranges[intensity]);
+
+        const g = player.gender;
+        const targets = g === "man" ? ["butt", "balls"] : g === "woman" ? ["pussy", "butt", "boobs"] : ["butt", "seat"];
+        const target = targets[randInt(0, targets.length - 1)];
+
+        if (isCPU) {
+            // CPU resolves the action instantly by rolling implement
+            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+            const chosen = pool[randInt(0, pool.length - 1)];
+            addHistory(`${player.name} receives ${count} ${intensity} spanks on ${target} using ${chosen}.`);
+            switchTurn();
+        } else {
+            // Human player opens the modal
+            appState.pending = {
+                type: 'IMPLEMENT',
+                playerKey: appState.currentPlayerKey,
+                cell: idx,
+                count,
+                target,
+                intensity
+            };
+            openActionModal();
+        }
+    }
+
+    // --- Event Listeners ---
+
+    addCustomBtn.addEventListener("click", () => {
+        const v = customImplementInput.value.trim();
+        if (!v) return;
+        implPool.push(v);
+        renderImplementsGrid();
+        const chips = [...implementsGrid.querySelectorAll(".chip")];
+        const newChip = chips.find(c => c.dataset.impl === v);
+        if (newChip) toggleImplementSelection(newChip);
+        customImplementInput.value = "";
+    });
+
+    singleBtn.addEventListener("click", () => {
+        appState.mode = 1;
+        singleBtn.classList.add("btn");
+        singleBtn.classList.remove("secondary");
+        twoBtn.classList.add("secondary");
+        twoBtn.classList.remove("btn");
+        player2Form.style.display = 'none'; 
+        playersForm.classList.remove("hidden");
+        diceModeSection.classList.remove("hidden");
+        renderImplementsGrid();
+    });
+
+    twoBtn.addEventListener("click", () => {
+        appState.mode = 2;
+        twoBtn.classList.add("btn");
+        twoBtn.classList.remove("secondary");
+        singleBtn.classList.add("secondary");
+        singleBtn.classList.remove("btn");
+        player2Form.style.display = 'flex'; 
+        playersForm.classList.remove("hidden");
+        diceModeSection.classList.remove("hidden");
+        renderImplementsGrid();
+    });
+
+    startGameBtn.addEventListener("click", () => {
+        if (!appState.mode || !appState.diceMode) {
+            console.warn("Select player mode and dice mode first.");
+            // Provide visual feedback
+            [singleBtn, twoBtn, computerDiceBtn, manualDiceBtn].forEach(el => {
+                el.style.outline = '2px solid red';
+                setTimeout(() => el.style.outline = 'none', 1000);
+            });
+            return;
+        }
+        
+        const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
+        const p1Gender = document.getElementById("p1Gender").value;
+        let p2Name = "", p2Gender = "";
+
+        if (appState.mode === 2) {
+            p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
+            p2Gender = document.getElementById("p2Gender").value;
+        } else {
+            p2Name = "CPU";
+            p2Gender = "other";
+        }
+
+        appState.players.player1 = { name: p1Name, gender: p1Gender, position: 0 };
+        appState.players.player2 = { name: p2Name, gender: p2Gender, position: 0 };
+        appState.chosenImplements = [...implSelections];
+
+        setupSection.classList.add("hidden");
+        gameSection.classList.remove("hidden");
+        
+        // --- DICE MODE UI TOGGLE FIX ---
+        if (appState.diceMode === 'computer') {
+            computerRollUI.classList.remove('hidden');
+            computerRollUI.style.display = 'flex'; // Use flex for horizontal layout
+            manualRollUI.classList.add('hidden');
+            manualRollUI.style.display = 'none'; 
+            diceEl.textContent = '?';
+        } else {
+            computerRollUI.classList.add('hidden');
+            computerRollUI.style.display = 'none'; 
+            manualRollUI.classList.remove('hidden');
+            manualRollUI.style.display = 'flex'; // Use flex for the column layout
+        }
+        // ---------------------------------
+        
+        buildBoard();
+        updateTurnIndicator();
+        addHistory("Game started. Roll the dice to begin!");
+    });
+
+    // Listener for Computer Dice Roll
+    rollBtn.addEventListener('click', () => {
+        if (appState.pending) { 
+            console.warn('Finish pending action first.');
+            return;
+        }
+        const val = randInt(1, 6);
+        diceEl.textContent = val;
+        processPlayerMove(val); 
+    });
+    
+    // --- Implement Modal Logic ---
+
+    function selectImplChip(el) {
+        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+        implResult.textContent = `Selected: ${el.dataset.impl}`;
+    }
+
+    implRandomBtn.addEventListener('click', () => {
+        const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+        const chosen = pool[randInt(0, pool.length - 1)];
+        implResult.textContent = `Rolled implement: ${chosen}`;
+        
+        [...implChips.querySelectorAll('.chip')].forEach(c => c.classList.remove('selected'));
+        const t = [...implChips.querySelectorAll('.chip')].find(c => c.dataset.impl === chosen);
+        if (t) t.classList.add('selected');
+    });
+
+    implConfirmBtn.addEventListener('click', () => {
+        const sel = implChips.querySelector('.chip.selected');
+        let chosen;
+        
+        if (sel) {
+            chosen = sel.dataset.impl;
+        } else {
+            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
+            chosen = pool[randInt(0, pool.length - 1)];
+        }
+
+        const p = appState.pending;
+        if (p && p.type === 'IMPLEMENT') {
+            const player = appState.players[p.playerKey];
+            addHistory(`✅ ${player.name} receives ${p.count} ${p.intensity} spanks on ${p.target} using ${chosen}.`);
+        }
+
+        appState.pending = null;
+        implModal.classList.add('hidden');
+        switchTurn();
+        
+        if (appState.mode === 1 && appState.currentPlayerKey === 'player2') {
+            setTimeout(cpuAutoRoll, 700);
+        }
+    });
+    
+    // --- Go Back Confirm Logic ---
+    goBackConfirmBtn.addEventListener('click', () => {
+        const p = appState.pending;
+        if (p && p.type === 'GO_BACK') {
+            const player = appState.players[p.playerKey];
+            
+            // Set the player position back to the new position
+            player.position = p.newPos; 
+            
+            addHistory(`⚡ ${player.name} accepted the detour from Box #${p.oldPos} and is now at Box #${p.newPos}.`);
+            
+            // Re-highlight players on the board after the position update
+            highlightPlayers();
+        }
+        
+        appState.pending = null;
+        implModal.classList.add('hidden');
+        switchTurn();
+        
+        if (appState.mode === 1 && appState.currentPlayerKey === 'player2') {
+            setTimeout(cpuAutoRoll, 700);
+        }
+    });
+
+    initSetup();
+
+</script>
+</body>
+</html>
