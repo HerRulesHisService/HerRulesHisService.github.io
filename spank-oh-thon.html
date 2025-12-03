@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Spank-Oh-Thon</title>
+<title>Spank-OH-Thon</title>
 <style>
     :root{ --p1:#ffd54f; --p2:#cfd8dc; --bg:#0b1220; --panel:#0f1724; --muted:#9aa6bf }
     *{box-sizing:border-box;margin:0;padding:0;font-family:Inter,Segoe UI,Roboto,Arial,sans-serif}
@@ -15,11 +15,13 @@
     .center{display:flex;justify-content:center;align-items:center}
     input,select,button{font-size:14px}
 
+    /* Board Styles */
     #board{display:grid;grid-template-columns:repeat(10,1fr);gap:8px;margin-top:14px}
     .cell{background:rgba(255,255,255,0.03);height:66px;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:var(--muted);border:2px solid transparent;transition:all 0.3s ease;}
     .cell .num{font-weight:700;color:#fff}
     .cell .title{font-size:0.75rem;color:var(--muted)}
 
+    /* Cell Highlights */
     .landed-p1{background:linear-gradient(135deg,#fff6d6,#ffd54f);color:#10221a;border-color:#f0c843}
     .landed-p2{background:linear-gradient(135deg,#f2f6f8,#cfd8dc);color:#10221a;border-color:#bfc9cc}
     .landed-both{background:#ffffff;color:#10221a;border-color:#ffffff}
@@ -35,16 +37,93 @@
     .chip{padding:8px;border-radius:8px;border:1px solid rgba(0,0,0,0.08);background:#555;color:#fff;cursor:pointer;text-align:left;transition:background 0.2s}
     .chip.selected{background:#ff9aa2; color:#111; outline:3px solid #ff6b9d}
 
+    /* Button Styles */
     .controls{margin-top:12px;display:flex;gap:8px}
     .btn{background:linear-gradient(135deg,#ff9aa2,#ff6b9d);color:#111;padding:10px;border-radius:8px;border:none;cursor:pointer;font-weight:700;transition:background 0.2s, transform 0.1s}
     .btn:hover{background:linear-gradient(135deg,#ff6b9d,#ff9aa2);}
     .btn:active{transform:scale(0.98);}
+    .btn:disabled {opacity: 0.6; cursor: not-allowed;}
 
     .btn.secondary{background:transparent;color:#cbd6e6;border:1px solid rgba(255,255,255,0.06);transition:border-color 0.2s, background 0.2s;}
     .btn.secondary:hover{border-color:rgba(255,255,255,0.15);}
     .btn.secondary:active{background:rgba(255,255,255,0.05); transform:scale(0.98);}
 
-    .history{margin-top:10px;max-height:180px;overflow:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px}
+    /* Dice and Button Sizing Updates */
+    .dice {
+        width: 50px;
+        height: 50px;
+        background: #fff;
+        border-radius: 8px;
+        color: #111;
+        font-size: 20px;
+        cursor: pointer;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        
+        /* New styles for dot layout (3x3 grid) */
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        padding: 4px; 
+        align-items: center;
+        justify-items: center;
+        transition: transform 0.1s;
+    }
+
+    .dice .dot {
+        width: 10px; 
+        height: 10px;
+        background: #111;
+        border-radius: 50%;
+        opacity: 0; 
+        transition: opacity 0.05s;
+    }
+    
+    /* Dice face dot positioning using data-roll attribute */
+    /* 3x3 Grid: 1 2 3 / 4 5 6 / 7 8 9 */
+    
+    /* 1: Center */
+    .dice[data-roll="1"] .dot:nth-child(5) { opacity: 1; } 
+
+    /* 2: Top-left, Bottom-right */
+    .dice[data-roll="2"] .dot:nth-child(1), 
+    .dice[data-roll="2"] .dot:nth-child(9) { opacity: 1; } 
+
+    /* 3: Diagonal 1, 5, 9 */
+    .dice[data-roll="3"] .dot:nth-child(1), 
+    .dice[data-roll="3"] .dot:nth-child(5), 
+    .dice[data-roll="3"] .dot:nth-child(9) { opacity: 1; }
+
+    /* 4: All corners */
+    .dice[data-roll="4"] .dot:nth-child(1), 
+    .dice[data-roll="4"] .dot:nth-child(3), 
+    .dice[data-roll="4"] .dot:nth-child(7), 
+    .dice[data-roll="4"] .dot:nth-child(9) { opacity: 1; } 
+
+    /* 5: All corners + center */
+    .dice[data-roll="5"] .dot:nth-child(1), 
+    .dice[data-roll="5"] .dot:nth-child(3), 
+    .dice[data-roll="5"] .dot:nth-child(5), 
+    .dice[data-roll="5"] .dot:nth-child(7), 
+    .dice[data-roll="5"] .dot:nth-child(9) { opacity: 1; }
+
+    /* 6: Sides/Rows */
+    .dice[data-roll="6"] .dot:nth-child(1), 
+    .dice[data-roll="6"] .dot:nth-child(3), 
+    .dice[data-roll="6"] .dot:nth-child(4), 
+    .dice[data-roll="6"] .dot:nth-child(6), 
+    .dice[data-roll="6"] .dot:nth-child(7), 
+    .dice[data-roll="6"] .dot:nth-child(9) { opacity: 1; } 
+
+    /* Adjusted padding for button height match (Approx. 50px height) */
+    .btn-dice-match {
+        padding: 15px 10px !important;
+    }
+
+    .history{margin-top:10px;max-height:180px;overflow-y:auto;background:rgba(255,255,255,0.02);padding:8px;border-radius:8px; display: flex; flex-direction: column-reverse;}
+    /* Style for history items (to separate them) */
+    .history > div { border-top: 1px solid rgba(255,255,255,0.05); padding: 6px 4px; }
+    /* Remove top border from the most recent (now bottom) item when reversed */
+    .history > div:last-child { border-top: none; }
 
     footer{margin-top:16px;color:var(--muted);font-size:13px;text-align:center}
 
@@ -54,7 +133,7 @@
 <body onload="initSetup()">
 <div class="app">
     <header>
-        <h1>Spank-Oh-Thon</h1>
+        <h1>Spank-OH-Thon</h1>
         <p style="color:var(--muted)">Adults only. Play consensually and respect boundaries.</p>
     </header>
 
@@ -130,9 +209,14 @@
                 <div id="diceControlArea" style="display: flex; gap: 12px; align-items: flex-end; justify-content: center;">
                     <!-- Computer Roll UI - Now a horizontal flex group for compactness -->
                     <div id="computerRollUI" class="hidden" style="display: flex; gap: 12px; align-items: center;">
-                        <div class="dice" id="dice" style="width:50px;height:50px;background:#fff;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#111;font-size:20px;cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">?</div>
-                        <!-- Roll Button -->
-                        <button id="rollBtn" class="btn" style="padding: 6px 10px;">Roll Dice</button>
+                        <!-- DICE FACE IMPLEMENTATION -->
+                        <div class="dice" id="dice" data-roll="0">
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+                        </div>
+                        <!-- Roll Button - Height matched -->
+                        <button id="rollBtn" class="btn btn-dice-match">Roll Dice</button>
                     </div>
 
                     <!-- Manual Roll UI (Kept vertical for input/submit) -->
@@ -143,8 +227,8 @@
                         <div id="manualRollError" style="color:#ff6b9d; font-size:10px; min-height: 18px;"></div>
                     </div>
                     
-                    <!-- Reset button is a sibling, positioned horizontally alongside the roll UIs -->
-                    <button id="resetBtn" class="btn secondary" style="padding: 6px 10px;">Reset Game</button>
+                    <!-- Reset button is a sibling, positioned horizontally alongside the roll UIs. Height matched -->
+                    <button id="resetBtn" class="btn secondary btn-dice-match">Reset Game</button>
                 </div>
 
                 <div style="width:220px;text-align:right">
@@ -156,7 +240,7 @@
             <div id="board"></div>
 
             <div class="history card" id="history">
-                <strong style="display:block;margin-bottom:6px">Action History</strong>
+                <strong style="display:block;margin-bottom:6px; align-self: flex-end;">Action History (Latest on Top)</strong>
             </div>
         </section>
     </main>
@@ -271,6 +355,9 @@
         resetBtn.addEventListener("click", () => location.reload());
         resetSetupBtn.addEventListener("click", () => location.reload());
         
+        // Set initial dice state to 0 (no dots)
+        diceEl.dataset.roll = 0; 
+
         // Setup initial listeners for dice mode selection
         computerDiceBtn.addEventListener("click", () => selectDiceMode('computer'));
         manualDiceBtn.addEventListener("click", () => selectDiceMode('manual'));
@@ -357,16 +444,19 @@
 
     function highlightPlayers() {
         document.querySelectorAll('.cell').forEach(el => el.classList.remove('landed-p1', 'landed-p2', 'landed-both'));
-        const p1 = appState.players.player1.position,
-            p2 = appState.players.player2.position;
+        // Use optional chaining since player2 may not exist in single-player mode
+        const p1 = appState.players.player1?.position;
+        const p2 = appState.players.player2?.position;
         
         const cell1 = document.querySelector(`.cell[data-idx="${p1}"]`);
         const cell2 = document.querySelector(`.cell[data-idx="${p2}"]`);
 
-        if (p1 > 0 && p2 > 0 && p1 === p2) {
+        // Check if both players exist AND positions are equal
+        if (appState.mode === 2 && p1 > 0 && p2 > 0 && p1 === p2) {
             if(cell1) cell1.classList.add('landed-both');
         } else {
             if (p1 > 0 && cell1) cell1.classList.add('landed-p1');
+            // Only highlight P2 if P2 exists (mode === 2)
             if (appState.mode === 2 && p2 > 0 && cell2) cell2.classList.add('landed-p2');
         }
     }
@@ -377,21 +467,27 @@
 
     function addHistory(txt) {
         const d = document.createElement('div');
-        d.style.padding = '6px 4px';
-        d.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
         d.textContent = txt;
-        historyEl.appendChild(d);
-        historyEl.scrollTop = historyEl.scrollHeight;
+        
+        // --- KEY CHANGE: Prepend the new entry to the history container ---
+        const firstChild = historyEl.querySelector('div');
+        if (firstChild) {
+            historyEl.insertBefore(d, firstChild);
+        } else {
+            historyEl.appendChild(d);
+        }
+        // Since the CSS uses flex-direction: column-reverse, the first child 
+        // in the DOM is visually at the bottom. The last child in the DOM 
+        // is visually at the top. Inserting before the first child ensures
+        // the new entry is visually at the top (and is the last DOM child).
     }
 
     function switchTurn() {
-        if (appState.mode === 1) {
-            // In single-player, always switches between player 1 and CPU (player 2)
+        // Only switch turns if in Two-Player mode
+        if (appState.mode === 2) {
             appState.currentPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
-        } else {
-            // Two players: switches between player 1 and player 2
-            appState.currentPlayerKey = appState.currentPlayerKey === 'player1' ? 'player2' : 'player1';
-        }
+        } 
+        // If mode === 1 (Single Player), currentPlayerKey remains 'player1'
         updateTurnIndicator();
     }
 
@@ -420,8 +516,8 @@
         addHistory(`🎲 ${player.name} moved ${val} and landed on ${player.position}`);
         highlightPlayers();
 
-        // Check for and handle the cell action
-        handleCellAction(player, player.position, false);
+        // Check for and handle the cell action (no CPU logic needed here)
+        handleCellAction(player, player.position);
     }
     
     // --- Manual Dice Handler ---
@@ -445,38 +541,6 @@
         // Process the valid manual move
         processPlayerMove(rollValue);
     }
-
-    // --- CPU Logic ---
-
-    function cpuAutoRoll() {
-        const val = randInt(1, 6);
-        diceEl.textContent = val;
-        const player = appState.players.player2;
-        
-        let newPosition = player.position + val;
-
-        // Check for GO BACK - CPU moves immediately
-        if (GO_BACK_SPOTS.hasOwnProperty(newPosition)) {
-            const oldPos = newPosition;
-            newPosition = GO_BACK_SPOTS[newPosition];
-            player.position = newPosition; 
-            addHistory(`⚡ ${player.name} hit the 'Go Back' space (${oldPos}) and is moved to Box #${newPosition}!`);
-            highlightPlayers(); // Highlight immediate CPU movement
-        }
-
-        if (newPosition > appState.boardCells) {
-            newPosition = appState.boardCells;
-        }
-
-        player.position = newPosition;
-        
-        addHistory(`${player.name} rolled ${val} and landed on ${player.position}`);
-        highlightPlayers();
-
-        // CPU resolves action and switches turn instantly
-        handleCellAction(player, player.position, true);
-    }
-
 
     // --- Roll and Action Handlers ---
 
@@ -528,16 +592,11 @@
         implModal.classList.remove("hidden");
     }
 
-    function handleCellAction(player, idx, isCPU) {
+    function handleCellAction(player, idx) {
         // 1. Check for Go Back Action
         if (GO_BACK_SPOTS.hasOwnProperty(idx)) {
             const newPos = GO_BACK_SPOTS[idx];
             
-            if (isCPU) {
-                // CPU logic is resolved instantly in cpuAutoRoll
-                return;
-            }
-
             // Human player: Player lands on the spot (idx), then is moved back (newPos) on modal confirmation.
             appState.pending = {
                 type: 'GO_BACK',
@@ -564,24 +623,16 @@
         const targets = g === "man" ? ["butt", "balls"] : g === "woman" ? ["pussy", "butt", "boobs"] : ["butt", "seat"];
         const target = targets[randInt(0, targets.length - 1)];
 
-        if (isCPU) {
-            // CPU resolves the action instantly by rolling implement
-            const pool = appState.chosenImplements.length ? appState.chosenImplements : implPool;
-            const chosen = pool[randInt(0, pool.length - 1)];
-            addHistory(`${player.name} receives ${count} ${intensity} spanks on ${target} using ${chosen}.`);
-            switchTurn();
-        } else {
-            // Human player opens the modal
-            appState.pending = {
-                type: 'IMPLEMENT',
-                playerKey: appState.currentPlayerKey,
-                cell: idx,
-                count,
-                target,
-                intensity
-            };
-            openActionModal();
-        }
+        // Human player opens the modal
+        appState.pending = {
+            type: 'IMPLEMENT',
+            playerKey: appState.currentPlayerKey,
+            cell: idx,
+            count,
+            target,
+            intensity
+        };
+        openActionModal();
     }
 
     // --- Event Listeners ---
@@ -634,52 +685,70 @@
         
         const p1Name = document.getElementById("p1Name").value.trim() || "Player 1";
         const p1Gender = document.getElementById("p1Gender").value;
-        let p2Name = "", p2Gender = "";
-
-        if (appState.mode === 2) {
-            p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
-            p2Gender = document.getElementById("p2Gender").value;
-        } else {
-            p2Name = "CPU";
-            p2Gender = "other";
-        }
 
         appState.players.player1 = { name: p1Name, gender: p1Gender, position: 0 };
-        appState.players.player2 = { name: p2Name, gender: p2Gender, position: 0 };
+        appState.currentPlayerKey = 'player1';
+
+        if (appState.mode === 2) {
+            const p2Name = document.getElementById("p2Name").value.trim() || "Player 2";
+            const p2Gender = document.getElementById("p2Gender").value;
+            appState.players.player2 = { name: p2Name, gender: p2Gender, position: 0 };
+        } else {
+            // Explicitly ensure only player1 exists in single player mode
+            appState.players = { player1: appState.players.player1 };
+        }
+
         appState.chosenImplements = [...implSelections];
 
         setupSection.classList.add("hidden");
         gameSection.classList.remove("hidden");
         
-        // --- DICE MODE UI TOGGLE FIX ---
+        // --- DICE MODE UI TOGGLE ---
         if (appState.diceMode === 'computer') {
             computerRollUI.classList.remove('hidden');
-            computerRollUI.style.display = 'flex'; // Use flex for horizontal layout
+            computerRollUI.style.display = 'flex'; 
             manualRollUI.classList.add('hidden');
             manualRollUI.style.display = 'none'; 
-            diceEl.textContent = '?';
+            // Set initial dice state
+            diceEl.dataset.roll = 0;
         } else {
             computerRollUI.classList.add('hidden');
             computerRollUI.style.display = 'none'; 
             manualRollUI.classList.remove('hidden');
-            manualRollUI.style.display = 'flex'; // Use flex for the column layout
+            manualRollUI.style.display = 'flex'; 
         }
-        // ---------------------------------
         
         buildBoard();
         updateTurnIndicator();
         addHistory("Game started. Roll the dice to begin!");
     });
 
-    // Listener for Computer Dice Roll
+    // Listener for Computer Dice Roll (Updated with animation logic)
     rollBtn.addEventListener('click', () => {
-        if (appState.pending) { 
-            console.warn('Finish pending action first.');
+        if (appState.pending || rollBtn.disabled) { 
+            console.warn('Finish pending action first or wait for roll.');
             return;
         }
-        const val = randInt(1, 6);
-        diceEl.textContent = val;
-        processPlayerMove(val); 
+        
+        rollBtn.disabled = true;
+
+        const finalVal = randInt(1, 6);
+        let rollCount = 0;
+        const maxRolls = 10; // Number of flashes
+        
+        const rollInterval = setInterval(() => {
+            if (rollCount < maxRolls) {
+                // Flash random numbers
+                diceEl.dataset.roll = randInt(1, 6); 
+                rollCount++;
+            } else {
+                clearInterval(rollInterval);
+                // Set final value and process move
+                diceEl.dataset.roll = finalVal; 
+                processPlayerMove(finalVal); 
+                rollBtn.disabled = false;
+            }
+        }, 100); // 100ms flash interval
     });
     
     // --- Implement Modal Logic ---
@@ -719,11 +788,7 @@
 
         appState.pending = null;
         implModal.classList.add('hidden');
-        switchTurn();
-        
-        if (appState.mode === 1 && appState.currentPlayerKey === 'player2') {
-            setTimeout(cpuAutoRoll, 700);
-        }
+        switchTurn(); // Switches turn if in 2-player mode, does nothing in 1-player mode
     });
     
     // --- Go Back Confirm Logic ---
@@ -743,11 +808,7 @@
         
         appState.pending = null;
         implModal.classList.add('hidden');
-        switchTurn();
-        
-        if (appState.mode === 1 && appState.currentPlayerKey === 'player2') {
-            setTimeout(cpuAutoRoll, 700);
-        }
+        switchTurn(); // Switches turn if in 2-player mode, does nothing in 1-player mode
     });
 
     initSetup();
