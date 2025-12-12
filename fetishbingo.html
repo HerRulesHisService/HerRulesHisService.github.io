@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kink Discovery Bingo</title>
+  <style>
+    :root{
+      --bg:#111; --card:#222; --accent:#8a2be2; --muted:#444; --text:#eee;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 18px;
+      text-align: center;
+      min-height:100vh;
+    }
+    h1 { margin: 8px 0 6px 0; font-size: 22px; text-align:center; }
+    #level { margin-top:6px; font-size:14px; color:#ddd; }
+
+    .choice-boxes,
+    .fetish-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 18px;
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .choice,
+    .fetish {
+      background: var(--card);
+      border: 2px solid var(--muted);
+      border-radius: 10px;
+      padding: 12px 14px;
+      width: calc(33% - 10px);
+      min-width: 120px;
+      cursor: pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .choice:hover,
+    .fetish:hover { transform: translateY(-4px); }
+    .selected { background: var(--accent); border-color: #c77dff; color:#fff; font-weight:700; }
+
+    #screenshot-btn, #reset-btn {
+      margin-top: 20px;
+      padding: 10px 18px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      cursor: pointer;
+      font-size: 15px;
+      display:none;
+    }
+
+    #toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #222;
+      padding: 10px 18px;
+      border-radius: 8px;
+      color:#fff;
+      font-size: 14px;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .4s ease;
+    }
+
+    .fade-in { animation: fadeIn .4s ease forwards; }
+    @keyframes fadeIn {
+      from { opacity:0; transform:scale(.95); }
+      to { opacity:1; transform:scale(1); }
+    }
+
+    /* Screenshot mobile */
+    .screenshot-mobile {
+      width: 390px;
+      padding: 20px;
+      border-radius:12px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, sans-serif;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      text-align:center;
+      gap:12px;
+    }
+    .screenshot-title{ font-size:22px; font-weight:bold; }
+    .screenshot-level{ font-size:14px; color:#ddd; margin-bottom:4px; }
+
+    .screenshot-grid{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:10px;
+      width:100%;
+      max-width:540px;
+    }
+    .screenshot-cell{
+      background: var(--card);
+      border:2px solid var(--muted);
+      border-radius:10px;
+      padding:12px 14px;
+      width: calc(33% - 10px);
+      min-width:120px;
+      font-size:14px;
+    }
+    .screenshot-cell.marked{
+      background: var(--accent);
+      border-color:#c77dff;
+      color:white;
+      font-weight:700;
+    }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+  <h1>Kink Discovery Bingo</h1>
+  <div id="level"></div>
+
+  <div id="first-screen" class="choice-boxes">
+    <div class="choice" data-choice="I've Tried">I've Tried</div>
+    <div class="choice" data-choice="I've Enjoyed">I've Enjoyed</div>
+    <div class="choice" data-choice="I'm Curious About">I'm Curious About</div>
+  </div>
+
+  <div id="fetish-screen" class="fetish-grid" style="display:none"></div>
+
+  <button id="reset-btn">Reset Fetish Cards</button>
+  <button id="screenshot-btn">Take Mobile-friendly Screenshot</button>
+
+  <div id="toast"></div>
+
+<script>
+const fetishList = [
+"Oral Sex","Spanking","Bondage","Anal Sex","Hair Pulling","Toys","Talking Dirty","Blindfolds","Lingerie","Breast/Nipple Play","Handcuffs","Sex In Public","Mutual Masturbation","Ass Play","Biting","Role Play","Discipline","Masturbation","Collar and Lead/Leash","Candle Wax","Orgasm Control","Exhibitionism","Kissing","Erotic Photography","Master/Slave","Gangbangs","Strap-ons","Rimming","Nipples","Voyeurism","Humiliation","Pain","Cunnilingus","Anal","fingering","High Heels","Squirting","Whips","Cocksucking","Creampie","Waking up to oral sex","Blow Jobs","Power Exchange","Aftercare","Face Slapping","Flirting","Doggy Style","Fisting","Pantyhose/Stockings","Begging","Orgasm Denial","Group Sex","Age Play","Piercings","Pussy Worship","Snuggling","Watersports","Pegging","Handjobs","Daddy/girl","Bisexuality","Morning Sex","Affectionate Domination","Showering Together","FMF threesomes","Edge Play","Obedience Training","Anal Training","Dirty Text Messaging","FemDom","Porn","Sensual Domination","Public Play","Ball Gags","Tit Fucking","Swallowing","Nudity","Sex with Strangers","Cuddling","Verbal Humiliation and Degradation","Ass worship","Polyamory","Chastity Devices","Neck Kissing/Touching","Making Out","Mistresses with Strap-Ons","Breasts","Throat Fucking","Costumes/Dressing-up","Tearing off Clothing","Aftercare Cuddles","Big Tits","Facesitting","MMF Threesomes","Caging/Confinement","Light Bondage","Belt Spanking","Edging","Clit Spanking","Latex","Fishnets","Spreader Bars","Flogging","D/s","Fucking Machines","Sluts","Cock Milking","Sleepy Sex","Breeding","Orgy","Sensual Play","Foot/Feet","Prostate Massage","Sadism","Anonymous Encounters","Shibari","Degradation","Being Cummed On","Caressing","Body Worship","Erotic Literature","Sexting","Mistress/slave","Ordered To Masturbate","Anal Play","Skirts","Butt plugs in public","Masochism","Two-Girl Blowjobs","Being Overpowered","Goth","Masks","Shower Sex","Ass Licking","Interracial Sex","Anal Beads","Erotic Massage","Schoolgirl Uniform","Honesty","Older Women","Ice Cubes","Cuddling with benefits","Cross-Dressing","Stockings","Rope","Red Heads","Impact Play","Gags","Anal Creampie","Touching","Daddy Daughter roleplay","Bruises","Glory Hole","Control","Anal Fingering","Doctor/Nurse Play","Swallowing Cum","Abduction Play","Sensation Play","Yes, Sir.","Hot Oil Massages","Rope Bondage","male submission","Photography","Panties","Ass to Mouth","Humor","Cuckold","Nipple Play","Seduction","Sexual Slavery","Attention","Facials","Scratching","Affection","Clamps and Clips","Teacher/Student","Cock and Ball Torture","Cosplay","Foot Massage","Trust","Bareback","Daddy/babygirl","Brats","Paddling","Massage","Prostate Milking","Geeks","Bondage Equipment","Neck Biting","Spitting","Swinging","Slapping","Small Tits","Forehead Kisses","Tease & Denial","Petplay","Whipping","Punishment","Eye Contact","Anal Stretching","Breast Spanking","Cunt Worship","Predator/prey","Scent","Road Head","BBW","24/7","The no panties rule","Hotwife","Pussy Spanking","Electrical Play","Foot Worship","Wax","Licking","Sex in the kitchen","Anal Hooks","Bukkake","subspace","Switching","Enemas","Chastity","Service-oriented submission","Tongue Sucking","Kneeling","Impregnation Fantasy","Maid Uniforms","Rope Play","Lace","Nipple Clamps","Burlesque","Schoolgirl","Music","Objectification","Triple Penetration","Pigtails","Feminization","Breast Bondage","Knee High Socks","Goddess Worship","Fetish Wear","Riding Crops","Male Authority","Glass Dildos","Knife Play","Suspension Bondage","Tit Slapping","Mind Fucks","Behavior Modification","Anime","Caning","Belt Whippings","Pinching","Domestic Servitude","Breastfeeding","Sexual Objectification","Boss/Secretary","Total Power Exchange","Phone Sex","Art Erotica","Female Supremacy","Outdoor Bondage","Rubber","Accents","Love","Wax Play","Body Paint","Sapiosexuality","Public Humiliation","Clit Pumping","OTK Spanking","Sissification","Kitten Petplay","Cuckolding","Online Play","Nipple Piercings","Writing Erotica","Hentai","Cock Slapping","Uniforms","Glasses","Vaginal Fisting","Lactation","Pursuit, Take-Down & Capture","Sex in the cemetery","Play Punishment","Manhandling","Bondage Art","Creampie Cleanup","Cheerleading Uniforms","Bondage Tape","Primal Play","Mommy/Boy Dynamics","Cyber Sex","Feet","Vintage Lingerie","Sissy Training","Vaginal Stretching","Sex in videostore porn rooms","slavery","Shaving","Japanese Bondage","Pussy Pumping","Asphyxiaphilia Play","1950s Household","Blood Play","Vampires","Lipstick","Puppy Play","Hairbrush Spanking","Transvestism","Genital Piercings","Tantra","Legs","Pet Play","Business Suits","Violet Wand","Makeup","Tongues","CBT","French Maids","Predicament Bondage","Anal Fisting","Tickling","Analingus","Flashing","Sadomasochism","Androgyny","Wrestling","Needle Play","Eye Contact Restrictions","Crops","Catsuits","Freckles","Mind Control","Corporal Punishment","Corset Training","DDlg","Bathroom Use Control","Clothespins","Sensualism","BBC","Affectionate Cruelty","Long Hair","Body Modification","Medical Play","Female Humiliation","Human Toilet","Wartenberg Pinwheels","Older Men","Duct Tape","Uncut Cock","Suspension","Sybian","Webcams","Pregnant","Nun/Priest Play","Crying","Fire Play","Diapers","Chakra energy play","Pin-Ups","Mental Bondage","Smoking","E-Stim","Military Uniforms","Shackles","Sissy","Bimboification","Urethral Sounds","Service","Toes and Feet","Necks","Dollification","Bellydancing","Chocolate","Breast Whipping","Maid","Cuckold Humiliation","Panty-Sniffing","Primal","Sex Magick","small penis humiliation","Crawling","Speech restriction","Ben Wa Balls","Covert Bondage","Mommy/girl","Beards","Food Play","Human Doll","Muscles","Queening","NylonLegs & Feet","Boot licking","Fear","Sex Online","human furniture","Monogamy","Posture Collars","BBW/BHM","Librarians","Pubic Hair","Branding","Sissy Panties","Domestic Discipline","Gender Play","Fetish Models","Spiritual BDSM","Sacred Sexuality","Boot Worship","Sister/Brother Roleplay","Tens Unit","Toilet slave","Silk","Damsels In Distress","Tears","sleep","Blushing","CFNM","Barefoot","Large Labia","ABDL","Armbinders","Fear Play","Furry","Ball Stretching","Slave Tattoos","Self-Bondage","Hoods","Rituals","Liquor","Cutting","Depilation/Shaving","Ballbusting","Sounds","Corsetry","Facial Hair","Gloves","Interrogation","Scarf bondage","Mummification","Lycra/Spandex","Vintage Porn","Vacuum pumping","Kilts","Fingernails","Smothering","Emotional Sadism","Feathers","Energy Play","Speculums","Single Tail Whips","Enforced Bedtime","Armpits","Sensual/slave dances","Sounding","Satin","Body Hair","Gas Masks","PVC","Hands","Pressure points","Toy Making","Bald Girls","artistic cutting","Corset Cinching","Violence","Socks","Spandex","Large objects","Medieval Devices","Figging","Cornertime","Urethral Fucking","Pony Play","Diaper","Sweat","Military","Vacuum Bed","Steampunk","Ball Kicking","Fire Cupping","Infidelity","Shoes","Bullwhips","Muscle Worship","WolfPlay","Toilet","Transformation","Claws","Ballet Boots/Shoes","Hook Suspension","Face Farting","Grooming","Voice Play","Emotional Masochism","Race Play","human ashtray","Punching Play","Clover Clamps","Kinbaku","Saran Wrap","Protocol","Hair Bondage","Scarification","Cupping","High Protocol","fetnights","Waterbondage","Braces","Slave Bells","Superheroes","Pirates","Victorian Lifestyles","Religious Play","Pro Domme","Anal Chastity","Martial Arts","Trampling","Gorean Slave Positions","Waterboarding","Corset Piercing","Geisha","Play Piercing","Fur","Inflatables","Hemp Rope","Auralism","Victorian Pornography","Piggy Play","Catheters","Boot","Hair","Encasement Fetish","Velvet","Cling Film","Metal","Defilement","Vampire gloves","decorative cutting","Cigars","Butches","Military Interrogation","Dacryphilia","Vinyl","Clowns","Infantilism","Petticoats","Kicking","Douching","Fire Flogging","Bastinado","Abrasion Play","Internal Enslavement","Head Shaving","Psycholagny","Zentai","Crucifixion Play","Casting","Sleepsacks","Robots","Flesh Hooks","Denim","Chaps","Nyotaimori","Forniphilia","Boot Blacking","Hojojutsu","Cell Popping","Gor","Staples","Percussion Play","Graphoerotica","Old Guard Slavery","Fish Hooks","Klismaphilia","Retifism"
+
+];
+
+const firstScreen = document.getElementById('first-screen');
+const fetishScreen = document.getElementById('fetish-screen');
+const screenshotBtn = document.getElementById('screenshot-btn');
+const resetBtn = document.getElementById('reset-btn');
+const levelBox = document.getElementById('level');
+const toast = document.getElementById('toast');
+let chosenLevel = "";
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.style.opacity = 1;
+  setTimeout(()=> toast.style.opacity = 0, 1800);
+}
+
+function buildFetishGrid(){
+  fetishScreen.innerHTML = "";
+  const selected = [];
+  while(selected.length < 15){
+    const r = fetishList[Math.floor(Math.random()*fetishList.length)];
+    if(!selected.includes(r)) selected.push(r);
+  }
+
+  selected.forEach(f =>{
+    const div = document.createElement('div');
+    div.className = 'fetish fade-in';
+    div.textContent = f;
+    div.addEventListener('click',()=> div.classList.toggle('selected'));
+    fetishScreen.appendChild(div);
+  });
+}
+
+firstScreen.addEventListener('click', e =>{
+  if(!e.target.classList.contains('choice')) return;
+  chosenLevel = e.target.dataset.choice;
+  levelBox.textContent = "Level: " + chosenLevel;
+  firstScreen.style.display = 'none';
+  fetishScreen.style.display = 'flex';
+  screenshotBtn.style.display = 'inline-block';
+  resetBtn.style.display = 'inline-block';
+  buildFetishGrid();
+});
+
+resetBtn.addEventListener('click', ()=>{
+  buildFetishGrid();
+  showToast('Cards refreshed!');
+});
+
+screenshotBtn.addEventListener('click', async () =>{
+  const temp = document.createElement('div');
+  temp.className = 'screenshot-mobile';
+  temp.innerHTML = `<div class="screenshot-title">Kink Discovery Bingo</div>
+                    <div class="screenshot-level">${chosenLevel}</div>
+                    <div class="screenshot-grid"></div>`;
+
+  const grid = temp.querySelector('.screenshot-grid');
+  document.querySelectorAll('.fetish').forEach(f =>{
+    const cell = document.createElement('div');
+    cell.className = 'screenshot-cell' + (f.classList.contains('selected')? ' marked':'' );
+    cell.textContent = f.textContent;
+    grid.appendChild(cell);
+  });
+
+  document.body.appendChild(temp);
+
+  const canvas = await html2canvas(temp);
+  const link = document.createElement('a');
+  link.download = 'kink_bingo.png';
+  link.href = canvas.toDataURL();
+  link.click();
+
+  temp.remove();
+  showToast('Screenshot saved!');
+});
+</script>
+</body>
+</html>
