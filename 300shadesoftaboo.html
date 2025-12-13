@@ -1,213 +1,988 @@
 <!DOCTYPE html>
-<html lang="en">
+<html 
+
+lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>300 Shades of Taboo</title>
+<meta 
+
+charset="UTF-8">
+<meta 
+
+name="viewport" 
+
+content="width=device-
+
+width, initial-
+
+scale=1.0">
+<title>300 
+
+Shades of Taboo</title>
 
 <style>
 :root{
-  --bg:#111; --card:#222; --accent:#8a2be2; --muted:#444; --text:#eee;
+  --bg:#111;
+ 
+
+ --card:#222;
+  --
+
+accent:#8a2be2;
+  --
+
+muted:#444;
+  --text:#eee;
+ 
+
+ --brand:#ffd84d;
 }
 body{
-  font-family:Arial,sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  padding:18px;
-  text-align:center;
-  min-height:100vh;
-}
-h1{margin:8px 0;font-size:22px;}
-#level{font-size:14px;color:#ddd;}
+  
 
-.choice-boxes,.fetish-grid{
+font-family:Arial,sans-
+
+serif;
+  background:var
+
+(--bg);
+  color:var(--
+
+text);
+  text-
+
+align:center;
+  
+
+padding:18px;
+}
+h1
+
+{margin:8px 0 2px;font-
+
+size:22px;}
+.site-link{
+  
+
+font-size:12px;
+  
+
+color:var(--brand);
+  
+
+margin-bottom:10px;
+}
+.site-link a{
+  color:var
+
+(--brand);
+  text-
+
+decoration:none;
+}
+.choice-boxes,.fetish-
+
+grid{
   display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:10px;
-  margin-top:18px;
-  width:100%;
-  max-width:540px;
+  
+
+flex-wrap:wrap;
+  
+
+justify-content:center;
+  
+
+gap:10px;
+  max-
+
+width:540px;
+  margin:18px 
+
+auto;
 }
 .choice,.fetish{
-  background:var(--card);
-  border:2px solid var(--muted);
-  border-radius:10px;
-  padding:12px 14px;
-  width:calc(33% - 10px);
-  min-width:120px;
-  cursor:pointer;
-  transition:.15s;
+  
+
+background:var(--card);
+  
+
+border:2px solid var(--
+
+muted);
+  border-
+
+radius:10px;
+  
+
+padding:12px;
+  
+
+width:calc(33% - 10px);
+  
+
+min-width:120px;
+  
+
+cursor:pointer;
+  
+
+transition:.15s;
 }
-.choice:hover,.fetish:hover{transform:translateY(-4px);}
+.choice:hover,.fetish:hov
+
+er{transform:translateY
+
+(-4px);}
 .selected{
-  background:var(--accent);
-  border-color:#c77dff;
-  font-weight:700;
-}
+  
 
-.intro-text{
+background:var(--accent);
+ 
+
+ border-color:#c77dff;
+  
+
+font-weight:700;
+}
+.intro-
+
+text{
   max-width:540px;
-  margin-top:20px;
-  font-size:14px;
-  line-height:1.6;
-  color:#ccc;
-}
+  
 
+margin:10px auto 20px;
+  
+
+font-size:14px;
+  
+
+color:#ccc;
+  line-
+
+height:1.6;
+}
 button{
-  margin-top:20px;
-  padding:10px 18px;
-  background:var(--accent);
-  border:none;
-  border-radius:8px;
+  
+
+margin:12px;
+  
+
+padding:10px 18px;
+  
+
+background:var(--accent);
+ 
+
+ border:none;
+  border-
+
+radius:8px;
   color:white;
-  cursor:pointer;
-  font-size:15px;
-  display:none;
+ 
+
+ font-size:15px;
+  
+
+cursor:pointer;
+  
+
+display:none;
 }
 
-.fade-in{animation:fadeIn .4s ease forwards;}
-@keyframes fadeIn{
-  from{opacity:0;transform:scale(.95);}
-  to{opacity:1;transform:scale(1);}
-}
+/* 
 
-/* Screenshot */
+Screenshot */
 .screenshot-mobile{
-  width:390px;
-  padding:20px;
-  background:var(--bg);
-  border-radius:12px;
-  display:flex;
-  flex-direction:column;
-  gap:10px;
+  
+
+width:390px;
+  
+
+padding:20px;
+  
+
+background:var(--bg);
+  
+
+border-radius:12px;
 }
-.screenshot-title{font-size:22px;font-weight:bold;}
-.screenshot-sub{font-size:14px;color:#ddd;}
+.screenshot-title{font-
+
+size:22px;font-
+
+weight:bold;}
+.screenshot-link{font-
+
+size:16px;color:var(--
+
+brand);}
+.screenshot-sub
+
+{font-
+
+size:14px;color:#ddd;marg
+
+in-top:4px;}
+.screenshot-
+
+date{font-
+
+size:16px;color:#aaa;marg
+
+in-bottom:10px;}
 .screenshot-grid{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
+  
+
+display:flex;
+  flex-
+
+wrap:wrap;
   gap:10px;
+  
+
+justify-content:center;
 }
 .screenshot-cell{
-  background:var(--card);
-  border:2px solid var(--muted);
-  border-radius:10px;
-  padding:12px;
-  width:calc(33% - 10px);
-  min-width:120px;
+  
+
+background:var(--card);
+  
+
+border:2px solid var(--
+
+muted);
+  border-
+
+radius:10px;
+  
+
+padding:12px;
+  
+
+width:calc(33% - 10px);
 }
 .screenshot-cell.marked{
-  background:var(--accent);
-  border-color:#c77dff;
-  font-weight:700;
+  
+
+background:var(--accent);
+ 
+
+ border-color:#c77dff;
+  
+
+font-weight:700;
 }
 </style>
 
-<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script 
+
+src="https://cdn.jsdelivr
+
+.net/npm/html2canvas@1.4.
+
+1/dist/html2canvas.min.js
+
+"></script>
 </head>
 
 <body>
 
-<h1>300 Shades of Taboo</h1>
-<div id="level"></div>
+<h1>300 Shades of 
 
-<div id="first-screen" class="choice-boxes">
-  <div class="choice" data-choice="has Tried">I've Tried</div>
-  <div class="choice" data-choice="Enjoys">I've Enjoyed</div>
-  <div class="choice" data-choice="is Curious About">I'm Curious About</div>
+Taboo</h1>
+<div 
+
+class="site-link">
+  <a 
+
+href="https://HerRulesHis
+
+Service.github.io" 
+
+target="_blank">
+    
+
+HerRulesHisService.github
+
+.io
+  </a>
 </div>
 
-<div class="intro-text" id="intro-text">
-  <p>
-    Let this game be a starting point for honest conversations — with yourself or with a partner.
-    Use it to open discussions about boundaries, curiosities, fantasies, and desires in a relaxed,
-    pressure-free way.
-  </p>
-  <p>
-    You’ll explore 15 fetishes at a time, randomly drawn from a total list of 300 commonly found on FetLife.
-    Each round offers a fresh mix without feeling overwhelmed.
-  </p>
+<div 
+
+id="first-screen" 
+
+class="choice-boxes">
+  
+
+<div class="choice" 
+
+data-choice="has 
+
+Tried">I've Tried</div>
+  
+
+<div class="choice" 
+
+data-choice="Enjoys">I've 
+
+Enjoyed</div>
+  <div 
+
+class="choice" data-
+
+choice="is Curious 
+
+About">I'm Curious 
+
+About</div>
 </div>
 
-<div id="fetish-screen" class="fetish-grid" style="display:none"></div>
+<div 
 
-<button id="reset-btn">Reset Fetish Cards</button>
-<button id="screenshot-btn">Take Screenshot</button>
+class="intro-text" 
+
+id="intro-text">
+  Let 
+
+this game be a starting 
+
+point for honest 
+
+conversations — with 
+
+yourself or with a 
+
+partner.
+  Use it to 
+
+explore boundaries, 
+
+curiosities, fantasies, 
+
+and desires without 
+
+pressure.
+  <br><br>
+  
+
+You’ll see 15 fetishes at 
+
+a time, randomly selected 
+
+from a full list of 300 
+
+commonly found on 
+
+FetLife.
+</div>
+
+<div 
+
+id="fetish-screen" 
+
+class="fetish-grid" 
+
+style="display:none"></di
+
+v>
+
+<button id="reset-
+
+btn">Reset Fetish 
+
+Cards</button>
+<button 
+
+id="screenshot-btn">Take 
+
+Screenshot</button>
 
 <script>
-const fetishList = [
-"Oral Sex","Spanking","Bondage","Anal Sex","Hair Pulling","Toys","Talking Dirty","Blindfolds","Lingerie","Breast/Nipple Play","Handcuffs","Sex In Public","Mutual Masturbation","Ass Play","Biting","Role Play","Discipline","Masturbation","Collar and Lead/Leash","Candle Wax","Orgasm Control","Exhibitionism","Kissing","Erotic Photography","Master/Slave","Gangbangs","Strap-ons","Rimming","Nipples","Voyeurism","Humiliation","Pain","Cunnilingus","Anal","fingering","High Heels","Squirting","Whips","Cocksucking","Creampie","Waking up to oral sex","Blow Jobs","Power Exchange","Aftercare","Face Slapping","Flirting","Doggy Style","Fisting","Pantyhose/Stockings","Begging","Orgasm Denial","Group Sex","Age Play","Piercings","Pussy Worship","Snuggling","Watersports","Pegging","Handjobs","Daddy/girl","Bisexuality","Morning Sex","Affectionate Domination","Showering Together","FMF threesomes","Edge Play","Obedience Training","Anal Training","Dirty Text Messaging","FemDom","Porn","Sensual Domination","Public Play","Ball Gags","Tit Fucking","Swallowing","Nudity","Sex with Strangers","Cuddling","Verbal Humiliation and Degradation","Ass worship","Polyamory","Chastity Devices","Neck Kissing/Touching","Making Out","Mistresses with Strap-Ons","Breasts","Throat Fucking","Costumes/Dressing-up","Tearing off Clothing","Aftercare Cuddles","Big Tits","Facesitting","MMF Threesomes","Caging/Confinement","Light Bondage","Belt Spanking","Edging","Clit Spanking","Latex","Fishnets","Spreader Bars","Flogging","D/s","Fucking Machines","Sluts","Cock Milking","Sleepy Sex","Breeding","Orgy","Sensual Play","Foot/Feet","Prostate Massage","Sadism","Anonymous Encounters","Shibari","Degradation","Being Cummed On","Caressing","Body Worship","Erotic Literature","Sexting","Mistress/slave","Ordered To Masturbate","Anal Play","Skirts","Butt plugs in public","Masochism","Two-Girl Blowjobs","Being Overpowered","Goth","Masks","Shower Sex","Ass Licking","Interracial Sex","Anal Beads","Erotic Massage","Schoolgirl Uniform","Honesty","Older Women","Ice Cubes","Cuddling with benefits","Cross-Dressing","Stockings","Rope","Red Heads","Impact Play","Gags","Anal Creampie","Touching","Daddy Daughter roleplay","Bruises","Glory Hole","Control","Anal Fingering","Doctor/Nurse Play","Swallowing Cum","Abduction Play","Sensation Play","Yes, Sir.","Hot Oil Massages","Rope Bondage","male submission","Photography","Panties","Ass to Mouth","Humor","Cuckold","Nipple Play","Seduction","Sexual Slavery","Attention","Facials","Scratching","Affection","Clamps and Clips","Teacher/Student","Cock and Ball Torture","Cosplay","Foot Massage","Trust","Bareback","Daddy/babygirl","Brats","Paddling","Massage","Prostate Milking","Geeks","Bondage Equipment","Neck Biting","Spitting","Swinging","Slapping","Small Tits","Forehead Kisses","Tease & Denial","Petplay","Whipping","Punishment","Eye Contact","Anal Stretching","Breast Spanking","Cunt Worship","Predator/prey","Scent","Road Head","BBW","24/7","The no panties rule","Hotwife","Pussy Spanking","Electrical Play","Foot Worship","Wax","Licking","Sex in the kitchen","Anal Hooks","Bukkake","subspace","Switching","Enemas","Chastity","Service-oriented submission","Tongue Sucking","Kneeling","Impregnation Fantasy","Maid Uniforms","Rope Play","Lace","Nipple Clamps","Burlesque","Schoolgirl","Music","Objectification","Triple Penetration","Pigtails","Feminization","Breast Bondage","Knee High Socks","Goddess Worship","Fetish Wear","Riding Crops","Male Authority","Glass Dildos","Knife Play","Suspension Bondage","Tit Slapping","Mind Fucks","Behavior Modification","Anime","Caning","Belt Whippings","Pinching","Domestic Servitude","Breastfeeding","Sexual Objectification","Boss/Secretary","Total Power Exchange","Phone Sex","Art Erotica","Female Supremacy","Outdoor Bondage","Rubber","Accents","Love","Wax Play","Body Paint","Sapiosexuality","Public Humiliation","Clit Pumping","OTK Spanking","Sissification","Kitten Petplay","Cuckolding","Online Play","Nipple Piercings","Writing Erotica","Hentai","Cock Slapping","Uniforms","Glasses","Vaginal Fisting","Lactation","Pursuit, Take-Down & Capture","Sex in the cemetery","Play Punishment","Manhandling","Bondage Art","Creampie Cleanup","Cheerleading Uniforms","Bondage Tape","Primal Play","Mommy/Boy Dynamics","Cyber Sex","Feet","Vintage Lingerie","Sissy Training","Vaginal Stretching","Sex in videostore porn rooms","slavery","Shaving","Japanese Bondage","Pussy Pumping","Asphyxiaphilia Play","1950s Household","Blood Play","Vampires","Lipstick","Puppy Play","Hairbrush Spanking","Transvestism","Genital Piercings","Tantra","Legs","Pet Play","Business Suits","Violet Wand","Makeup","Tongues","CBT","French Maids","Predicament Bondage","Anal Fisting","Tickling","Analingus","Flashing","Sadomasochism","Androgyny","Wrestling","Needle Play","Eye Contact Restrictions","Crops","Catsuits","Freckles","Mind Control","Corporal Punishment","Corset Training","DDlg","Bathroom Use Control","Clothespins","Sensualism","BBC","Affectionate Cruelty","Long Hair","Body Modification","Medical Play","Female Humiliation","Human Toilet","Wartenberg Pinwheels","Older Men","Duct Tape","Uncut Cock","Suspension","Sybian","Webcams","Pregnant","Nun/Priest Play","Crying","Fire Play","Diapers","Chakra energy play","Pin-Ups","Mental Bondage","Smoking","E-Stim","Military Uniforms","Shackles","Sissy","Bimboification","Urethral Sounds","Service","Toes and Feet","Necks","Dollification","Bellydancing","Chocolate","Breast Whipping","Maid","Cuckold Humiliation","Panty-Sniffing","Primal","Sex Magick","small penis humiliation","Crawling","Speech restriction","Ben Wa Balls","Covert Bondage","Mommy/girl","Beards","Food Play","Human Doll","Muscles","Queening","NylonLegs & Feet","Boot licking","Fear","Sex Online","human furniture","Monogamy","Posture Collars","BBW/BHM","Librarians","Pubic Hair","Branding","Sissy Panties","Domestic Discipline","Gender Play","Fetish Models","Spiritual BDSM","Sacred Sexuality","Boot Worship","Sister/Brother Roleplay","Tens Unit","Toilet slave","Silk","Damsels In Distress","Tears","sleep","Blushing","CFNM","Barefoot","Large Labia","ABDL","Armbinders","Fear Play","Furry","Ball Stretching","Slave Tattoos","Self-Bondage","Hoods","Rituals","Liquor","Cutting","Depilation/Shaving","Ballbusting","Sounds","Corsetry","Facial Hair","Gloves","Interrogation","Scarf bondage","Mummification","Lycra/Spandex","Vintage Porn","Vacuum pumping","Kilts","Fingernails","Smothering","Emotional Sadism","Feathers","Energy Play","Speculums","Single Tail Whips","Enforced Bedtime","Armpits","Sensual/slave dances","Sounding","Satin","Body Hair","Gas Masks","PVC","Hands","Pressure points","Toy Making","Bald Girls","artistic cutting","Corset Cinching","Violence","Socks","Spandex","Large objects","Medieval Devices","Figging","Cornertime","Urethral Fucking","Pony Play","Diaper","Sweat","Military","Vacuum Bed","Steampunk","Ball Kicking","Fire Cupping","Infidelity","Shoes","Bullwhips","Muscle Worship","WolfPlay","Toilet","Transformation","Claws","Ballet Boots/Shoes","Hook Suspension","Face Farting","Grooming","Voice Play","Emotional Masochism","Race Play","human ashtray","Punching Play","Clover Clamps","Kinbaku","Saran Wrap","Protocol","Hair Bondage","Scarification","Cupping","High Protocol","fetnights","Waterbondage","Braces","Slave Bells","Superheroes","Pirates","Victorian Lifestyles","Religious Play","Pro Domme","Anal Chastity","Martial Arts","Trampling","Gorean Slave Positions","Waterboarding","Corset Piercing","Geisha","Play Piercing","Fur","Inflatables","Hemp Rope","Auralism","Victorian Pornography","Piggy Play","Catheters","Boot","Hair","Encasement Fetish","Velvet","Cling Film","Metal","Defilement","Vampire gloves","decorative cutting","Cigars","Butches","Military Interrogation","Dacryphilia","Vinyl","Clowns","Infantilism","Petticoats","Kicking","Douching","Fire Flogging","Bastinado","Abrasion Play","Internal Enslavement","Head Shaving","Psycholagny","Zentai","Crucifixion Play","Casting","Sleepsacks","Robots","Flesh Hooks","Denim","Chaps","Nyotaimori","Forniphilia","Boot Blacking","Hojojutsu","Cell Popping","Gor","Staples","Percussion Play","Graphoerotica","Old Guard Slavery","Fish Hooks","Klismaphilia","Retifism"
+const fetishList 
+
+= [
+"Bondage","Spanking","Ana
+
+l Play","Oral Sex","Role 
+
+Play","Power 
+
+Exchange","FemDom","Male 
+
+Submission",
+"Orgasm 
+
+Control","Chastity","Impa
+
+ct 
+
+Play","Exhibitionism","Vo
+
+yeurism","Pet 
+
+Play","Praise Kink",
+"Degradation","Sensory 
+
+Deprivation","Blindfolds"
+
+,"Restraints","Public 
+
+Play","Dirty Talk",
+"Service 
+
+Submission","Foot 
+
+Worship","Tease & 
+
+Denial","Wax 
+
+Play","Electro 
+
+Play","Edge Play",
+"Shibari","Rope 
+
+Bondage","Aftercare","Cud
+
+dling","Breath 
+
+Play","Collars","Leashes"
+
+,"Humiliation",
+"Mind 
+
+Games","Obedience","Proto
+
+col","High 
+
+Protocol","Discipline","P
+
+unishment","Reward 
+
+Play",
+"Uniforms","Latex","Leath
+
+er","Fishnets","Corsets",
+
+"Heels","Masks","Hoods","
+
+Gags",
+"Spreader 
+
+Bars","Flogging","Caning"
+
+,"Paddling","Cropping","W
+
+hipping","Scratching","Bi
+
+ting",
+"Neck Play","Hair 
+
+Pulling","Wrestling","Pri
+
+mal 
+
+Play","Predator/Prey","Co
+
+nsensual Non-Consent",
+"Objectification","Owners
+
+hip Fantasy","Goddess 
+
+Worship","Body 
+
+Worship","Facesitting",
+"Strap-
+
+Ons","Pegging","Prostate 
+
+Play","Anal 
+
+Training","Squirting","Fa
+
+cials","Creampie",
+"Group 
+
+Play","Threesomes","Polya
+
+mory","Swinging","Cuckold
+
+ing","Hotwife",
+"Erotic 
+
+Photography","Sexting","D
+
+irty Messaging","Phone 
+
+Sex","Cyber Play","Cam 
+
+Play",
+"Cosplay","Costume 
+
+Play","Teacher/Student 
+
+(Adult 
+
+Roleplay)","Boss/Secretar
+
+y",
+"Doctor/Nurse","Maid 
+
+Service","Butler 
+
+Service","Uniform Play",
+"Age-Play (Consenting 
+
+Adults)","Caretaker 
+
+Dynamics (Adult)",
+"ABDL-
+
+style Dynamics (Adult 
+
+Only)","Infantilism 
+
+(Adult Roleplay)",
+"Diaper 
+
+Play (Adult Only)",
+"Fetish Wear","Latex 
+
+Hoods","PVC","Rubber","Bo
+
+ot Worship","Boot 
+
+Licking",
+"Foot 
+
+Massage","Tickling","Feat
+
+her Play","Ice Play","Oil 
+
+Play","Massage",
+"Erotic 
+
+Hypnosis","Mind Control 
+
+Fantasy","Behavior 
+
+Training","Speech 
+
+Control",
+"Posture 
+
+Control","Corner 
+
+Time","Kneeling","Crawlin
+
+g","Domestic 
+
+Discipline",
+"Body 
+
+Modification 
+
+Fantasy","Piercings","Tat
+
+toos","Scarification 
+
+(Fantasy)",
+"Breath 
+
+Control 
+
+(Light)","Suspension 
+
+Fantasy","Predicament 
+
+Bondage",
+"Glass 
+
+Toys","Metal 
+
+Toys","Vibrators","Remote 
+
+Control Toys","Public 
+
+Teasing",
+"Orgasm 
+
+Denial","Ruined 
+
+Orgasms","Edging 
+
+Games","Milking","Cock 
+
+Worship",
+"Breast 
+
+Worship","Nipple 
+
+Play","Clamps","Tit 
+
+Play","Body Paint","Food 
+
+Play",
+"Chocolate 
+
+Play","Wine 
+
+Play","Sensual 
+
+Feeding","Blind Date 
+
+Fantasy",
+"Anonymous 
+
+Encounters","Hotel 
+
+Play","Travel 
+
+Play","Outdoor Fantasy",
+"Energy Play","Spiritual 
+
+BDSM","Ritual 
+
+Play","Ceremonial 
+
+Control",
+"Writing 
+
+Erotica","Reading 
+
+Erotica","Storytelling 
+
+Play","Fantasy 
+
+Building",
+"Role-Based 
+
+Protocols","Slave 
+
+Positions","Service 
+
+Rituals",
+"Fetish 
+
+Photography","Art 
+
+Erotica","Vintage 
+
+Erotica","Music 
+
+Control",
+"Sound 
+
+Play","Voice 
+
+Control","Accent 
+
+Play","Dirty 
+
+Whispering",
+"Affectionate 
+
+Domination","Soft 
+
+Domming","Sensual 
+
+Domination",
+"Strict 
+
+Control","Rules & 
+
+Structure","Total Power 
+
+Exchange",
+"Playful 
+
+Bratting","Brat 
+
+Taming","Negotiated Power 
+
+Games",
+"Consent 
+
+Negotiation","Boundary 
+
+Play","Trust Exercises",
+"Aftercare 
+
+Rituals","Bondage 
+
+Art","Rope Aesthetics"
 ];
 
-const firstScreen = document.getElementById('first-screen');
-const fetishScreen = document.getElementById('fetish-screen');
-const screenshotBtn = document.getElementById('screenshot-btn');
-const resetBtn = document.getElementById('reset-btn');
-const introText = document.getElementById('intro-text');
+const firstScreen = 
 
-let chosenLevel = "";
+document.getElementById
 
-function buildGrid(){
-  fetishScreen.innerHTML="";
-  const selected=[];
-  while(selected.length<15){
-    const r=fetishList[Math.floor(Math.random()*fetishList.length)];
-    if(!selected.includes(r)) selected.push(r);
+("first-screen");
+const 
+
+fetishScreen = 
+
+document.getElementById
+
+("fetish-screen");
+const 
+
+resetBtn = 
+
+document.getElementById
+
+("reset-btn");
+const 
+
+screenshotBtn = 
+
+document.getElementById
+
+("screenshot-btn");
+const 
+
+introText = 
+
+document.getElementById
+
+("intro-text");
+let 
+
+chosenLevel = "";
+
+function 
+
+buildGrid(){
+  
+
+fetishScreen.innerHTML=""
+
+;
+  const chosen=[];
+  
+
+while(chosen.length<15){
+  
+
+  const f=fetishList
+
+[Math.floor(Math.random
+
+()*fetishList.length)];
+   
+
+ if(!chosen.includes(f)) 
+
+chosen.push(f);
   }
-  selected.forEach(f=>{
-    const d=document.createElement('div');
-    d.className='fetish fade-in';
-    d.textContent=f;
-    d.onclick=()=>d.classList.toggle('selected');
-    fetishScreen.appendChild(d);
+  
+
+chosen.forEach(f=>{
+    
+
+const 
+
+d=document.createElement
+
+("div");
+    
+
+d.className="fetish";
+    
+
+d.textContent=f;
+    
+
+d.onclick=()
+
+=>d.classList.toggle
+
+("selected");
+    
+
+fetishScreen.appendChild
+
+(d);
   });
 }
 
 firstScreen.onclick=e=>{
-  if(!e.target.classList.contains('choice')) return;
-  chosenLevel = e.target.dataset.choice;
-  firstScreen.style.display="none";
-  introText.style.display="none";
-  fetishScreen.style.display="flex";
-  screenshotBtn.style.display="inline-block";
-  resetBtn.style.display="inline-block";
-  buildGrid();
+  
+
+if(!
+
+e.target.classList.contai
+
+ns("choice")) return;
+  
+
+chosenLevel=e.target.data
+
+set.choice;
+  
+
+firstScreen.style.display
+
+="none";
+  
+
+introText.style.display="
+
+none";
+  
+
+fetishScreen.style.displa
+
+y="flex";
+  
+
+resetBtn.style.display="i
+
+nline-block";
+  
+
+screenshotBtn.style.displ
+
+ay="inline-block";
+  
+
+buildGrid();
 };
 
-resetBtn.onclick = () => buildGrid();
+resetBtn.onclick=buildGri
 
-screenshotBtn.onclick = async () => {
-  const userName = prompt("Enter your name:");
-  if(!userName) return;
+d;
 
-  const temp=document.createElement('div');
-  temp.className='screenshot-mobile';
-  temp.innerHTML=`
-    <div class="screenshot-title">300 Shades of Taboo</div>
-    <div class="screenshot-sub">${userName} ${chosenLevel}</div>
-    <div class="screenshot-grid"></div>
+screenshotBtn.onclick=asy
+
+nc()=>{
+  const 
+
+name=prompt("Enter your 
+
+name:");
+  if(!name) 
+
+return;
+
+  const date=new 
+
+Date
+
+().toLocaleDateString();
+
+  
+
+const 
+
+temp=document.createEleme
+
+nt("div");
+  
+
+temp.className="screensho
+
+t-mobile";
+  
+
+temp.innerHTML=`
+    <div 
+
+class="screenshot-
+
+title">300 Shades of 
+
+Taboo</div>
+    <div 
+
+class="screenshot-
+
+link">HerRulesHisService.
+
+github.io</div>
+    <div 
+
+class="screenshot-sub">
+
+${name} ${chosenLevel}
+
+</div>
+    <div 
+
+class="screenshot-date">
+
+${date}</div>
+    <div 
+
+class="screenshot-
+
+grid"></div>
   `;
 
-  const grid=temp.querySelector('.screenshot-grid');
-  document.querySelectorAll('.fetish').forEach(f=>{
-    const c=document.createElement('div');
-    c.className='screenshot-cell'+(f.classList.contains('selected')?' marked':'');
-    c.textContent=f.textContent;
-    grid.appendChild(c);
+  const 
+
+grid=temp.querySelector
+
+(".screenshot-grid");
+  
+
+document.querySelectorAll
+
+(".fetish").forEach(f=>{
+  
+
+  const 
+
+c=document.createElement
+
+("div");
+    
+
+c.className="screenshot-
+
+cell"+(f.classList.contai
+
+ns("selected")?" 
+
+marked":"");
+    
+
+c.textContent=f.textConte
+
+nt;
+    grid.appendChild
+
+(c);
   });
 
-  document.body.appendChild(temp);
-  const canvas=await html2canvas(temp);
-  const link=document.createElement('a');
-  link.download='300_shades_of_taboo.png';
-  link.href=canvas.toDataURL();
-  link.click();
-  temp.remove();
+  
+
+document.body.appendChild
+
+(temp);
+  const 
+
+canvas=await html2canvas
+
+(temp);
+  const 
+
+a=document.createElement
+
+("a");
+  
+
+a.href=canvas.toDataURL
+
+();
+  
+
+a.download="300_shades_of
+
+_taboo.png";
+  a.click();
+  
+
+temp.remove();
 };
 </script>
 
