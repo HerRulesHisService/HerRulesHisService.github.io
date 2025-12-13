@@ -69,18 +69,6 @@ button{
   display:none;
 }
 
-#toast{
-  position:fixed;
-  bottom:20px;
-  left:50%;
-  transform:translateX(-50%);
-  background:#222;
-  padding:10px 18px;
-  border-radius:8px;
-  opacity:0;
-  transition:.4s;
-}
-
 .fade-in{animation:fadeIn .4s ease forwards;}
 @keyframes fadeIn{
   from{opacity:0;transform:scale(.95);}
@@ -151,8 +139,6 @@ button{
 <button id="reset-btn">Reset Fetish Cards</button>
 <button id="screenshot-btn">Take Screenshot</button>
 
-<div id="toast"></div>
-
 <script>
 const fetishList = [
 "Oral Sex","Spanking","Bondage","Anal Sex","Hair Pulling","Toys","Talking Dirty","Blindfolds","Lingerie",
@@ -192,13 +178,13 @@ const fetishList = [
 "Forniphilia","Hojojutsu","Klismaphilia","Retifism"
 ];
 
-const firstScreen=document.getElementById('first-screen');
-const fetishScreen=document.getElementById('fetish-screen');
-const screenshotBtn=document.getElementById('screenshot-btn');
-const resetBtn=document.getElementById('reset-btn');
-const introText=document.getElementById('intro-text');
-const levelBox=document.getElementById('level');
-let chosenLevel="", userName="";
+const firstScreen = document.getElementById('first-screen');
+const fetishScreen = document.getElementById('fetish-screen');
+const screenshotBtn = document.getElementById('screenshot-btn');
+const resetBtn = document.getElementById('reset-btn');
+const introText = document.getElementById('intro-text');
+
+let chosenLevel = "";
 
 function buildGrid(){
   fetishScreen.innerHTML="";
@@ -217,8 +203,8 @@ function buildGrid(){
 }
 
 firstScreen.onclick=e=>{
-  if(!e.target.classList.contains('choice'))return;
-  chosenLevel=e.target.dataset.choice;
+  if(!e.target.classList.contains('choice')) return;
+  chosenLevel = e.target.dataset.choice;
   firstScreen.style.display="none";
   introText.style.display="none";
   fetishScreen.style.display="flex";
@@ -227,19 +213,20 @@ firstScreen.onclick=e=>{
   buildGrid();
 };
 
-resetBtn.onclick=()=>buildGrid();
+resetBtn.onclick = () => buildGrid();
 
-screenshotBtn.onclick=async()=>{
-  if(!userName){
-    userName=prompt("Enter your name:");
-    if(!userName) return;
-  }
+screenshotBtn.onclick = async () => {
+  const userName = prompt("Enter your name:");
+  if(!userName) return;
+
   const temp=document.createElement('div');
   temp.className='screenshot-mobile';
   temp.innerHTML=`
     <div class="screenshot-title">300 Shades of Taboo</div>
     <div class="screenshot-sub">${userName} ${chosenLevel}</div>
-    <div class="screenshot-grid"></div>`;
+    <div class="screenshot-grid"></div>
+  `;
+
   const grid=temp.querySelector('.screenshot-grid');
   document.querySelectorAll('.fetish').forEach(f=>{
     const c=document.createElement('div');
@@ -247,6 +234,7 @@ screenshotBtn.onclick=async()=>{
     c.textContent=f.textContent;
     grid.appendChild(c);
   });
+
   document.body.appendChild(temp);
   const canvas=await html2canvas(temp);
   const link=document.createElement('a');
